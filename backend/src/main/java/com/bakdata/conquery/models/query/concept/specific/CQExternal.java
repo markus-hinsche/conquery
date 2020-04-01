@@ -119,6 +119,8 @@ public class CQExternal implements CQElement {
 			);
 		}
 
+		log.trace("Resolved {} entries", includedEntities.size());
+
 		return new CQExternalResolved(includedEntities);
 	}
 

@@ -81,7 +81,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 			if (er.isFailed() && state == ExecutionState.RUNNING) {
 				fail(storage);
 				FailedEntityResult failed = er.asFailed();
-				log.error("Failed query " + queryId + " at least for the entity " + failed.getEntityId() + " with:\n{}", failed.getThrowable());
+				log.error("Failed Query[{}] at least for Entity[{}]", queryId, failed.getEntityId(), failed.getThrowable());
 			}
 		}
 		synchronized (getExecution()) {
@@ -89,6 +89,9 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 			results.addAll(result.getResults());
 			if (executingThreads == 0 && state == ExecutionState.RUNNING) {
 				finish(storage, ExecutionState.DONE);
+			}
+			else {
+				log.debug("Have {} results. {} Workers remaining", results.size(), executingThreads);
 			}
 		}
 	}
@@ -106,7 +109,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 	@Override
 	protected void finish(@NonNull MasterMetaStorage storage, ExecutionState executionState) {
 		lastResultCount = results.stream().flatMap(ContainedEntityResult::filterCast).count();
-
+		log.trace("Query[{}] done with {} results.", getId(), lastResultCount);
 		super.finish(storage, executionState);
 	}
 

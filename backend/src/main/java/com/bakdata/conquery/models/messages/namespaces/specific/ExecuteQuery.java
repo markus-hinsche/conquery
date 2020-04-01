@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.bakdata.conquery.io.cps.CPSType;
+import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.models.execution.ManagedExecution;
 import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
 import com.bakdata.conquery.models.messages.namespaces.NamespacedMessage;
@@ -36,6 +37,10 @@ public class ExecuteQuery extends WorkerMessage {
 
 	@Override
 	public void react(Worker context) throws Exception {
+		if(log.isTraceEnabled()) {
+			log.trace("Received Query\n{}", Jackson.MAPPER.writerFor(ManagedExecution.class).writeValueAsString(execution));
+		}
+
 		Set<Entry<ManagedExecutionId, QueryPlan>> plans = null;
 		// Generate query plans for this execution. For ManagedQueries this is only one plan.
 		// For ManagedForms there might be multiple plans, which originate from ManagedQueries.
@@ -55,7 +60,7 @@ public class ExecuteQuery extends WorkerMessage {
 				context.getQueryExecutor().execute(result, new QueryExecutionContext(context.getStorage()), entry);
 				result.getFuture().addListener(()->result.send(context), MoreExecutors.directExecutor());
 			} catch(Exception e) {
-				log.error(String.format("Error while executing {} (with subquery: {})", execution.getId(), entry.getKey()), e );
+				log.error("Error while executing {} (with subquery: {})", execution.getId(), entry.getKey(), e );
 				sendFailureToMaster(result, execution, context, e);
 			}
 		}
