@@ -167,8 +167,11 @@ public class CalculateCBlocksJob extends Job {
 
 				ConceptTreeChild child = cache.findMostSpecificChild(valueIndex, stringValue, rowMap);
 
+
 				// Add all Concepts and their path to the root to the CBlock
 				if (child != null) {
+					log.trace("Assigning `{}/{}` to `{}`", valueIndex, stringValue, child.getId());
+
 					cBlock.getMostSpecificChildren().add(child.getPrefix());
 					ConceptTreeNode<?> it = child;
 					while (it != null) {
@@ -177,6 +180,8 @@ public class CalculateCBlocksJob extends Job {
 					}
 				}
 				else {
+					log.trace("Cannot assign `{}/{}` to `{}`", valueIndex, stringValue, connector.getConcept().getId());
+
 					// see #174 improve handling by copying the relevant things from the old project
 					cBlock.getMostSpecificChildren().add(null);
 				}
