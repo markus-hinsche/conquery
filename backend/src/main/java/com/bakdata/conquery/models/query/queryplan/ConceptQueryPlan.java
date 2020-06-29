@@ -21,9 +21,11 @@ import com.bakdata.conquery.models.query.results.SinglelineEntityResult;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter @Setter
 @ToString
+@Slf4j
 public class ConceptQueryPlan implements QueryPlan, EventIterating {
 
 	@Getter @Setter
@@ -95,19 +97,32 @@ public class ConceptQueryPlan implements QueryPlan, EventIterating {
 			return EntityResult.notContained();
 		}
 
+		log.trace("Required Tables={}", requiredTables);
+
 		for(Table currentTable : requiredTables) {
+			log.trace("Next Table={}", currentTable.getId());
+
 			nextTable(ctx, currentTable);
 			for(Bucket bucket : entity.getBucket(currentTable.getId())) {
+				log.trace("Next Bucket={}", bucket.getId());
+
 				int localEntity = bucket.toLocal(entity.getId());
-				if(bucket.containsLocalEntity(localEntity)) {
-					if(isOfInterest(bucket)) {
-						nextBlock(bucket);
-						int start = bucket.getFirstEventOfLocal(localEntity);
-						int end = bucket.getLastEventOfLocal(localEntity);
-						for(int event = start; event < end ; event++) {
-							nextEvent(bucket, event);
-						}
-					}
+				if (!bucket.containsLocalEntity(localEntity)) {
+					continue;
+				}
+
+				if (!isOfInterest(bucket)) {
+					continue;
+				}
+
+				nextBlock(bucket);
+				int start = bucket.getFirstEventOfLocal(localEntity);
+				int end = bucket.getLastEventOfLocal(localEntity);
+
+				log.trace("Entity[{}] from {} to {}", entity.getId(), start, end);
+
+				for(int event = start; event < end ; event++) {
+					nextEvent(bucket, event);
 				}
 			}
 		}

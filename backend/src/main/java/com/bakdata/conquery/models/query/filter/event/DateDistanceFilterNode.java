@@ -11,10 +11,12 @@ import com.bakdata.conquery.models.events.Bucket;
 import com.bakdata.conquery.models.query.QueryExecutionContext;
 import com.bakdata.conquery.models.query.queryplan.clone.CloneContext;
 import com.bakdata.conquery.models.query.queryplan.filter.SingleColumnFilterNode;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Entity is included as long as Dates are within a certain range.
  */
+@Slf4j
 public class DateDistanceFilterNode extends SingleColumnFilterNode<Range.LongRange> {
 
 	private boolean hit = false;
@@ -46,6 +48,8 @@ public class DateDistanceFilterNode extends SingleColumnFilterNode<Range.LongRan
 		if (!bucket.has(event, getColumn())) {
 			return false;
 		}
+
+		log.trace("Bucket[{}] for Table[{}]. Filter wants Column[{}]", bucket.getId(), bucket.getImp().getTable(), getColumn().getTable().getId());
 
 		if (reference == null) {
 			return false;
