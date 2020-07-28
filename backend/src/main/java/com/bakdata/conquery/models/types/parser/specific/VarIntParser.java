@@ -34,6 +34,8 @@ public class VarIntParser extends Parser<Integer> {
 	
 	@Override
 	public Decision<Integer, Number, VarIntType> decideType() {
+		// TODO: 28.07.2020 FK: VarIntBoolean for two fields
+		// TODO: 28.07.2020 FK: Restructure this, so that this can be folded into IntParser where all unwrap to longs instead
 
 		if (maxValue - minValue < ((int) Byte.MAX_VALUE - (int) Byte.MIN_VALUE)) {
 			return new Decision<>(
