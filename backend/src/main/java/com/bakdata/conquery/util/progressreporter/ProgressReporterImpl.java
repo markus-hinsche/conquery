@@ -112,8 +112,8 @@ public class ProgressReporterImpl implements ProgressReporter {
 		}
 
 		final double progress = getProgress();
-		if (progress != max) {
-			log.warn("ProgressReporter is done but Progress is just {}/{}", getProgress(), getMax());
+		if (progress < 1) {
+			log.warn("ProgressReporter is done but Progress is just {}", progress);
 		}
 
 		innerProgress = max - reservedForChildren;
