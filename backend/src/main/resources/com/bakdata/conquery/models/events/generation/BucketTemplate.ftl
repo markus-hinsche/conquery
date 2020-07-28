@@ -129,7 +129,7 @@ public class Bucket_${suffix} extends Bucket {
 		<#-- there are no getters for null only columns-->
 		<#if col.type.typeId == type && col.type.nullLines != col.type.lines>
 			case ${col.position}:
-				return <@f.get col/>(event);
+				return <@f.getMajor col/>(event);
 		</#if>
 	</#list>
 	</#list>
@@ -219,7 +219,7 @@ public class Bucket_${suffix} extends Bucket {
             <#if col.type.lines != col.type.nullLines>
                 <#if col.type.typeId == "DATE">
                 case ${col.position}:
-                    return CDateRange.exactly(<@f.get col/>(event));
+                    return CDateRange.exactly(<@f.getMajor col/>(event));
                 <#elseif col.type.typeId == "DATE_RANGE">
                 case ${col.position}:
                     return <@f.getMajor col/>(event);
@@ -242,7 +242,7 @@ public class Bucket_${suffix} extends Bucket {
 			if(has(event, ${col_index})) {
 				builder.put(
 					"${safeJavaString(col.name)}",
-					imp.getColumns()[${col_index}].getType().createScriptValue(<@f.get col/>(event))
+					imp.getColumns()[${col_index}].getType().createScriptValue(<@f.getMajor col/>(event))
 				);
 			}
 			</#if>

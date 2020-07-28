@@ -5,7 +5,6 @@ import com.bakdata.conquery.models.common.daterange.CDateRange;
 import com.bakdata.conquery.models.types.CType;
 import com.bakdata.conquery.models.types.MajorTypeId;
 import com.bakdata.conquery.util.PackedUnsigned1616;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,8 +25,8 @@ public class DateRangeTypePacked extends CType<CDateRange, Integer> {
 		}
 
 		return CDateRange.of(
-			PackedUnsigned1616.getLeft(value)+minValue,
-			PackedUnsigned1616.getRight(value)+minValue
+				PackedUnsigned1616.getLeft(value) + minValue,
+				PackedUnsigned1616.getRight(value) + minValue
 		);
 	}
 

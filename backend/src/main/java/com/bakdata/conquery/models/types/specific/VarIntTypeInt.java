@@ -2,17 +2,16 @@ package com.bakdata.conquery.models.types.specific;
 
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.types.CType;
-
 import lombok.Getter;
 
 @CPSType(base=CType.class, id="VAR_INT_INT32")
 @Getter
 public class VarIntTypeInt extends VarIntType {
 
-	private final int maxValue;
-	private final int minValue;
+	private final long maxValue;
+	private final long minValue;
 	
-	public VarIntTypeInt(int minValue, int maxValue) {
+	public VarIntTypeInt(long minValue, long maxValue) {
 		super(int.class);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -20,7 +19,7 @@ public class VarIntTypeInt extends VarIntType {
 
 	@Override
 	public int toInt(Number value) {
-		return value.intValue();
+		return (int) (value.intValue() + minValue);
 	}
 	
 	@Override

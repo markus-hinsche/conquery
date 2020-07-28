@@ -2,17 +2,16 @@ package com.bakdata.conquery.models.types.specific;
 
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.types.CType;
-
 import lombok.Getter;
 
 @CPSType(base=CType.class, id="VAR_INT_BYTE")
 @Getter
 public class VarIntTypeByte extends VarIntType {
 
-	private final byte maxValue;
-	private final byte minValue;
+	private final long maxValue;
+	private final long minValue;
 	
-	public VarIntTypeByte(byte minValue, byte maxValue) {
+	public VarIntTypeByte(long minValue, long maxValue) {
 		super(byte.class);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -20,7 +19,7 @@ public class VarIntTypeByte extends VarIntType {
 
 	@Override
 	public int toInt(Number value) {
-		return value.byteValue();
+		return (int) (value.intValue() + minValue);
 	}
 
 	@Override

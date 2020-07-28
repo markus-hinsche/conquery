@@ -41,29 +41,29 @@ public class IntegerParser extends Parser<Long> {
 
 	@Override
 	protected Decision<Long, ?, ? extends CType<Long, ?>> decideType() {
-		if(maxValue+1 <= Integer.MAX_VALUE && minValue >= Integer.MIN_VALUE) {
+		if (maxValue + 1 <= Integer.MAX_VALUE && minValue >= Integer.MIN_VALUE) {
 			VarIntParser subParser = new VarIntParser();
-			subParser.registerValue((int)maxValue);
-			subParser.registerValue((int)minValue);
+			subParser.registerValue((int) maxValue);
+			subParser.registerValue((int) minValue);
 			subParser.setLines(getLines());
 			subParser.setNullLines(getNullLines());
 			Decision<Integer, Number, VarIntType> subDecision = subParser.findBestType();
 			return new Decision<>(
-				new Transformer<Long, Number>() {
-					@Override
-					public Number transform(@NonNull Long value) {
-						return subDecision.getTransformer().transform(value.intValue());
-					}
-				},
-				new IntegerTypeVarInt(subDecision.getType())
+					new Transformer<Long, Number>() {
+						@Override
+						public Number transform(@NonNull Long value) {
+							return subDecision.getTransformer().transform(value.intValue());
+						}
+					},
+					new IntegerTypeVarInt(subDecision.getType())
 			);
 		}
-		else {
-			return new Decision<Long, Long, IntegerTypeLong>(
-				new NoopTransformer<>(),
-				new IntegerTypeLong(minValue, maxValue)
-			);
-		}
+
+
+		return new Decision<Long, Long, IntegerTypeLong>(
+			new NoopTransformer<>(),
+			new IntegerTypeLong(minValue, maxValue)
+		);
 	}
 
 }

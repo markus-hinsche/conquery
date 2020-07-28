@@ -17,6 +17,6 @@ public abstract class VarIntType extends CType<Integer, Number> {
 	
 	@Override
 	public Integer createScriptValue(Number value) {
-		return value.intValue();
+		return toInt(value);
 	}
 }

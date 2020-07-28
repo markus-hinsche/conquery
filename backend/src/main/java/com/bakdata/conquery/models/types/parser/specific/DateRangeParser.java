@@ -101,6 +101,8 @@ public class DateRangeParser extends Parser<CDateRange> {
 			);
 		}
 
+		// TODO: 27.07.2020 this can be refined to also undergo VarInt compression
+
 		return new Decision<>(
 				new NoopTransformer<>(),
 				new DateRangeTypeDateRange()
