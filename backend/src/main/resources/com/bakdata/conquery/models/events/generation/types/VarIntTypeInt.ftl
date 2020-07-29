@@ -14,6 +14,6 @@
 	</#if>
 </#macro>
 <#macro nullCheck type><#nested/> == <@nullValue type=type/></#macro>
-<#macro majorTypeTransformation type><#nested></#macro>
+<#macro majorTypeTransformation type>${type.minValue} + <#nested></#macro>
 
 <#macro unboxValue type> ((Integer)<#nested>).intValue() </#macro>

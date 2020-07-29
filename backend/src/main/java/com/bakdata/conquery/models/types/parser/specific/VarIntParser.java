@@ -51,6 +51,8 @@ public class VarIntParser extends Parser<Integer> {
 			);
 		}
 
-		return new Decision<>(value -> value - minValue, new VarIntTypeInt(minValue, maxValue));
+
+
+		return new Decision<>(value -> (int) (value - minValue), new VarIntTypeInt(minValue, maxValue));
 	}
 }
