@@ -242,7 +242,7 @@ public class Bucket_${suffix} extends Bucket {
 			if(has(event, ${col_index})) {
 				builder.put(
 					"${safeJavaString(col.name)}",
-					imp.getColumns()[${col_index}].getType().createScriptValue(<@f.getMajor col/>(event))
+					imp.getColumns()[${col_index}].getType().createScriptValue(<@f.get col/>(event))
 				);
 			}
 			</#if>
