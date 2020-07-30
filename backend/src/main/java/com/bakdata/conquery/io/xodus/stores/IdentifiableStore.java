@@ -1,5 +1,7 @@
 package com.bakdata.conquery.io.xodus.stores;
 
+import java.util.List;
+
 import com.bakdata.conquery.models.identifiable.CentralRegistry;
 import com.bakdata.conquery.models.identifiable.Identifiable;
 import com.bakdata.conquery.models.identifiable.ids.IId;
@@ -8,6 +10,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.glassfish.hk2.api.MultiException;
 
 /**
  * Store for Identifiable values. Directly delegates all changes to the supplied {@link CentralRegistry}.
@@ -58,10 +61,18 @@ public class IdentifiableStore<VALUE extends Identifiable<?>> extends KeyIncludi
 				return;
 			}
 
-			centralRegistry.register(value);
 			onAdd.accept(value);
+			centralRegistry.register(value);
 		} catch(Exception e) {
-			throw new RuntimeException("Failed to add "+value, e);
+
+			try {
+				onRemove.accept(value);
+			}
+			catch (Exception exception) {
+				throw new MultiException(List.of(e,  exception));
+			}
+
+			throw new RuntimeException("Failed to add " + value, e);
 		}
 	}
 }
