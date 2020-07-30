@@ -206,7 +206,7 @@ public class GenerationTests {
 				fake.setPosition(c);
 				
 				Object orig = originalArrays.get(i)[c];
-				String message = "checking "+c+" "+bucket.getImp().getColumns()[c].getType()+":"+i+" = "+orig;
+				String message = "checking Column "+c+" "+bucket.getImp().getColumns()[c].getType()+":"+i+" = "+orig;
 				
 				if(orig == null) {
 					assertThat(bucket.has(i, fake))

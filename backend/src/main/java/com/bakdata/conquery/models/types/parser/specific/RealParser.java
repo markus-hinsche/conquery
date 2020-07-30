@@ -8,15 +8,23 @@ import com.bakdata.conquery.models.types.parser.Parser;
 import com.bakdata.conquery.models.types.specific.RealTypeDouble;
 import com.bakdata.conquery.models.types.specific.RealTypeFloat;
 import com.bakdata.conquery.util.NumberParsing;
+import com.google.common.math.StatsAccumulator;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ToString(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class RealParser extends Parser<Double> {
 
-	private float floatULP = Float.NEGATIVE_INFINITY;
-	private double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+	private double precision = 1e-3;
+
+	private final StatsAccumulator ulpStats = new StatsAccumulator();
+	private final StatsAccumulator valueStats = new StatsAccumulator();
+
 
 
 	@Override
@@ -30,17 +38,16 @@ public class RealParser extends Parser<Double> {
 			return;
 		}
 
-		floatULP = Math.max(floatULP, Math.ulp(v.floatValue()));
-		min = Math.min(v, min);
-		max = Math.max(v, max);
+		ulpStats.add(Math.ulp(v.floatValue()));
+		valueStats.add(v);
 	}
 
 	@Override
 	protected Decision<Double, ?, ? extends CType<Double, ?>> decideType() {
 		// TODO: 27.07.2020 FK: Make this configurable
-		log.debug("{}", this);
+		log.debug("Values = {} ULP = {}", valueStats, ulpStats);
 
-		if(floatULP < 1e-2){
+		if(ulpStats.mean() < 1e-2){
 			return new Decision<>(
 					Double::floatValue,
 					new RealTypeFloat()

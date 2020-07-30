@@ -1,10 +1,5 @@
 package com.bakdata.conquery.models.events.generation;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileManager;
-import javax.tools.ToolProvider;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -14,6 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileManager;
+import javax.tools.ToolProvider;
 
 import com.github.powerlibraries.io.Out;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class ClassGenerator {
 
 	protected void addTask(String fullClassName, String content) throws IOException {
 		files.add(new StringJavaFileObject(fullClassName, content));
-		if(log.isTraceEnabled()) {
+		if(true) {
 			File tmp = new File("codeGenDebug");
 			String[] parts = StringUtils.split(fullClassName, '.');
 			String className = parts[parts.length - 1];
@@ -60,7 +60,7 @@ public class ClassGenerator {
 				classLoader)
 			) {
 				StringWriter output = new StringWriter();
-				CompilationTask task = COMPILER.getTask(output, fileManager, null, Arrays.asList(log.isTraceEnabled()?"-g":"-g:none"), null, files);
+				CompilationTask task = COMPILER.getTask(output, fileManager, null, Arrays.asList(true?"-g":"-g:none"), null, files);
 
 				if (!task.call()) {
 					throw new IllegalStateException("Failed to compile: "+output);
