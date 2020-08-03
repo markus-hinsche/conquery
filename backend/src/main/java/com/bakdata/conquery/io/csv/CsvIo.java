@@ -51,8 +51,7 @@ public class CsvIo {
 	 */
 	public static boolean isGZipped(@NonNull File file) throws IOException {
 		String contentType = Files.probeContentType(file.toPath());
-		if(contentType != null && contentType.contains("gzip"))
-			return true;
-		return false;
+		log.trace("File[{}] Content-Type = {}", file, contentType);
+		return contentType != null && contentType.contains("gzip");
 	}
 }
