@@ -7,13 +7,17 @@ import com.bakdata.conquery.models.types.specific.VarIntType;
 import com.bakdata.conquery.models.types.specific.VarIntTypeByte;
 import com.bakdata.conquery.models.types.specific.VarIntTypeInt;
 import com.bakdata.conquery.models.types.specific.VarIntTypeShort;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString(callSuper = true)
 public class VarIntParser extends Parser<Integer> {
 
-	private long maxValue = Integer.MIN_VALUE;
-	private long minValue = Integer.MAX_VALUE;
+	@Setter
+	private int maxValue = Integer.MIN_VALUE;
+
+	@Setter
+	private int minValue = Integer.MAX_VALUE;
 
 	@Override
 	public void registerValue(Integer v) {
@@ -37,22 +41,22 @@ public class VarIntParser extends Parser<Integer> {
 		// TODO: 28.07.2020 FK: VarIntBoolean for two fields
 		// TODO: 28.07.2020 FK: Restructure this, so that this can be folded into IntParser where all unwrap to longs instead
 
-		if (maxValue - minValue < ((int) Byte.MAX_VALUE - (int) Byte.MIN_VALUE)) {
+
+		if (Math.subtractExact((long)maxValue, (long)minValue) + 1 < ((long) Byte.MAX_VALUE - (long) Byte.MIN_VALUE)) {
+			final VarIntTypeByte typeByte = new VarIntTypeByte(minValue, maxValue);
+			return new Decision<>(typeByte::toByte, typeByte);
+		}
+
+		if (Math.subtractExact((long) maxValue, (long) minValue) + 1 < ((long) Short.MAX_VALUE - (long) Short.MIN_VALUE)) {
+			final VarIntTypeShort typeShort = new VarIntTypeShort(minValue, maxValue);
 			return new Decision<>(
-					value -> (byte) (value - minValue),
-					new VarIntTypeByte(minValue, maxValue)
+					typeShort::toShort,
+					typeShort
 			);
 		}
 
-		if (maxValue - minValue < ((long) Short.MAX_VALUE - (long) Short.MIN_VALUE)) {
-			return new Decision<>(
-					value -> (short) (value - minValue),
-					new VarIntTypeShort(minValue, maxValue)
-			);
-		}
 
 
-
-		return new Decision<>(value -> (int) (value - minValue), new VarIntTypeInt(minValue, maxValue));
+		return new Decision<>(value -> value, new VarIntTypeInt(minValue, maxValue));
 	}
 }

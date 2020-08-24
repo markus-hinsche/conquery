@@ -5,15 +5,14 @@ import com.bakdata.conquery.models.types.CType;
 import com.bakdata.conquery.models.types.parser.Decision;
 import com.bakdata.conquery.models.types.parser.NoopTransformer;
 import com.bakdata.conquery.models.types.parser.Parser;
-import com.bakdata.conquery.models.types.parser.Transformer;
 import com.bakdata.conquery.models.types.specific.IntegerTypeLong;
 import com.bakdata.conquery.models.types.specific.IntegerTypeVarInt;
 import com.bakdata.conquery.models.types.specific.VarIntType;
 import com.bakdata.conquery.util.NumberParsing;
-import lombok.NonNull;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
-@ToString(callSuper = true)
+@ToString(callSuper = true) @Slf4j
 public class IntegerParser extends Parser<Long> {
 
 	private long maxValue = Long.MIN_VALUE;
@@ -41,28 +40,33 @@ public class IntegerParser extends Parser<Long> {
 
 	@Override
 	protected Decision<Long, ?, ? extends CType<Long, ?>> decideType() {
-		if (maxValue + 1 <= Integer.MAX_VALUE && minValue >= Integer.MIN_VALUE) {
-			VarIntParser subParser = new VarIntParser();
-			subParser.registerValue((int) maxValue);
-			subParser.registerValue((int) minValue);
-			subParser.setLines(getLines());
-			subParser.setNullLines(getNullLines());
-			Decision<Integer, Number, VarIntType> subDecision = subParser.findBestType();
-			return new Decision<>(
-					new Transformer<Long, Number>() {
-						@Override
-						public Number transform(@NonNull Long value) {
-							return subDecision.getTransformer().transform(value.intValue());
-						}
-					},
-					new IntegerTypeVarInt(subDecision.getType())
-			);
+
+		try {
+			if (Math.subtractExact(maxValue + 1, minValue) < Math.subtractExact((long) Integer.MAX_VALUE, (long) Integer.MIN_VALUE)) {
+				VarIntParser subParser = new VarIntParser();
+
+				subParser.setMaxValue((int) maxValue);
+				subParser.setMinValue((int) minValue);
+
+				subParser.setLines(getLines());
+				subParser.setNullLines(getNullLines());
+
+				Decision<Integer, Number, VarIntType> subDecision = subParser.findBestType();
+
+				return new Decision<>(
+						value -> subDecision.getTransformer().transform(value.intValue()),
+						new IntegerTypeVarInt(subDecision.getType())
+				);
+			}
+		}
+		catch (ArithmeticException exc) {
+			// This means the numbers were out of integer range.
+			log.trace("min = {}, max = {}", minValue, maxValue, exc);
 		}
 
-
-		return new Decision<Long, Long, IntegerTypeLong>(
-			new NoopTransformer<>(),
-			new IntegerTypeLong(minValue, maxValue)
+		return new Decision<>(
+				new NoopTransformer<>(),
+				new IntegerTypeLong(minValue, maxValue)
 		);
 	}
 

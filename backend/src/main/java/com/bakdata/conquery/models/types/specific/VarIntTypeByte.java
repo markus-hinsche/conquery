@@ -10,10 +10,10 @@ import lombok.ToString;
 @ToString
 public class VarIntTypeByte extends VarIntType {
 
-	private final long maxValue;
-	private final long minValue;
+	private final int maxValue;
+	private final int minValue;
 	
-	public VarIntTypeByte(long minValue, long maxValue) {
+	public VarIntTypeByte(int minValue, int maxValue) {
 		super(byte.class);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -21,7 +21,11 @@ public class VarIntTypeByte extends VarIntType {
 
 	@Override
 	public int toInt(Number value) {
-		return (value.intValue() + (int) minValue);
+		return (value.intValue() + (int) minValue - (int) Byte.MIN_VALUE);
+	}
+
+	public byte toByte(int value) {
+		return (byte) ((int) value - (int)minValue + (int)Byte.MIN_VALUE);
 	}
 
 		@Override
