@@ -109,7 +109,7 @@ public class Import extends NamedImpl<ImportId> {
 				.getConstructor()
 				.newInstance();
 		} catch (Exception e) {
-			log.error("Failed to generate classes for {}:\n{}\n{}", this, bucketSource, factorySource);
+			log.error("Failed to generate classes for {}", this);
 			throw new IllegalStateException("Failed to generate Bucket classes", e);
 		}
 	}

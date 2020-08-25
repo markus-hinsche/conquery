@@ -6,7 +6,7 @@ import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +60,7 @@ public class ClassGenerator {
 				classLoader)
 			) {
 				StringWriter output = new StringWriter();
-				CompilationTask task = COMPILER.getTask(output, fileManager, null, Arrays.asList(true?"-g":"-g:none"), null, files);
+				CompilationTask task = COMPILER.getTask(output, fileManager, null, Collections.singletonList("-g"), null, files);
 
 				if (!task.call()) {
 					throw new IllegalStateException("Failed to compile: "+output);

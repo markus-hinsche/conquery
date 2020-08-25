@@ -118,8 +118,9 @@ public class SuccinctTrie extends Dictionary {
 				next.setParent(current);
 				current.addChild(next);
 				nodeCount++;
-				if (nodeCount > Integer.MAX_VALUE - 10)
+				if (nodeCount > Integer.MAX_VALUE - 10) {
 					throw new IllegalStateException("This dictionary is to large " + nodeCount);
+				}
 			}
 			current = next;
 			nodeIndex++;
