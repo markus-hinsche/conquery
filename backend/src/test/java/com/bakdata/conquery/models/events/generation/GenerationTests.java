@@ -277,10 +277,23 @@ public class GenerationTests {
 			assertThat(typeByte.toInt(value)).isEqualTo(510);
 		}
 		{
+			final VarIntTypeByte typeByte = new VarIntTypeByte(0, 3);
+
+			final byte value = typeByte.toByte(0);
+			assertThat(typeByte.toInt(value)).isEqualTo(0);
+		}
+		{
 			final VarIntTypeShort type = new VarIntTypeShort(30, 50);
 
 			final short value = type.toShort(40);
 			assertThat(type.toInt(value)).isEqualTo(40);
+		}
+
+		{
+			final VarIntTypeByte type = new VarIntTypeByte(0, 3);
+
+			final byte value = type.toByte(0);
+			assertThat(type.toInt(Integer.valueOf(value))).isEqualTo(0);
 		}
 	}
 }

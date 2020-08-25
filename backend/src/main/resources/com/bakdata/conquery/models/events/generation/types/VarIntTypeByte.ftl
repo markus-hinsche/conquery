@@ -1,4 +1,4 @@
-<#macro nullValue type>((byte)${type.maxValue+1})</#macro>
+<#macro nullValue type>Byte.MAX_VALUE</#macro>
 <#macro kryoSerialization type>output.writeByte(<#nested/>)</#macro>
 <#macro kryoDeserialization type>input.readByte()</#macro>
 <#macro nullCheck type><#nested/> == <@nullValue type=type/></#macro>

@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.mina.core.buffer.IoBuffer;
-
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.dictionary.Dictionary;
 import com.bakdata.conquery.models.dictionary.DictionaryEntry;
@@ -16,14 +14,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.AbstractIterator;
-
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.mina.core.buffer.IoBuffer;
 
-@CPSType(id="SUCCINCT_TRIE", base=Dictionary.class)
+@CPSType(id = "SUCCINCT_TRIE", base = Dictionary.class)
 public class SuccinctTrie extends Dictionary {
 
 	@Getter
@@ -80,28 +78,28 @@ public class SuccinctTrie extends Dictionary {
 
 	@Override
 	public int add(byte[] bytes) {
-		return put(bytes,entryCount,true);
+		return put(bytes, entryCount, true);
 	}
 
 	@Override
 	public int put(byte[] key) {
 		return put(key, entryCount, false);
 	}
-	
+
 	public void checkCompressed(String errorMessage) {
 		if (!isCompressed()) {
 			throw new IllegalStateException(errorMessage);
 		}
 	}
-	
+
 	public void checkUncompressed(String errorMessage) {
 		if (isCompressed()) {
 			throw new IllegalStateException(errorMessage);
 		}
 	}
-	
+
 	public void tryCompress() {
-		if(!isCompressed()) {
+		if (!isCompressed()) {
 			this.compress();
 		}
 	}
@@ -133,7 +131,7 @@ public class SuccinctTrie extends Dictionary {
 			totalBytesStored += key.length;
 			return entryCount++;
 		}
-		else if (failOnDuplicate){
+		else if (failOnDuplicate) {
 			throw new IllegalStateException(String.format("the key {} was already part of this trie", new String(key, StandardCharsets.UTF_8)));
 		}
 		else {
@@ -158,7 +156,7 @@ public class SuccinctTrie extends Dictionary {
 		selectZeroCache[1] = 1;
 
 		for (HelpNode node : nodesInOrder) {
-			position+=node.children.size();
+			position += node.children.size();
 			zeroesWritten++;
 			selectZeroCache[zeroesWritten] = position;
 			position++;
@@ -170,7 +168,7 @@ public class SuccinctTrie extends Dictionary {
 	}
 
 	private List<HelpNode> createNodesInOrder() {
-		ArrayList<HelpNode> nodesInOrder = new ArrayList<HelpNode>(nodeCount-1);
+		ArrayList<HelpNode> nodesInOrder = new ArrayList<HelpNode>(nodeCount - 1);
 
 		// initialize arrays for rebuilding the data later on
 		reverseLookup = new int[entryCount];
@@ -184,7 +182,7 @@ public class SuccinctTrie extends Dictionary {
 		keyPartArray = new byte[nodeCount];
 
 		nodesInOrder.add(root);
-		for (int index=0; index < nodeCount-1; index++) {
+		for (int index = 0; index < nodeCount - 1; index++) {
 			HelpNode node = nodesInOrder.get(index);
 			node.setPositionInArray(index);
 			if (node != root) {
@@ -266,7 +264,7 @@ public class SuccinctTrie extends Dictionary {
 		checkCompressed("use compress before performing getReverse on the trie");
 
 		if (intValue >= reverseLookup.length) {
-			throw new IllegalArgumentException("intValue " + intValue + " to high, no such key in the trie");
+			throw new IllegalArgumentException("intValue " + intValue + " too high, no such key in the trie");
 		}
 		int nodeIndex = reverseLookup[intValue];
 		while (parentIndex[nodeIndex] != -1) {
@@ -310,7 +308,8 @@ public class SuccinctTrie extends Dictionary {
 		return valuesBytes;
 	}
 
-	@Data @RequiredArgsConstructor
+	@Data
+	@RequiredArgsConstructor
 	public static class Entry {
 		private final int key;
 		private final String value;
@@ -379,7 +378,7 @@ public class SuccinctTrie extends Dictionary {
 		IoBuffer buffer = IoBuffer.allocate(512);
 		buffer.setAutoExpand(true);
 		getReverse(id, buffer);
-		byte[] out = new byte[buffer.limit()-buffer.position()];
+		byte[] out = new byte[buffer.limit() - buffer.position()];
 		buffer.get(out);
 		buffer.free();
 		return out;
@@ -387,6 +386,6 @@ public class SuccinctTrie extends Dictionary {
 
 	@Override
 	public long estimateMemoryConsumption() {
-		return 13L*getNodeCount() + 4L*size();
+		return 13L * getNodeCount() + 4L * size();
 	}
 }

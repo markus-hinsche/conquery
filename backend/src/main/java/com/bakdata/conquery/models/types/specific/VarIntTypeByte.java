@@ -21,11 +21,12 @@ public class VarIntTypeByte extends VarIntType {
 
 	@Override
 	public int toInt(Number value) {
-		return (value.intValue() + (int) minValue - (int) Byte.MIN_VALUE);
+		return ((int) value.byteValue() + (int) minValue - (int) Byte.MIN_VALUE);
 	}
 
 	public byte toByte(int value) {
-		return (byte) ((int) value - (int)minValue + (int)Byte.MIN_VALUE);
+		final byte b = (byte) ((int) value - (int) minValue + (int) Byte.MIN_VALUE);
+		return b;
 	}
 
 		@Override
