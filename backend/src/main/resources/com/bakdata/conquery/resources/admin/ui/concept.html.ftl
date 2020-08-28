@@ -22,7 +22,7 @@
 		<@layout.kid k="ID" v=connector.id/>
 		<@layout.kv k="Label" v=connector.label/>
 		<@layout.kv k="Validity Dates" v=connector.validityDates?join(', ')/>
-		<@layout.kv k="Table" v=connector.table/>
+		<@layout.kv k="Table" v=connector.table.id/>
 		<@layout.kc k="Filters">
 			<ul>
 			<#list connector.collectAllFilters() as filter>

@@ -19,10 +19,7 @@ import javax.validation.Validator;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-
-import com.bakdata.conquery.ConqueryConstants;
 import com.bakdata.conquery.apiv1.FilterSearch;
-
 import com.bakdata.conquery.io.HCFile;
 import com.bakdata.conquery.io.cps.CPSTypeIdResolver;
 import com.bakdata.conquery.io.csv.CsvIo;
@@ -561,7 +558,7 @@ public class AdminProcessor {
 															  .collect(Collectors.toList());
 
 		if(!connectors.isEmpty()) {
-			throw new IllegalArgumentException(String.format("Cannot delete table `%s`, because it still has connectors for Concepts: `%s`", tableId, connectors.stream().map(Connector::getConcept).collect(Collectors.toList())));
+			throw new IllegalArgumentException(String.format("Cannot delete table `%s`, because it still has connectors for Concepts: `%s`", tableId, connectors.stream().map(Connector::getConcept).map(Concept::getId).collect(Collectors.toList())));
 		}
 
 

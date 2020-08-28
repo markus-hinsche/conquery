@@ -20,14 +20,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * This is a single node or concept in a concept tree.
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.CUSTOM, property="type")
 @CPSBase
-@ToString(of={"name", "connectors"})
 public abstract class Concept<CONNECTOR extends Connector> extends ConceptElement<ConceptId> {
 	
 	@Getter @Setter
@@ -67,5 +65,13 @@ public abstract class Concept<CONNECTOR extends Connector> extends ConceptElemen
 	@Override
 	public long calculateBitMask() {
 		return 0L;
+	}
+
+	@Override
+	public String toString() {
+		return "Concept(" +
+			   "id=" + getId() +
+			   ",connectors=" + connectors +
+			   ")";
 	}
 }
