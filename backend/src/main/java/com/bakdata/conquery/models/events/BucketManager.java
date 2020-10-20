@@ -92,7 +92,7 @@ public class BucketManager {
 				try (Locked lock = cBlockLocks.acquire(con.getId())) {
 
 					Table t = con.getTable();
-					CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this, con, t);
+					CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this.worker, this, con, t);
 					ConnectorId conName = con.getId();
 
 					for (Import imp : t.findImports(storage)) {
@@ -173,7 +173,7 @@ public class BucketManager {
 		for (Concept<?> c : storage.getAllConcepts()) {
 			for (Connector con : c.getConnectors()) {
 				try (Locked lock = cBlockLocks.acquire(con.getId())) {
-					CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this, con, con.getTable());
+					CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this.worker, this, con, con.getTable());
 					Import imp = bucket.getImp();
 					if (con.getTable().getId().equals(bucket.getImp().getTable())) {
 						CBlockId cBlockId = new CBlockId(
@@ -198,7 +198,7 @@ public class BucketManager {
 		for (Connector con : c.getConnectors()) {
 			try (Locked lock = cBlockLocks.acquire(con.getId())) {
 				Table t = con.getTable();
-				CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this, con, t);
+				CalculateCBlocksJob job = new CalculateCBlocksJob(storage, this.worker, this, con, t);
 				for (Import imp : t.findImports(storage)) {
 					for (int bucketNumber : worker.getInfo().getIncludedBuckets()) {
 

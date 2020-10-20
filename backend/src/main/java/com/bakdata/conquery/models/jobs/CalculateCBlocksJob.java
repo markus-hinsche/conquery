@@ -2,6 +2,7 @@ package com.bakdata.conquery.models.jobs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.bakdata.conquery.io.xodus.WorkerStorage;
 import com.bakdata.conquery.models.common.daterange.CDateRange;
@@ -14,9 +15,13 @@ import com.bakdata.conquery.models.events.BucketEntry;
 import com.bakdata.conquery.models.events.BucketManager;
 import com.bakdata.conquery.models.events.CBlock;
 import com.bakdata.conquery.models.identifiable.ids.specific.CBlockId;
-import lombok.Getter;
+import com.bakdata.conquery.models.worker.Worker;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +35,7 @@ public class CalculateCBlocksJob extends Job {
 
 	private final List<CalculationInformation> infos = new ArrayList<>();
 	private final WorkerStorage storage;
+	private final Worker worker;
 	private final BucketManager bucketManager;
 	private final Connector connector;
 	private final Table table;
@@ -45,47 +51,60 @@ public class CalculateCBlocksJob extends Job {
 
 	@Override
 	public void execute() throws Exception {
-		this.progressReporter.setMax(infos.size());
+		getProgressReporter().setMax(infos.size());
 
-		for (CalculationInformation info : infos) {
-			try {
-				if (bucketManager.hasCBlock(info.getCBlockId())) {
-					log.trace("Skipping calculation of CBlock[{}] because its already present in the BucketManager.");
-					continue;
-				}
+		final ListeningExecutorService service = MoreExecutors.listeningDecorator(worker.getExecutorService());
 
-				CBlock cBlock = createCBlock(connector, info);
-				cBlock.initIndizes(info.getBucket().getBucketSize());
+		log.info("Starting to calculate {} CBlocks.", infos.size());
 
-				connector.calculateCBlock(cBlock, info.getBucket());
+		final List<ListenableFuture<CBlock>> cBlockFutures =
+				infos.stream()
+					 .filter(info -> !bucketManager.hasCBlock(info.getCBlockId()))
+					 .map(info -> service.submit(() -> doCalculateCBlock(info)))
+					 .collect(Collectors.toList());
 
-				calculateEntityDateIndices(cBlock, info.getBucket());
-				bucketManager.addCalculatedCBlock(cBlock);
-				storage.addCBlock(cBlock);
+		final List<CBlock> cBlocks = Futures.allAsList(cBlockFutures).get();
+
+		log.info("Finished calculating CBlocks.");
+
+		for (CBlock cBlock : cBlocks) {
+
+			// Might have failed.
+			if (cBlock == null) {
+				continue;
 			}
-			catch (Exception e) {
-				throw new Exception(
-						String.format(
-								"Exception in CalculateCBlocksJob (CBlock=%s, connector=%s, table=%s)",
-								info.getCBlockId(),
-								connector,
-								table
-						),
-						e
-				);
-			}
-			finally {
-				this.progressReporter.report(1);
-			}
+
+			bucketManager.addCalculatedCBlock(cBlock);
+			storage.addCBlock(cBlock);
 		}
-		progressReporter.done();
+
+		getProgressReporter().done();
+	}
+
+	public CBlock doCalculateCBlock(CalculationInformation info) {
+		try {
+			CBlock cBlock = new CBlock(info.getBucket().getId(), connector.getId(), info.getBucket().getBucketSize());
+
+			connector.calculateCBlock(cBlock, info.getBucket());
+
+			calculateEntityDateIndices(cBlock, info.getBucket(), storage.getDataset().getTables().get(info.getBucket().getImp().getTable()));
+
+			return cBlock;
+		}
+		catch (Exception e) {
+			log.warn("Exception in CalculateCBlocksJob for {}", info, e);
+		}
+		finally {
+			getProgressReporter().report(1);
+		}
+
+		return null;
 	}
 
 	/**
 	 * For every included entity, calculate min and max and store them as statistics in the CBlock.
 	 */
-	private void calculateEntityDateIndices(CBlock cBlock, Bucket bucket) {
-		Table table = storage.getDataset().getTables().get(bucket.getImp().getTable());
+	private static void calculateEntityDateIndices(CBlock cBlock, Bucket bucket, Table table) {
 		for (Column column : table.getColumns()) {
 			if (!column.getType().isDateCompatible()) {
 				continue;
@@ -105,20 +124,13 @@ public class CalculateCBlocksJob extends Job {
 		}
 	}
 
-	private static CBlock createCBlock(Connector connector, CalculationInformation info) {
-		return new CBlock(info.getBucket().getId(), connector.getId());
-	}
-
-
 	public boolean isEmpty() {
 		return infos.isEmpty();
 	}
 
 	@RequiredArgsConstructor
-	@Getter
-	@Setter
+	@Data
 	private static class CalculationInformation {
-
 		private final Bucket bucket;
 		private final CBlockId cBlockId;
 	}

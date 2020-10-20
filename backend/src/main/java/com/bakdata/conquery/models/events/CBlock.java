@@ -42,7 +42,7 @@ public class CBlock extends IdentifiableImpl<CBlockId> {
 	 */
 	private long[] includedConcepts;
 
-	// TODO: 02.09.2020 FK: Make chop this onto a per-column basis
+	// TODO: 02.09.2020 FK: Chop this onto a per-column basis, making for a fine grained index.
 	/**
 	 * Statistic for fast lookup if entity is of interest.
 	 * Int array for memory performance.
@@ -60,22 +60,20 @@ public class CBlock extends IdentifiableImpl<CBlockId> {
 	@Nullable
 	private int[][] mostSpecificChildren = null;
 	
-	public CBlock(BucketId bucket, ConnectorId connector) {
+	public CBlock(BucketId bucket, ConnectorId connector, int bucketSize) {
 		this.bucket = bucket;
 		this.connector = connector;
+		includedConcepts = new long[bucketSize];
+		minDate = new int[bucketSize];
+		maxDate = new int[bucketSize];
+
+		Arrays.fill(minDate, Integer.MAX_VALUE);
+		Arrays.fill(maxDate, Integer.MIN_VALUE);
 	}
 	
 	@Override @JsonIgnore
 	public CBlockId createId() {
 		return new CBlockId(bucket, connector);
-	}
-
-	public void initIndizes(int bucketSize) {
-		includedConcepts = new long[bucketSize];
-		minDate = new int[bucketSize];
-		maxDate = new int[bucketSize];
-		Arrays.fill(minDate, Integer.MAX_VALUE);
-		Arrays.fill(maxDate, Integer.MIN_VALUE);
 	}
 
 	public void addEntityIncludedConcept(int localEntity, ConceptTreeNode<?> node) {
