@@ -1,6 +1,7 @@
 package com.bakdata.conquery.models.messages.namespaces.specific;
 
 import com.bakdata.conquery.io.cps.CPSType;
+import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.bakdata.conquery.models.messages.namespaces.NamespacedMessage;
 import com.bakdata.conquery.models.messages.namespaces.WorkerMessage;
@@ -23,6 +24,10 @@ public class RemoveImportJob extends WorkerMessage.Slow {
 	@Override
 	public void react(Worker context) throws Exception {
 		log.info("Deleting Import[{}]", importId);
+
+		final Import imp = context.getStorage().getImport(importId);
+		imp.getUsedDictionaries().forEach(context::removeDictionary);
+
 
 		context.removeImport(importId);
 	}

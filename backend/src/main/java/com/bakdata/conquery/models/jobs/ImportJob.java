@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.bakdata.conquery.ConqueryConstants;
@@ -116,10 +118,17 @@ public class ImportJob extends Job {
 			//create data import and store/send it
 			log.info("\tupdating import information");
 			//if mapping is not required we can also use the old infos here
-			Import outImport = createImport(header, !mappingRequired, entityBucketSize);
-			Import inImport = createImport(header, true, entityBucketSize);
 
+			// The import used for reading the CQPP-file.
+			Import inImport = createImport(header, true, entityBucketSize);
 			inImport.setSuffix(inImport.getSuffix() + "_old");
+
+			// The import used for recoding and writing the CQPP file.
+			Import outImport = createImport(header, !mappingRequired, entityBucketSize);
+
+			{
+
+			}
 
 			namespace.getStorage().updateImport(outImport);
 			namespace.sendToAll(new AddImport(outImport));
@@ -201,7 +210,27 @@ public class ImportJob extends Job {
 			col.setPosition(i);
 			imp.getColumns()[i] = col;
 		}
+
+		imp.setUsedDictionaries(collectUsedDictionaries(header));
+
 		return imp;
+	}
+
+	private Set<DictionaryId> collectUsedDictionaries(PreprocessedHeader header) {
+		Table table = namespace.getStorage().getDataset().getTables().get(this.table);
+		PPColumn[] columns = header.getColumns();
+		final Set<DictionaryId> importedDicts = new HashSet<>();
+		for (int pos = 0; pos < columns.length; pos++) {
+			PPColumn column = columns[pos];
+			// only consider StringTypes which are not shared
+			if (!(column.getType() instanceof AStringType) || table.getColumns()[pos].getSharedDictionary() == null) {
+				continue;
+			}
+
+			importedDicts.add(((AStringType<?>) column.getType()).getUnderlyingDictionary().getId());
+		}
+
+		return importedDicts;
 	}
 
 	private void sendBuckets(DictionaryMapping primaryMapping, Int2ObjectMap<ImportBucket> buckets, Int2ObjectMap<List<byte[]>> bytes) {

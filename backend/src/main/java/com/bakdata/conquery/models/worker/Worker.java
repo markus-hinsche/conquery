@@ -21,6 +21,7 @@ import com.bakdata.conquery.models.dictionary.Dictionary;
 import com.bakdata.conquery.models.events.Bucket;
 import com.bakdata.conquery.models.events.BucketManager;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
+import com.bakdata.conquery.models.identifiable.ids.specific.DictionaryId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.bakdata.conquery.models.jobs.JobManager;
 import com.bakdata.conquery.models.messages.namespaces.NamespaceMessage;
@@ -198,4 +199,7 @@ public class Worker implements MessageSender.Transforming<NamespaceMessage, Netw
 		close();
 	}
 
+	public void removeDictionary(DictionaryId dictionaryId) {
+		storage.removeDictionary(dictionaryId);
+	}
 }

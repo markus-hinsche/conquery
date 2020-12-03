@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -18,6 +20,7 @@ import com.bakdata.conquery.models.events.generation.SafeJavaString;
 import com.bakdata.conquery.models.events.generation.SafeName;
 import com.bakdata.conquery.models.identifiable.NamedImpl;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
+import com.bakdata.conquery.models.identifiable.ids.specific.DictionaryId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.bakdata.conquery.models.identifiable.ids.specific.TableId;
 import com.bakdata.conquery.models.preproc.PPColumn;
@@ -53,6 +56,9 @@ public class Import extends NamedImpl<ImportId> {
 	@JsonManagedReference @NotNull
 	private ImportColumn[] columns = new ImportColumn[0];
 	private long numberOfEntries;
+
+	private Set<DictionaryId> usedDictionaries = Collections.emptySet();
+
 	private String suffix;
 	@JsonIgnore
 	private transient BlockFactory blockFactory;
