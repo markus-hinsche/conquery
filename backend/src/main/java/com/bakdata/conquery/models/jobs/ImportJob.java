@@ -223,11 +223,17 @@ public class ImportJob extends Job {
 		for (int pos = 0; pos < columns.length; pos++) {
 			PPColumn column = columns[pos];
 			// only consider StringTypes which are not shared
-			if (!(column.getType() instanceof AStringType) || table.getColumns()[pos].getSharedDictionary() == null) {
+			if (!(column.getType() instanceof AStringType) || table.getColumns()[pos].getSharedDictionary() != null) {
 				continue;
 			}
 
-			importedDicts.add(((AStringType<?>) column.getType()).getUnderlyingDictionary().getId());
+			final Dictionary underlyingDictionary = ((AStringType<?>) column.getType()).getUnderlyingDictionary();
+			// Not all Strings have a Dictionary
+			if(underlyingDictionary == null){
+				continue;
+			}
+
+			importedDicts.add(underlyingDictionary.getId());
 		}
 
 		return importedDicts;
