@@ -179,10 +179,12 @@ public class AdminUIResource extends HAdmin {
 				getProgressReporter().setMax(100);
 
 				while(!getProgressReporter().isDone() && !isCancelled()) {
-					getProgressReporter().report(1);
-
-					if(getProgressReporter().getProgress() >= 100) {
+					if (getProgressReporter().getProgress() < 100) {
+						getProgressReporter().report(1);
+					}
+					else {
 						getProgressReporter().done();
+						return;
 					}
 
 					Uninterruptibles.sleepUninterruptibly((int)(Math.random()*200), TimeUnit.MILLISECONDS);
