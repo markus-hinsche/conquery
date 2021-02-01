@@ -26,20 +26,20 @@ import lombok.Setter;
 public class StringTypeEncoded extends StringType {
 
 	@Nonnull
-	protected StringTypeDictionary subType;
+	protected StringTypeDictionary store;
 	@NonNull
 	private Encoding encoding;
 
 	@JsonCreator
-	public StringTypeEncoded(StringTypeDictionary subType, Encoding encoding) {
+	public StringTypeEncoded(StringTypeDictionary store, Encoding encoding) {
 		super();
-		this.subType = subType;
+		this.store = store;
 		this.encoding = encoding;
 	}
 
 	@Override
 	public String getElement(int value) {
-		return encoding.encode(subType.getElement(value));
+		return encoding.encode(store.getElement(value));
 	}
 
 	@Override
@@ -49,23 +49,23 @@ public class StringTypeEncoded extends StringType {
 
 	@Override
 	public void loadDictionaries(NamespacedStorage storage) {
-		subType.loadDictionaries(storage);
+		store.loadDictionaries(storage);
 	}
 
 
 	@Override
 	public int size() {
-		return subType.size();
+		return store.size();
 	}
 
 	@Override
 	public int getId(String value) {
-		return subType.getId(encoding.decode(value));
+		return store.getId(encoding.decode(value));
 	}
 
 	@Override
 	public Iterator<String> iterator() {
-		Iterator<byte[]> subIt = subType.iterator();
+		Iterator<byte[]> subIt = store.iterator();
 		return new Iterator<>() {
 			@Override
 			public boolean hasNext() {
@@ -81,47 +81,47 @@ public class StringTypeEncoded extends StringType {
 
 	@Override
 	public String toString() {
-		return "StringTypeEncoded[encoding=" + encoding + ", subType=" + subType + "]";
+		return "StringTypeEncoded[encoding=" + encoding + ", subType=" + store + "]";
 	}
 
 	@Override
 	public long estimateEventBits() {
-		return subType.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
 	public long estimateMemoryConsumptionBytes() {
-		return subType.estimateMemoryConsumptionBytes();
+		return store.estimateMemoryConsumptionBytes();
 	}
 
 	@Override
 	public long estimateTypeSizeBytes() {
-		return subType.estimateTypeSizeBytes();
+		return store.estimateTypeSizeBytes();
 	}
 
 	@Override
 	public Dictionary getUnderlyingDictionary() {
-		return subType.getDictionary();
+		return store.getDictionary();
 	}
 
 	@Override
 	public void setUnderlyingDictionary(DictionaryId newDict) {
-		subType.setUnderlyingDictionary(newDict);
+		store.setUnderlyingDictionary(newDict);
 	}
 
 	@Override
 	public void setIndexStore(ColumnStore<Long> newType) {
-		subType.setIndexStore(newType);
+		store.setIndexStore(newType);
 	}
 
 	@Override
 	public StringTypeEncoded doSelect(int[] starts, int[] length) {
-		return new StringTypeEncoded(subType.doSelect(starts, length), getEncoding());
+		return new StringTypeEncoded(store.doSelect(starts, length), getEncoding());
 	}
 
 	@Override
 	public void set(int event, Integer value) {
-		subType.set(event, value);
+		store.set(event, value);
 	}
 
 	@Override
@@ -131,12 +131,17 @@ public class StringTypeEncoded extends StringType {
 
 	@Override
 	public int getString(int event) {
-		return subType.getString(event);
+		return store.getString(event);
 	}
 
 	@Override
 	public boolean has(int event) {
-		return subType.has(event);
+		return store.has(event);
+	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
 	}
 
 	@RequiredArgsConstructor

@@ -30,7 +30,7 @@ import lombok.ToString;
 @ToString
 public abstract class ColumnStore<JAVA_TYPE> {
 
-	private int lines = 0; // todo this is only used for estimating size, extract it somehow.
+	public abstract int getLines();
 
 	/**
 	 * Helper method to select partitions of an array. Resulting array is of length sum(lengths). Incoming type T has to be of ArrayType or this will fail.
@@ -92,7 +92,6 @@ public abstract class ColumnStore<JAVA_TYPE> {
 	public ColumnStore<JAVA_TYPE> select(int[] starts, int[] lengths){
 		//TODO FK: this is just WIP as getLines is only used for isEmpty and AdminEnd description, but detangling requires a lot of refactoring.
 		final ColumnStore<JAVA_TYPE> select = doSelect(starts, lengths);
-		select.setLines(Arrays.stream(lengths).sum());
 		return select;
 	}
 
@@ -103,7 +102,7 @@ public abstract class ColumnStore<JAVA_TYPE> {
 	 */
 	public ColumnStore<JAVA_TYPE> createDescription() {
 		final ColumnStore<JAVA_TYPE> select = doSelect(new int[0], new int[0]);
-		select.setLines(getLines());
+		// TODO description class
 		return select;
 	}
 

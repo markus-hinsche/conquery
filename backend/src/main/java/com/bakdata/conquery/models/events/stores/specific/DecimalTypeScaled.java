@@ -16,12 +16,12 @@ import lombok.Getter;
 public class DecimalTypeScaled extends ColumnStore<BigDecimal> {
 
 	private final int scale;
-	private final ColumnStore<Long> subType;
+	private final ColumnStore<Long> store;
 
 	@JsonCreator
 	public DecimalTypeScaled(int scale, ColumnStore<Long> subType) {
 		this.scale = scale;
-		this.subType = subType;
+		this.store = subType;
 	}
 
 		@Override
@@ -31,26 +31,26 @@ public class DecimalTypeScaled extends ColumnStore<BigDecimal> {
 
 	@Override
 	public String toString() {
-		return "DecimalTypeScaled[numberType=" + subType + "]";
+		return "DecimalTypeScaled[numberType=" + store + "]";
 	}
 
 	@Override
 	public long estimateEventBits() {
-		return subType.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
 	public DecimalTypeScaled doSelect(int[] starts, int[] length) {
-		return new DecimalTypeScaled(scale, subType.select(starts, length));
+		return new DecimalTypeScaled(scale, store.select(starts, length));
 	}
 
 	@Override
 	public void set(int event, BigDecimal value) {
 		if (value == null) {
-			subType.set(event, null);
+			store.set(event, null);
 		}
 		else {
-			subType.set(event, unscale(scale, value).longValue());
+			store.set(event, unscale(scale, value).longValue());
 		}
 	}
 
@@ -65,7 +65,7 @@ public class DecimalTypeScaled extends ColumnStore<BigDecimal> {
 
 	@Override
 	public BigDecimal getDecimal(int event) {
-		return scale(scale, subType.getInteger(event));
+		return scale(scale, store.getInteger(event));
 	}
 
 	public static BigDecimal scale(int scale, long value) {
@@ -74,6 +74,11 @@ public class DecimalTypeScaled extends ColumnStore<BigDecimal> {
 
 	@Override
 	public boolean has(int event) {
-		return subType.has(event);
+		return store.has(event);
+	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
 	}
 }

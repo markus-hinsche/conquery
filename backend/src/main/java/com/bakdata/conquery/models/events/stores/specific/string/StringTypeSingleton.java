@@ -22,13 +22,13 @@ import lombok.Setter;
 public class StringTypeSingleton extends StringType {
 
 	private final String singleValue;
-	private final BooleanStore delegate;
+	private final BooleanStore store;
 
 	@JsonCreator
-	public StringTypeSingleton(String singleValue, BooleanStore delegate) {
+	public StringTypeSingleton(String singleValue, BooleanStore store) {
 		super();
 		this.singleValue = singleValue;
-		this.delegate = delegate;
+		this.store = store;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class StringTypeSingleton extends StringType {
 
 	@Override
 	public StringTypeSingleton doSelect(int[] starts, int[] length) {
-		return new StringTypeSingleton(singleValue, delegate.doSelect(starts, length));
+		return new StringTypeSingleton(singleValue, store.doSelect(starts, length));
 	}
 
 	@Override
@@ -73,6 +73,11 @@ public class StringTypeSingleton extends StringType {
 	}
 
 	@Override
+	public int getLines() {
+		return store.getLines();
+	}
+
+	@Override
 	public long estimateEventBits() {
 		return Byte.SIZE;
 	}
@@ -89,12 +94,12 @@ public class StringTypeSingleton extends StringType {
 
 	@Override
 	public void set(int event, Integer value) {
-		getDelegate().set(event, value != null && value == 0);
+		getStore().set(event, value != null && value == 0);
 	}
 
 	@Override
 	public boolean has(int event) {
-		return getDelegate().getBoolean(event);
+		return getStore().getBoolean(event);
 	}
 
 	@Override

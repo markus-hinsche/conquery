@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @CPSType(base = ColumnStore.class, id = "STRING_DICTIONARY")
 public class StringTypeDictionary extends ColumnStore<Integer> {
 
-	protected ColumnStore<Long> numberType;
+	protected ColumnStore<Long> store;
 
 	@JsonIgnore
 	private transient Dictionary dictionary;
@@ -41,15 +41,15 @@ public class StringTypeDictionary extends ColumnStore<Integer> {
 	@InternalOnly
 	private DatasetId dataset;
 
-	public StringTypeDictionary(ColumnStore<Long> numberType, Dictionary dictionary, String name) {
-		this.numberType = numberType;
+	public StringTypeDictionary(ColumnStore<Long> store, Dictionary dictionary, String name) {
+		this.store = store;
 		this.dictionary = dictionary;
 		this.name = name;
 	}
 
 	@JsonCreator
-	public StringTypeDictionary(ColumnStore<Long> numberType, DatasetId dataset, String name) {
-		this.numberType = numberType;
+	public StringTypeDictionary(ColumnStore<Long> store, DatasetId dataset, String name) {
+		this.store = store;
 		this.name = name;
 		this.dataset = dataset;
 	}
@@ -94,7 +94,7 @@ public class StringTypeDictionary extends ColumnStore<Integer> {
 
 	@Override
 	public String toString() {
-		return "StringTypeDictionary[dictionary=" + dictionary + ", numberType=" + numberType + "]";
+		return "StringTypeDictionary[dictionary=" + dictionary + ", numberType=" + store + "]";
 	}
 
 	@Override
@@ -110,12 +110,12 @@ public class StringTypeDictionary extends ColumnStore<Integer> {
 
 	@Override
 	public StringTypeDictionary doSelect(int[] starts, int[] length) {
-		return new StringTypeDictionary(numberType.doSelect(starts, length), getDataset(), getName());
+		return new StringTypeDictionary(store.doSelect(starts, length), getDataset(), getName());
 	}
 
 	@Override
 	public int getString(int event) {
-		return (int) getNumberType().getInteger(event);
+		return (int) getStore().getInteger(event);
 	}
 
 	@Override
@@ -125,25 +125,30 @@ public class StringTypeDictionary extends ColumnStore<Integer> {
 
 	@Override
 	public long estimateEventBits() {
-		return numberType.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
 	public void set(int event, Integer value) {
 		if (value == null) {
-			numberType.set(event, null);
+			store.set(event, null);
 		}
 		else {
-			numberType.set(event, value.longValue());
+			store.set(event, value.longValue());
 		}
 	}
 
 	@Override
 	public final boolean has(int event) {
-		return numberType.has(event);
+		return store.has(event);
 	}
 
 	public void setIndexStore(ColumnStore<Long> newType) {
-		numberType = newType;
+		store = newType;
+	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
 	}
 }

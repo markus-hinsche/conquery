@@ -80,4 +80,9 @@ public class BooleanStore extends ColumnStore<Boolean> {
 	public boolean getBoolean(int event) {
 		return values.get(event);
 	}
+
+	@Override
+	public int getLines() {
+		return values.length();
+	}
 }

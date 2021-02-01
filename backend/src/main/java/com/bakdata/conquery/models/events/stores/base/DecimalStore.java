@@ -61,4 +61,9 @@ public class DecimalStore extends ColumnStore<BigDecimal> {
 	public BigDecimal getDecimal(int event) {
 		return values[event];
 	}
+
+	@Override
+	public int getLines() {
+		return values.length;
+	}
 }

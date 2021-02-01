@@ -62,4 +62,8 @@ public class ShortStore extends ColumnStore<Long> {
 		return values[event];
 	}
 
+	@Override
+	public int getLines() {
+		return values.length;
+	}
 }

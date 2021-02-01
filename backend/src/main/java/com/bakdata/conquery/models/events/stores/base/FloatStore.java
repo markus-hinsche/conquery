@@ -58,4 +58,9 @@ public class FloatStore extends ColumnStore<Double> {
 	public double getReal(int event) {
 		return values[event];
 	}
+
+	@Override
+	public int getLines() {
+		return values.length;
+	}
 }

@@ -47,9 +47,7 @@ public abstract class Parser<MAJOR_JAVA_TYPE> {
 			return new EmptyStore<>();
 		}
 
-		ColumnStore<MAJOR_JAVA_TYPE> dec = decideType();
-		copyLineCounts(dec);
-		return dec;
+		return decideType();
 	}
 	
 	public MAJOR_JAVA_TYPE addLine(MAJOR_JAVA_TYPE v) {
@@ -63,9 +61,5 @@ public abstract class Parser<MAJOR_JAVA_TYPE> {
 			registerValue(v);
 		}
 		return v;
-	}
-	
-	public void copyLineCounts(ColumnStore<?> type) {
-		type.setLines(lines);
 	}
 }

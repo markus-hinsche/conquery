@@ -68,4 +68,9 @@ public class ByteStore extends ColumnStore<Long> {
 		return values[event];
 	}
 
+	@Override
+	public int getLines() {
+		return values.length;
+	}
+
 }

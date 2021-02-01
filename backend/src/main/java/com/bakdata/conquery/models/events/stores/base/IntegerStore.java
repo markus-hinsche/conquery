@@ -63,4 +63,9 @@ public class IntegerStore extends ColumnStore<Long> {
 	public long getInteger(int event) {
 		return values[event];
 	}
+
+	@Override
+	public int getLines() {
+		return values.length;
+	}
 }

@@ -68,4 +68,9 @@ public class DateRangeTypeQuarter extends ColumnStore<CDateRange> {
 
 		return CDateRange.of(begin, CDate.ofLocalDate(end));
 	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
+	}
 }

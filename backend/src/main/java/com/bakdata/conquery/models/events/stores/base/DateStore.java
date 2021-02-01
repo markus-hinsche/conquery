@@ -72,7 +72,8 @@ public class DateStore extends ColumnStore<Integer> {
 		return (int) store.getInteger(event);
 	}
 
-	public Object getAsObject(int event) {
-		return CDate.toLocalDate(getDate(event));
+	@Override
+	public int getLines() {
+		return store.getLines();
 	}
 }

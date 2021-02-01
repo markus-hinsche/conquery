@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 public class MoneyTypeInteger extends ColumnStore<Long> {
 
-	protected ColumnStore<Long> numberType;
+	protected ColumnStore<Long> store;
 
 	@JsonCreator
-	public MoneyTypeInteger(ColumnStore<Long> numberType) {
-		this.numberType = numberType;
+	public MoneyTypeInteger(ColumnStore<Long> store) {
+		this.store = store;
 	}
 
 	@Override
@@ -25,17 +25,17 @@ public class MoneyTypeInteger extends ColumnStore<Long> {
 
 	@Override
 	public Long createScriptValue(Long value) {
-		return (long) numberType.createScriptValue(value);
+		return (long) store.createScriptValue(value);
 	}
 
 	@Override
 	public MoneyTypeInteger doSelect(int[] starts, int[] length) {
-		return new MoneyTypeInteger(numberType.select(starts, length));
+		return new MoneyTypeInteger(store.select(starts, length));
 	}
 
 	@Override
 	public long getMoney(int event) {
-		return numberType.getInteger(event);
+		return store.getInteger(event);
 	}
 
 	@Override
@@ -45,26 +45,31 @@ public class MoneyTypeInteger extends ColumnStore<Long> {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "[numberType=" + numberType + "]";
+		return this.getClass().getSimpleName() + "[numberType=" + store + "]";
 	}
 
 	@Override
 	public long estimateEventBits() {
-		return numberType.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
 	public void set(int event, Long value) {
 		if (value == null) {
-			numberType.set(event, null);
+			store.set(event, null);
 		}
 		else {
-			numberType.set(event, value.longValue());
+			store.set(event, value.longValue());
 		}
 	}
 
 	@Override
 	public final boolean has(int event) {
-		return numberType.has(event);
+		return store.has(event);
+	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
 	}
 }

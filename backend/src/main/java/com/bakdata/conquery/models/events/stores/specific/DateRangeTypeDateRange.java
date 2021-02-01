@@ -92,4 +92,9 @@ public class DateRangeTypeDateRange extends ColumnStore<CDateRange> {
 	public boolean has(int event) {
 		return minStore.has(event) || maxStore.has(event);
 	}
+
+	@Override
+	public int getLines() {
+		return minStore.getLines();
+	}
 }

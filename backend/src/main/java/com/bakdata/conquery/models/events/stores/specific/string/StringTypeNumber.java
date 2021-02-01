@@ -27,7 +27,7 @@ import lombok.ToString;
 public class StringTypeNumber extends StringType {
 
 	@Nonnull
-	protected ColumnStore<Long> delegate;
+	protected ColumnStore<Long> store;
 	//used as a compact intset
 	private Range<Integer> range;
 
@@ -39,7 +39,7 @@ public class StringTypeNumber extends StringType {
 	public StringTypeNumber(Range<Integer> range, ColumnStore<Long> numberType) {
 		super();
 		this.range = range;
-		this.delegate = numberType;
+		this.store = numberType;
 	}
 
 	public StringTypeNumber(Range<Integer> range, ColumnStore<Long> numberType, Map<Integer, String> dictionary) {
@@ -49,7 +49,7 @@ public class StringTypeNumber extends StringType {
 
 	@Override
 	public long estimateEventBits() {
-		return delegate.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
@@ -107,8 +107,13 @@ public class StringTypeNumber extends StringType {
 	public void setIndexStore(ColumnStore<Long> indexStore) {	}
 
 	@Override
+	public int getLines() {
+		return store.getLines();
+	}
+
+	@Override
 	public StringTypeNumber doSelect(int[] starts, int[] length) {
-		return new StringTypeNumber(range, delegate.doSelect(starts, length));
+		return new StringTypeNumber(range, store.doSelect(starts, length));
 	}
 
 	@Override
@@ -118,21 +123,21 @@ public class StringTypeNumber extends StringType {
 
 	@Override
 	public int getString(int event) {
-		return (int) getDelegate().getInteger(event);
+		return (int) getStore().getInteger(event);
 	}
 
 	@Override
 	public void set(int event, Integer value) {
 		if (value == null) {
-			getDelegate().set(event, null);
+			getStore().set(event, null);
 		}
 		else {
-			getDelegate().set(event, Long.valueOf(dictionary.get(value)));
+			getStore().set(event, Long.valueOf(dictionary.get(value)));
 		}
 	}
 
 	@Override
 	public boolean has(int event) {
-		return getDelegate().has(event);
+		return getStore().has(event);
 	}
 }

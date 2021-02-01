@@ -13,7 +13,6 @@ public class EmptyStore<T> extends ColumnStore<T> {
 	@JsonCreator
 	public EmptyStore(){
 		super();
-		setLines(0);
 	}
 
 	@Override
@@ -44,5 +43,10 @@ public class EmptyStore<T> extends ColumnStore<T> {
 	@Override
 	public boolean isEmpty() {
 		return true;
+	}
+
+	@Override
+	public int getLines() {
+		return 0;
 	}
 }

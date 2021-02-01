@@ -26,7 +26,7 @@ import lombok.ToString;
 public class StringTypePrefixSuffix extends StringType {
 
 	@Nonnull
-	protected StringType subType;
+	protected StringType store;
 
 	@NonNull
 	private String prefix;
@@ -35,39 +35,39 @@ public class StringTypePrefixSuffix extends StringType {
 	private String suffix;
 
 	@JsonCreator
-	public StringTypePrefixSuffix(StringType subType, String prefix, String suffix) {
+	public StringTypePrefixSuffix(StringType store, String prefix, String suffix) {
 		super();
-		this.subType = subType;
+		this.store = store;
 		this.prefix = prefix;
 		this.suffix = suffix;
 	}
 
 	@Override
 	public String getElement(int value) {
-		return prefix + subType.getElement(value) + suffix;
+		return prefix + store.getElement(value) + suffix;
 	}
 
 	@Override
 	public String createScriptValue(Integer value) {
-		return prefix + subType.createScriptValue(value);
+		return prefix + store.createScriptValue(value);
 	}
 
 	@Override
 	public int getId(String value) {
 		if (value.startsWith(prefix)) {
-			return subType.getId(value.substring(prefix.length()));
+			return store.getId(value.substring(prefix.length()));
 		}
 		return -1;
 	}
 
 	@Override
 	public void setIndexStore(ColumnStore<Long> indexStore) {
-		subType.setIndexStore(indexStore);
+		store.setIndexStore(indexStore);
 	}
 
 	@Override
 	public Iterator<String> iterator() {
-		Iterator<String> subIt = subType.iterator();
+		Iterator<String> subIt = store.iterator();
 		return new Iterator<String>() {
 			@Override
 			public boolean hasNext() {
@@ -83,45 +83,50 @@ public class StringTypePrefixSuffix extends StringType {
 
 
 	@Override
+	public int getLines() {
+		return store.getLines();
+	}
+
+	@Override
 	public StringTypePrefixSuffix doSelect(int[] starts, int[] length) {
-		return new StringTypePrefixSuffix(subType.doSelect(starts, length), getPrefix(), getSuffix());
+		return new StringTypePrefixSuffix(store.doSelect(starts, length), getPrefix(), getSuffix());
 	}
 
 	@Override
 	public void loadDictionaries(NamespacedStorage storage) {
-		subType.loadDictionaries(storage);
+		store.loadDictionaries(storage);
 	}
 
 	@Override
 	public int size() {
-		return subType.size();
+		return store.size();
 	}
 
 	@Override
 	public long estimateEventBits() {
-		return subType.estimateEventBits();
+		return store.estimateEventBits();
 	}
 
 	@Override
 	public long estimateMemoryConsumptionBytes() {
 		return (long) prefix.getBytes(StandardCharsets.UTF_8).length * Byte.SIZE +
 			   (long) suffix.getBytes(StandardCharsets.UTF_8).length * Byte.SIZE +
-			   subType.estimateMemoryConsumptionBytes();
+			   store.estimateMemoryConsumptionBytes();
 	}
 
 	@Override
 	public long estimateTypeSizeBytes() {
-		return subType.estimateTypeSizeBytes();
+		return store.estimateTypeSizeBytes();
 	}
 
 	@Override
 	public Dictionary getUnderlyingDictionary() {
-		return subType.getUnderlyingDictionary();
+		return store.getUnderlyingDictionary();
 	}
 
 	@Override
 	public void setUnderlyingDictionary(DictionaryId newDict) {
-		subType.setUnderlyingDictionary(newDict);
+		store.setUnderlyingDictionary(newDict);
 	}
 
 	@Override
@@ -131,16 +136,16 @@ public class StringTypePrefixSuffix extends StringType {
 
 	@Override
 	public int getString(int event) {
-		return subType.getString(event);
+		return store.getString(event);
 	}
 
 	@Override
 	public void set(int event, Integer value) {
-		subType.set(event, value);
+		store.set(event, value);
 	}
 
 	@Override
 	public boolean has(int event) {
-		return subType.has(event);
+		return store.has(event);
 	}
 }

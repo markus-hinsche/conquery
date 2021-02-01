@@ -62,4 +62,9 @@ public class RebasingStore extends ColumnStore<Long> {
 	public boolean has(int event) {
 		return store.has(event);
 	}
+
+	@Override
+	public int getLines() {
+		return store.getLines();
+	}
 }
