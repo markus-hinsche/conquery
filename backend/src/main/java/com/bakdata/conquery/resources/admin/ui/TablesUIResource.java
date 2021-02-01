@@ -2,7 +2,6 @@ package com.bakdata.conquery.resources.admin.ui;
 
 import static com.bakdata.conquery.resources.ResourceConstants.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import com.bakdata.conquery.io.jersey.ExtraMimeTypes;
 import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.datasets.Table;
-import com.bakdata.conquery.models.events.stores.specific.string.StringType;
+import com.bakdata.conquery.models.dictionary.Dictionary;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.bakdata.conquery.models.identifiable.ids.specific.TableId;
@@ -80,14 +79,10 @@ public class TablesUIResource extends HAdmin {
 						//total size of dictionaries
 						imports
 								.stream()
-								.flatMap(i -> Arrays.stream(i.getColumns()))
-								.filter(c -> c.getTypeDescription() instanceof StringType)
-								.map(c -> (StringType) c.getTypeDescription())
-								.filter(c -> c.getUnderlyingDictionary() != null)
-								.collect(Collectors.groupingBy(t -> t.getUnderlyingDictionary().getId()))
-								.values()
-								.stream()
-								.mapToLong(l -> l.get(0).estimateTypeSizeBytes())
+								.flatMap(i -> i.getDictionaries().stream())
+								.distinct()
+								.map(namespace.getStorage()::getDictionary)
+								.mapToLong(Dictionary::estimateMemoryConsumption)
 								.sum(),
 						//total size of entries
 						imports

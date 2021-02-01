@@ -2,7 +2,6 @@ package com.bakdata.conquery.resources.admin.ui;
 
 import static com.bakdata.conquery.resources.ResourceConstants.DATASET;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -21,7 +20,7 @@ import com.bakdata.conquery.models.concepts.Concept;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.datasets.SecondaryIdDescription;
-import com.bakdata.conquery.models.events.stores.specific.string.StringType;
+import com.bakdata.conquery.models.dictionary.Dictionary;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.identifiable.ids.specific.TableId;
 import com.bakdata.conquery.models.identifiable.mapping.PersistentIdMap;
@@ -87,14 +86,10 @@ public class DatasetsUIResource extends HAdmin {
 								.getStorage()
 								.getAllImports()
 								.stream()
-								.flatMap(i -> Arrays.stream(i.getColumns()))
-								.filter(c -> c.getTypeDescription() instanceof StringType)
-								.map(c -> (StringType) c.getTypeDescription())
-								.filter(c -> c.getUnderlyingDictionary() != null)
-								.collect(Collectors.groupingBy(t -> t.getUnderlyingDictionary().getId()))
-								.values()
-								.stream()
-								.mapToLong(l -> l.get(0).estimateTypeSizeBytes())
+								.flatMap(i -> i.getDictionaries().stream())
+								.distinct()
+								.map(namespace.getStorage()::getDictionary)
+								.mapToLong(Dictionary::estimateMemoryConsumption)
 								.sum(),
 						// total size of entries
 						namespace.getStorage().getAllImports().stream().mapToLong(Import::estimateMemoryConsumption).sum()
