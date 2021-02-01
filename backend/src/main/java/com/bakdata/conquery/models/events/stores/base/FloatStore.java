@@ -30,7 +30,7 @@ public class FloatStore extends ColumnStore<Double> {
 		return Float.SIZE;
 	}
 
-	public FloatStore doSelect(int[] starts, int[] ends) {
+	public FloatStore select(int[] starts, int[] ends) {
 		return new FloatStore(ColumnStore.selectArray(starts, ends, values, float[]::new));
 	}
 

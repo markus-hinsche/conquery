@@ -112,8 +112,8 @@ public class StringTypeNumber extends StringType {
 	}
 
 	@Override
-	public StringTypeNumber doSelect(int[] starts, int[] length) {
-		return new StringTypeNumber(range, store.doSelect(starts, length));
+	public StringTypeNumber select(int[] starts, int[] length) {
+		return new StringTypeNumber(range, store.select(starts, length));
 	}
 
 	@Override

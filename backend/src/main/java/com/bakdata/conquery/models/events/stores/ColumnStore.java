@@ -82,29 +82,19 @@ public abstract class ColumnStore<JAVA_TYPE> {
 		return 0;
 	}
 
-
-	public abstract ColumnStore<JAVA_TYPE> doSelect(int[] starts, int[] lengths);
-
 	/**
 	 * Select the partition of this store.
 	 * The returning store has to accept queries up to {@code sum(lenghts)}, values may not be reordered.
 	 */
-	public ColumnStore<JAVA_TYPE> select(int[] starts, int[] lengths){
-		//TODO FK: this is just WIP as getLines is only used for isEmpty and AdminEnd description, but detangling requires a lot of refactoring.
-		final ColumnStore<JAVA_TYPE> select = doSelect(starts, lengths);
-		return select;
-	}
-
-
+	public abstract ColumnStore<JAVA_TYPE> select(int[] starts, int[] lengths);
 
 	/**
 	 * Create an empty store that's only a description of the transformation.
 	 */
-	public ColumnStore<JAVA_TYPE> createDescription() {
-		final ColumnStore<JAVA_TYPE> select = doSelect(new int[0], new int[0]);
-		// TODO description class
-		return select;
+	public ColumnStore<?> createDescription() {
+		return select(new int[0], new int[0]);
 	}
+
 
 	/**
 	 * Set the event. If null, the store will store a null value, making {@link #has(int)} return false.

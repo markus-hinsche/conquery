@@ -1,6 +1,5 @@
 package com.bakdata.conquery.models.datasets;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.bakdata.conquery.models.events.stores.ColumnStore;
@@ -18,8 +17,8 @@ public class ImportColumn extends NamedImpl<ImportColumnId> {
 	@JsonBackReference @NotNull
 	private final Import parent;
 
-	@NotNull @Valid
-	private final ColumnStore<?> typeDescription;
+	private final long memoryBytes;
+	private final ColumnStore<?> description;
 
 	@Override
 	public ImportColumnId createId() {

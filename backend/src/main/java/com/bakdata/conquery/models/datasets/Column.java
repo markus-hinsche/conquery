@@ -66,7 +66,7 @@ public class Column extends Labeled<ColumnId> {
 			throw new IllegalArgumentException(String.format("Import %s is not for same table as %s", imp.getTable(), getTable().getId()));
 		}
 
-		return imp.getColumns()[getPosition()].getTypeDescription();
+		return imp.getColumns()[getPosition()].getDescription();
 	}
 
 	@Override
