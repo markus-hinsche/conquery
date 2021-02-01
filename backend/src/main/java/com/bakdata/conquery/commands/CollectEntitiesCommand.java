@@ -131,7 +131,7 @@ public class CollectEntitiesCommand extends ConqueryCommand {
 
 		private void add(StringType primType, File file) {
 			Set<String> list = entities.computeIfAbsent(file, f->Sets.newConcurrentHashSet());
-			primType.forEach(list::add);
+			primType.values().forEachRemaining(list::add);
 		}
 		
 	}
