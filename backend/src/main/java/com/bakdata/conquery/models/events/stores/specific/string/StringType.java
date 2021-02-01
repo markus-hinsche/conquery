@@ -1,5 +1,7 @@
 package com.bakdata.conquery.models.events.stores.specific.string;
 
+import java.util.Iterator;
+
 import com.bakdata.conquery.io.xodus.NamespacedStorage;
 import com.bakdata.conquery.models.dictionary.Dictionary;
 import com.bakdata.conquery.models.events.stores.ColumnStore;
@@ -12,8 +14,10 @@ import lombok.NoArgsConstructor;
  *
  */
 @NoArgsConstructor
-public abstract class StringType extends ColumnStore<Integer> implements Iterable<String> {
+public abstract class StringType extends ColumnStore<Integer>  {
 
+
+	public abstract Iterator<String> values();
 
 	@Override
 	public abstract StringType select(int[] starts, int[] length) ;

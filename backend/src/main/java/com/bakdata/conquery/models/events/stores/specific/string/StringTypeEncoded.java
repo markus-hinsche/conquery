@@ -64,7 +64,7 @@ public class StringTypeEncoded extends StringType {
 	}
 
 	@Override
-	public Iterator<String> iterator() {
+	public Iterator<String> values() {
 		Iterator<byte[]> subIt = store.iterator();
 		return new Iterator<>() {
 			@Override

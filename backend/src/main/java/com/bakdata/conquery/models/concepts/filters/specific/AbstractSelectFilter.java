@@ -85,7 +85,7 @@ public abstract class AbstractSelectFilter<FE_TYPE> extends SingleColumnFilter<F
 		if (values == null) {
 			values = new HashSet<>();
 		}
-		values.addAll(Sets.newHashSet(((StringType) getColumn().getTypeFor(imp)).iterator()));
+		values.addAll(Sets.newHashSet(((StringType) getColumn().getTypeFor(imp)).values()));
 	}
 
 	public String getLabelFor(String value) {

@@ -53,7 +53,7 @@ public class StringTypeNumber extends StringType {
 	}
 
 	@Override
-	public Iterator<String> iterator() {
+	public Iterator<String> values() {
 		return IntStream
 					   .rangeClosed(
 							   range.getMin(),

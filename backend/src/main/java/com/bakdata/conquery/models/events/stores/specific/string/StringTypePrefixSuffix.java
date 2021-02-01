@@ -66,8 +66,8 @@ public class StringTypePrefixSuffix extends StringType {
 	}
 
 	@Override
-	public Iterator<String> iterator() {
-		Iterator<String> subIt = store.iterator();
+	public Iterator<String> values() {
+		Iterator<String> subIt = store.values();
 		return new Iterator<String>() {
 			@Override
 			public boolean hasNext() {
