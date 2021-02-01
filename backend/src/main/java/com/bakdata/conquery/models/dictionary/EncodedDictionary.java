@@ -1,12 +1,14 @@
 package com.bakdata.conquery.models.dictionary;
 
 import com.bakdata.conquery.models.events.stores.specific.string.StringTypeEncoded;
+import lombok.Data;
 
 /**
  * Handle class allowing direct encoded access to Dictionary without wrapping inside StringTypeEncoded.
  *
  * Main usage is PrimaryDictionary.
  */
+@Data
 public class EncodedDictionary {
 
 	private final Dictionary dict;
