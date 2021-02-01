@@ -80,7 +80,6 @@ public class StringParser extends Parser<Integer> {
 		// Is this a singleton?
 		if (strings.size() == 1) {
 			StringTypeSingleton type = new StringTypeSingleton(strings.keySet().iterator().next(), BooleanStore.create(getLines()));
-			copyLineCounts(type);
 			return type;
 		}
 
@@ -123,8 +122,7 @@ public class StringParser extends Parser<Integer> {
 		StringType result = guess.getType();
 		//wrap in prefix suffix
 		if (!Strings.isNullOrEmpty(prefix) || !Strings.isNullOrEmpty(suffix)) {
-			result = new StringTypePrefixSuffix(result, prefix, suffix);
-			copyLineCounts(result);
+			return new StringTypePrefixSuffix(result, prefix, suffix);
 		}
 
 		return result;

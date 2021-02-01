@@ -115,11 +115,6 @@ public class StringTypePrefixSuffix extends StringType {
 	}
 
 	@Override
-	public long estimateTypeSizeBytes() {
-		return store.estimateTypeSizeBytes();
-	}
-
-	@Override
 	public Dictionary getUnderlyingDictionary() {
 		return store.getUnderlyingDictionary();
 	}

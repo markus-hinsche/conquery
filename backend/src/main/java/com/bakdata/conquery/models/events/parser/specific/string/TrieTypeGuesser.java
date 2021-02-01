@@ -27,10 +27,7 @@ public class TrieTypeGuesser extends StringTypeGuesser {
 		}
 
 
-		p.copyLineCounts(type);
 		StringTypeEncoded result = new StringTypeEncoded(type, p.getEncoding());
-		p.copyLineCounts(result);
-		p.copyLineCounts(indexType);
 
 		return new Guess(
 				result,

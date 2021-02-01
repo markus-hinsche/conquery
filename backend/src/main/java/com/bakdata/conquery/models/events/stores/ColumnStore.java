@@ -76,13 +76,6 @@ public abstract class ColumnStore<JAVA_TYPE> {
 	public abstract long estimateEventBits();
 
 	/**
-	 * Bytes required to store auxilary data.
-	 */
-	public long estimateTypeSizeBytes() {
-		return 0;
-	}
-
-	/**
 	 * Select the partition of this store.
 	 * The returning store has to accept queries up to {@code sum(lenghts)}, values may not be reordered.
 	 */

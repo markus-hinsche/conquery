@@ -49,7 +49,6 @@ public class NumberTypeGuesser extends StringTypeGuesser {
 			}
 
 			ColumnStore<Long> decision = numberParser.findBestType();
-			p.copyLineCounts(decision);
 
 			final StringTypeNumber type = new StringTypeNumber(range, decision, p.getStrings().inverse());
 

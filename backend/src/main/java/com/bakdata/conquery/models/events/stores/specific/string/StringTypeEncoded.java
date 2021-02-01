@@ -95,11 +95,6 @@ public class StringTypeEncoded extends StringType {
 	}
 
 	@Override
-	public long estimateTypeSizeBytes() {
-		return store.estimateTypeSizeBytes();
-	}
-
-	@Override
 	public Dictionary getUnderlyingDictionary() {
 		return store.getDictionary();
 	}

@@ -97,11 +97,6 @@ public class StringTypeDictionary extends ColumnStore<Integer> {
 		return "StringTypeDictionary[dictionary=" + dictionary + ", numberType=" + store + "]";
 	}
 
-	@Override
-	public long estimateTypeSizeBytes() {
-		return dictionary.estimateMemoryConsumption();
-	}
-
 
 	public void setUnderlyingDictionary(DictionaryId newDict) {
 		name = newDict.getDictionary();
