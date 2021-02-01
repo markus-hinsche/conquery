@@ -33,6 +33,7 @@ public abstract class ColumnStore<JAVA_TYPE> {
 	/**
 	 * Number of lines in this store, null or present.
 	 */
+	@JsonIgnore
 	public abstract int getLines();
 
 	/**
