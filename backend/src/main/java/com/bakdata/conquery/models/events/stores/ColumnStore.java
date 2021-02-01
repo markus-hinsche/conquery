@@ -30,6 +30,9 @@ import lombok.ToString;
 @ToString
 public abstract class ColumnStore<JAVA_TYPE> {
 
+	/**
+	 * Number of lines in this store, null or present.
+	 */
 	public abstract int getLines();
 
 	/**
