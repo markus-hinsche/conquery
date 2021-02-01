@@ -3,6 +3,7 @@ package com.bakdata.conquery.resources.admin.ui;
 import static com.bakdata.conquery.resources.ResourceConstants.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -80,6 +81,7 @@ public class TablesUIResource extends HAdmin {
 						imports
 								.stream()
 								.flatMap(i -> i.getDictionaries().stream())
+								.filter(Objects::nonNull)
 								.distinct()
 								.map(namespace.getStorage()::getDictionary)
 								.mapToLong(Dictionary::estimateMemoryConsumption)

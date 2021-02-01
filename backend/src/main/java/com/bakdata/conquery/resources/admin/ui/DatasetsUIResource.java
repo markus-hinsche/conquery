@@ -3,6 +3,7 @@ package com.bakdata.conquery.resources.admin.ui;
 import static com.bakdata.conquery.resources.ResourceConstants.DATASET;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -87,6 +88,7 @@ public class DatasetsUIResource extends HAdmin {
 								.getAllImports()
 								.stream()
 								.flatMap(i -> i.getDictionaries().stream())
+								.filter(Objects::nonNull)
 								.distinct()
 								.map(namespace.getStorage()::getDictionary)
 								.mapToLong(Dictionary::estimateMemoryConsumption)
