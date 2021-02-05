@@ -54,9 +54,7 @@ public class ConqueryConfig extends Configuration {
 	@NotNull
 	private APIConfig api = new APIConfig();
 	@NotNull
-	private List<String> dateFormats = List.of(
-			"yyyy-MM-dd", "yyyyMMdd", "dd.MM.yyyy"
-	);
+	private DateFormatFactory dateFormats = new DateFormatFactory();
 	@Valid
 	@NotNull
 	private FrontendConfig frontend = new FrontendConfig();
