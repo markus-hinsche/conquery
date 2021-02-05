@@ -1,6 +1,8 @@
 package com.bakdata.conquery.models.config;
 
+import com.bakdata.conquery.models.exceptions.ParsingException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -97,5 +99,22 @@ public class DateFormatFactory {
             }
         }
         return ERROR_DATE;
+    }
+
+    /**
+     * Try parsing the String value to a LocalDate.
+     */
+    public static LocalDate parseToLocalDate(String value) throws ParsingException {
+        if(Strings.isNullOrEmpty(value)) {
+            return null;
+        }
+
+        final LocalDate out = DATE_CACHE.getUnchecked(value);
+
+        if(out.equals(ERROR_DATE)) {
+            throw new IllegalArgumentException(String.format("Failed to parse `%s` as LocalDate.", value));
+        }
+
+        return out;
     }
 }

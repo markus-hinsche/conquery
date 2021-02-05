@@ -108,7 +108,8 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		this.environment = environment;
 		this.validator = environment.getValidator();
 		this.config = config;
-		config.initializePlugins(this);
+		config.initializeStatics();
+		config.initialize(this);
 
 		// Initialization of internationalization
 		I18n.init();

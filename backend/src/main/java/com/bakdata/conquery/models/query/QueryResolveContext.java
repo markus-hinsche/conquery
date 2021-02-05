@@ -1,5 +1,6 @@
 package com.bakdata.conquery.models.query;
 
+import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.Namespace;

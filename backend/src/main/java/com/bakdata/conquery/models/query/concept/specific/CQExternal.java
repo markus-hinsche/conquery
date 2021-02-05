@@ -1,21 +1,11 @@
 package com.bakdata.conquery.models.query.concept.specific;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.validation.constraints.NotEmpty;
-
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.models.common.CDateSet;
 import com.bakdata.conquery.models.common.daterange.CDateRange;
 import com.bakdata.conquery.models.config.ConqueryConfig;
+import com.bakdata.conquery.models.config.DateFormatFactory;
 import com.bakdata.conquery.models.dictionary.EncodedDictionary;
 import com.bakdata.conquery.models.error.ConqueryError;
 import com.bakdata.conquery.models.events.parser.specific.DateRangeParser;
@@ -32,13 +22,16 @@ import com.bakdata.conquery.models.query.queryplan.ConceptQueryPlan;
 import com.bakdata.conquery.models.query.queryplan.QPNode;
 import com.bakdata.conquery.models.query.queryplan.specific.ExternalNode;
 import com.bakdata.conquery.models.query.resultinfo.ResultInfoCollector;
-import com.bakdata.conquery.util.DateFormats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.collect.MoreCollectors;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
+import java.util.*;
 
 @Slf4j
 @CPSType(id = "EXTERNAL", base = CQElement.class)
@@ -67,6 +60,7 @@ public class CQExternal extends CQElement {
 
 	@Override
 	public void resolve(QueryResolveContext context) {
+		
 		EncodedDictionary primary = context.getNamespace().getStorage().getPrimaryDictionary();
 		Optional<DateFormat> dateFormat = format.stream()
 												.map(FormatColumn::getDateFormat)
@@ -144,17 +138,17 @@ public class CQExternal extends CQElement {
 		EVENT_DATE {
 			@Override
 			public CDateSet readDates(int[] dateIndices, String[] row) throws ParsingException {
-				return CDateSet.create(Collections.singleton(CDateRange.exactly(DateFormats.parseToLocalDate(row[dateIndices[0]]))));
+				return CDateSet.create(Collections.singleton(CDateRange.exactly(DateFormatFactory.parseToLocalDate(row[dateIndices[0]]))));
 			}
 		},
 		START_END_DATE {
 			@Override
 			public CDateSet readDates(int[] dateIndices, String[] row) throws ParsingException {
-				LocalDate start = row[dateIndices[0]] == null ? null : DateFormats.parseToLocalDate(row[dateIndices[0]]);
+				LocalDate start = row[dateIndices[0]] == null ? null : DateFormatFactory.parseToLocalDate(row[dateIndices[0]]);
 
 				LocalDate end = (dateIndices.length < 2 || row[dateIndices[1]] == null) ?
-								null :
-								DateFormats.parseToLocalDate(row[dateIndices[1]]);
+						null :
+						DateFormatFactory.parseToLocalDate(row[dateIndices[1]]);
 
 				if (start == null && end == null) {
 					return null;

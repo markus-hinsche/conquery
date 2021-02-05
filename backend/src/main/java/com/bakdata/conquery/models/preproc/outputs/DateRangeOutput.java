@@ -1,19 +1,18 @@
 package com.bakdata.conquery.models.preproc.outputs;
 
-import java.time.LocalDate;
-
-import javax.validation.constraints.NotNull;
-
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.common.daterange.CDateRange;
+import com.bakdata.conquery.models.config.DateFormatFactory;
 import com.bakdata.conquery.models.events.parser.MajorTypeId;
 import com.bakdata.conquery.models.events.parser.Parser;
 import com.bakdata.conquery.models.exceptions.ParsingException;
-import com.bakdata.conquery.util.DateFormats;
 import com.google.common.base.Strings;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import lombok.Data;
 import lombok.ToString;
+
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 /**
  * Parse input columns as {@link CDateRange}. Input values must be {@link com.bakdata.conquery.models.common.CDate} based ints.
@@ -52,8 +51,8 @@ public class DateRangeOutput extends OutputDescription {
 					throw new IllegalArgumentException("Open Ranges are not allowed.");
 				}
 
-				LocalDate start = DateFormats.parseToLocalDate(row[startIndex]);
-				LocalDate end = DateFormats.parseToLocalDate(row[endIndex]);
+				LocalDate start = DateFormatFactory.parseToLocalDate(row[startIndex]);
+				LocalDate end = DateFormatFactory.parseToLocalDate(row[endIndex]);
 
 				return CDateRange.of(start, end);
 			}

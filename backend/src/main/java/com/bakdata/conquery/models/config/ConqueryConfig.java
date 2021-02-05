@@ -92,7 +92,15 @@ public class ConqueryConfig extends Configuration {
 		((DefaultServerFactory) this.getServerFactory()).setJerseyRootPath("/api/");
 	}
 
-	public void initializePlugins(ManagerNode node) {
+	/**
+	 * Initialize everything that needs to have objects members just for configuration, but is used
+	 * entirely statically elsewhere.
+	 */
+	public void initializeStatics(){
+		dateFormats.initializeFormatters();
+	}
+
+	public void initialize(ManagerNode node) {
 		plugins.forEach(config -> config.initialize((node)));
 	}
 

@@ -1,18 +1,18 @@
 package com.bakdata.conquery.models.events.parser.specific;
 
-import javax.annotation.Nonnull;
-
 import com.bakdata.conquery.models.common.daterange.CDateRange;
+import com.bakdata.conquery.models.config.DateFormatFactory;
 import com.bakdata.conquery.models.config.ParserConfig;
 import com.bakdata.conquery.models.events.parser.Parser;
 import com.bakdata.conquery.models.events.stores.root.DateRangeStore;
 import com.bakdata.conquery.models.events.stores.specific.DateRangeTypeDateRange;
 import com.bakdata.conquery.models.events.stores.specific.DateRangeTypeQuarter;
 import com.bakdata.conquery.models.exceptions.ParsingException;
-import com.bakdata.conquery.util.DateFormats;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nonnull;
 
 @Slf4j
 @ToString(callSuper = true)
@@ -47,8 +47,8 @@ public class DateRangeParser extends Parser<CDateRange, DateRangeStore> {
 		}
 
 		return CDateRange.of(
-				DateFormats.parseToLocalDate(parts[0]),
-				DateFormats.parseToLocalDate(parts[1])
+				DateFormatFactory.parseToLocalDate(parts[0]),
+				DateFormatFactory.parseToLocalDate(parts[1])
 		);
 	}
 
