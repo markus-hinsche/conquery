@@ -28,7 +28,9 @@ import com.bakdata.conquery.models.events.stores.root.RealStore;
 import com.bakdata.conquery.models.events.stores.root.StringStore;
 import com.bakdata.conquery.models.identifiable.IdentifiableImpl;
 import com.bakdata.conquery.models.identifiable.ids.specific.BucketId;
+import com.bakdata.conquery.models.identifiable.ids.specific.ConnectorId;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -70,6 +72,9 @@ public class Bucket extends IdentifiableImpl<BucketId> {
 	private final int bucketSize;
 	@NsIdRef
 	private final Import imp;
+
+	@JsonIgnore
+	private final transient Map<ConnectorId, CBlock> cBlocks = new HashMap<>();
 
 	@Override
 	public BucketId createId() {

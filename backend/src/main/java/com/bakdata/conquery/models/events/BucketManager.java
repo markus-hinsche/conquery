@@ -25,6 +25,9 @@ import com.bakdata.conquery.models.jobs.CalculateCBlocksJob;
 import com.bakdata.conquery.models.jobs.JobManager;
 import com.bakdata.conquery.models.query.entity.Entity;
 import com.bakdata.conquery.models.worker.Worker;
+import it.unimi.dsi.fastutil.ints.Int2IntAVLTreeMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -54,7 +57,7 @@ public class BucketManager {
 	 * <p>
 	 * Connector -> Bucket -> [BucketId -> CBlock]
 	 */
-	private final Map<ConnectorId, Int2ObjectMap<Map<BucketId, CBlock>>> connectorToCblocks;
+	private final Map<ConnectorId, Int2IntMap> connectorToCblocks;
 
 	/**
 	 * Table -> BucketN -> [Buckets]
@@ -63,7 +66,7 @@ public class BucketManager {
 
 	public static BucketManager create(Worker worker, WorkerStorage storage) {
 		Int2ObjectMap<Entity> entities = new Int2ObjectAVLTreeMap<>();
-		Map<ConnectorId, Int2ObjectMap<Map<BucketId, CBlock>>> connectorCBlocks = new HashMap<>();
+		Map<ConnectorId, Int2IntMap> connectorCBlocks = new HashMap<>();
 		Map<TableId, Int2ObjectMap<List<Bucket>>> tableBuckets = new HashMap<>();
 
 		IntArraySet assignedBucketNumbers = worker.getInfo().getIncludedBuckets();
@@ -100,17 +103,17 @@ public class BucketManager {
 	/**
 	 * Assert validity of operation, and create index for CBlocks.
 	 */
-	private static void registerCBlock(CBlock cBlock, WorkerStorage storage, Map<ConnectorId, Int2ObjectMap<Map<BucketId, CBlock>>> connectorCBlocks) {
+	private static void registerCBlock(CBlock cBlock, WorkerStorage storage, Map<ConnectorId, Int2IntMap> connectorCBlocks) {
 
 		Bucket bucket = storage.getBucket(cBlock.getBucket());
 		if (bucket == null) {
 			throw new NoSuchElementException("Could not find an element called '" + cBlock.getBucket() + "'");
 		}
 
-		connectorCBlocks
-				.computeIfAbsent(cBlock.getConnector(), connectorId -> new Int2ObjectAVLTreeMap<>())
-				.computeIfAbsent(bucket.getId().getBucket(), bucketId -> new HashMap<>(3))
-				.put(cBlock.getBucket(), cBlock);
+		connectorCBlocks.computeIfAbsent(cBlock.getConnector(), (ignored) -> new Int2IntAVLTreeMap())
+						.compute(bucket.getBucket(), (b, occ) -> occ == null ? 1 : occ + 1);
+
+		bucket.getCBlocks().put(cBlock.getConnector(), cBlock);
 	}
 
 	@SneakyThrows
@@ -300,10 +303,10 @@ public class BucketManager {
 			throw new NoSuchElementException("Could not find an element called '" + cBlockId.getBucket() + "'");
 		}
 
-		connectorToCblocks.getOrDefault(cBlockId.getConnector(), Int2ObjectMaps.emptyMap())
-						  .getOrDefault(cBlockId.getBucket().getBucket(), Collections.emptyMap())
-						  .values()
-						  .removeIf(cblock -> cblock.getId().equals(cBlockId));
+		bucket.getCBlocks().remove(cBlockId.getConnector());
+
+		connectorToCblocks.getOrDefault(cBlockId.getConnector(), Int2IntMaps.EMPTY_MAP)
+						  .computeIfPresent(bucket.getBucket(), (b, occ) -> occ - 1);
 
 		for (int entityId : bucket.entities()) {
 			final Entity entity = entities.get(entityId);
@@ -375,16 +378,12 @@ public class BucketManager {
 							 .getOrDefault(bucketId, Collections.emptyList());
 	}
 
-	public Map<BucketId, CBlock> getEntityCBlocksForConnector(Entity entity, ConnectorId connectorId) {
-		final int bucketId = Entity.getBucket(entity.getId(), worker.getInfo().getEntityBucketSize());
 
-		return connectorToCblocks.getOrDefault(connectorId, Int2ObjectMaps.emptyMap())
-								 .getOrDefault(bucketId, Collections.emptyMap());
-	}
 
 	public boolean hasEntityCBlocksForConnector(Entity entity, ConnectorId connectorId) {
+
 		final int bucketId = Entity.getBucket(entity.getId(), worker.getInfo().getEntityBucketSize());
-		return connectorToCblocks.getOrDefault(connectorId, Int2ObjectMaps.emptyMap())
-								 .containsKey(bucketId);
+		return connectorToCblocks.getOrDefault(connectorId, Int2IntMaps.EMPTY_MAP)
+								 .getOrDefault(bucketId, 0) > 0;
 	}
 }

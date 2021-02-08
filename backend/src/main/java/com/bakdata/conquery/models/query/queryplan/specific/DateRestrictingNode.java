@@ -1,14 +1,10 @@
 package com.bakdata.conquery.models.query.queryplan.specific;
 
-import java.util.Map;
-import java.util.Objects;
-
 import com.bakdata.conquery.models.common.CDateSet;
 import com.bakdata.conquery.models.common.daterange.CDateRange;
 import com.bakdata.conquery.models.datasets.Column;
 import com.bakdata.conquery.models.events.Bucket;
 import com.bakdata.conquery.models.events.CBlock;
-import com.bakdata.conquery.models.identifiable.ids.specific.BucketId;
 import com.bakdata.conquery.models.identifiable.ids.specific.TableId;
 import com.bakdata.conquery.models.query.QueryExecutionContext;
 import com.bakdata.conquery.models.query.queryplan.QPChainNode;
@@ -23,7 +19,6 @@ public class DateRestrictingNode extends QPChainNode {
 
 	protected final CDateSet restriction;
 	protected Column validityDateColumn;
-	protected Map<BucketId, CBlock> preCurrentRow = null;
 
 	public DateRestrictingNode(CDateSet restriction, QPNode child) {
 		super(child);
@@ -44,7 +39,6 @@ public class DateRestrictingNode extends QPChainNode {
 		super.nextTable(ctx, currentTable);
 
 
-		preCurrentRow = ctx.getBucketManager().getEntityCBlocksForConnector(getEntity(), context.getConnector().getId());
 		validityDateColumn = context.getValidityDateColumn();
 
 		if (validityDateColumn != null && !validityDateColumn.getType().isDateCompatible()) {
@@ -54,7 +48,7 @@ public class DateRestrictingNode extends QPChainNode {
 
 	@Override
 	public boolean isOfInterest(Bucket bucket) {
-		CBlock cBlock = Objects.requireNonNull(preCurrentRow.get(bucket.getId()));
+		CBlock cBlock = bucket.getCBlocks().get(context.getConnector().getId());
 
 		if (validityDateColumn == null) {
 			// If there is no validity date set for a concept there is nothing to restrict
