@@ -113,10 +113,6 @@ public class Preprocessor {
 																									   .getParent()));
 		}
 
-		//delete target file if it exists
-		if (preprocessedFile.exists()) {
-			FileUtils.forceDelete(preprocessedFile);
-		}
 
 		log.info("PREPROCESSING START in {}", descriptor.getInputFile().getDescriptionFile());
 
@@ -257,7 +253,13 @@ public class Preprocessor {
 		}
 
 
-			//if successful move the tmp file to the target location
+		//delete target file if it exists
+		if (preprocessedFile.exists()) {
+			FileUtils.forceDelete(preprocessedFile);
+		}
+
+
+		//if successful move the tmp file to the target location
 		FileUtils.moveFile(tmp, preprocessedFile);
 		log.info("PREPROCESSING DONE in {}", descriptor.getInputFile().getDescriptionFile());
 	}
