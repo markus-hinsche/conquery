@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.SequenceInputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.io.storage.StoreInfo;
@@ -50,7 +49,8 @@ public class BigStoreTest {
 	@Test
 	public void testFull() throws JSONException, IOException {
 		BigStore<DictionaryId, Dictionary> store = new BigStore<>(new XodusStoreFactory(), Validators.newValidator(), env,
-			StoreInfo.DICTIONARIES, new ArrayList<>(), (e) -> {}, (e) -> {});
+			StoreInfo.DICTIONARIES
+		);
 		store.setChunkByteSize(Ints.checkedCast(DataSize.megabytes(1).toBytes()));
 
 		Dictionary nDict = new MapDictionary(new DatasetId("test"), "dict");
@@ -85,7 +85,8 @@ public class BigStoreTest {
 	@Test
 	public void testEmpty() throws JSONException, IOException {
 		BigStore<DictionaryId, Dictionary> store = new BigStore<>(new XodusStoreFactory(), Validators.newValidator(), env,
-			StoreInfo.DICTIONARIES, new ArrayList<>(), (e) -> {}, (e) -> {});
+			StoreInfo.DICTIONARIES
+		);
 		store.setChunkByteSize(Ints.checkedCast(DataSize.megabytes(1).toBytes()));
 
 		Dictionary nDict = new MapDictionary(new DatasetId("test"), "dict");

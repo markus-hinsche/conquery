@@ -76,7 +76,7 @@ public enum StoreInfo implements IStoreInfo {
     /**
      * Store for identifiable values, with injectors. Store is also cached.
      */
-    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store baseStore, CentralRegistry centralRegistry, Injectable... injectables) {
+    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(ConqueryStore baseStore, CentralRegistry centralRegistry, Injectable... injectables) {
 
         for (Injectable injectable : injectables) {
             baseStore.inject(injectable);
@@ -90,35 +90,35 @@ public enum StoreInfo implements IStoreInfo {
     /**
      * Store for identifiable values, without injectors. Store is also cached.
      */
-    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store baseStore, CentralRegistry centralRegistry) {
+    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(ConqueryStore baseStore, CentralRegistry centralRegistry) {
         return identifiable(baseStore, centralRegistry, new SingletonNamespaceCollection(centralRegistry));
     }
 
     /**
      * General Key-Value store with caching.
      */
-    public <KEY, VALUE> CachedStore<KEY, VALUE> cached(Store<KEY, VALUE> baseStore) {
+    public <KEY, VALUE> CachedStore<KEY, VALUE> cached(ConqueryStore<KEY, VALUE> baseStore) {
         return new CachedStore<>(baseStore);
     }
 
     /**
      * Identifiable store, that lazy registers items in the central registry.
      */
-    public <T extends Identifiable<?>>  IdentifiableCachedStore<T> identifiableCachedStore(Store baseStore, CentralRegistry centralRegistry) {
+    public <T extends Identifiable<?>>  IdentifiableCachedStore<T> identifiableCachedStore(ConqueryStore baseStore, CentralRegistry centralRegistry) {
         return new IdentifiableCachedStore<T>(centralRegistry, baseStore);
     }
 
     /**
      * General Key-Value store with weak caching.
      */
-    public <KEY, VALUE> WeakCachedStore<KEY, VALUE> weakCached(Store<KEY, VALUE> baseStore, Duration cacheDuration) {
+    public <KEY, VALUE> WeakCachedStore<KEY, VALUE> weakCached(ConqueryStore<KEY, VALUE> baseStore, Duration cacheDuration) {
         return new WeakCachedStore<>(baseStore, cacheDuration);
     }
 
     /**
      * Store holding a single value.
      */
-    public <VALUE> SingletonStore<VALUE> singleton(Store baseStore, Injectable... injectables) {
+    public <VALUE> SingletonStore<VALUE> singleton(ConqueryStore baseStore, Injectable... injectables) {
         return new SingletonStore<>(baseStore, injectables);
     }
 

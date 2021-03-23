@@ -18,7 +18,7 @@ import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.io.jackson.JacksonUtil;
 import com.bakdata.conquery.io.storage.IStoreInfo;
-import com.bakdata.conquery.io.storage.Store;
+import com.bakdata.conquery.io.storage.ConqueryStore;
 import com.bakdata.conquery.models.config.XodusStoreFactory;
 import com.bakdata.conquery.models.exceptions.ValidatorHelper;
 import com.bakdata.conquery.util.io.FileUtil;
@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ToString(of = "store")
-public class SerializingStore<KEY, VALUE> implements Store<KEY, VALUE> {
+public class SerializingStore<KEY, VALUE> implements ConqueryStore<KEY, VALUE> {
 
 	public static final String DUMP_FILE_EXTENTION = "json";
 	

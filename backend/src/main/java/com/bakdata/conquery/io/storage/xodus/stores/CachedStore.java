@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.bakdata.conquery.io.jackson.Injectable;
 import com.bakdata.conquery.io.jackson.serializer.IdReferenceResolvingException;
-import com.bakdata.conquery.io.storage.Store;
+import com.bakdata.conquery.io.storage.ConqueryStore;
 import com.bakdata.conquery.io.storage.xodus.stores.SerializingStore.IterationStatistic;
 import com.bakdata.conquery.util.io.ProgressBar;
 import com.google.common.base.Stopwatch;
@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor @Slf4j
-public class CachedStore<KEY, VALUE> implements Store<KEY, VALUE> {
+public class CachedStore<KEY, VALUE> implements ConqueryStore<KEY, VALUE> {
 
 	private static final  ProgressBar PROGRESS_BAR = new ProgressBar(0, System.out);
 	
 	private ConcurrentHashMap<KEY, VALUE> cache = new ConcurrentHashMap<>();
-	private final Store<KEY, VALUE> store;
+	private final ConqueryStore<KEY, VALUE> store;
 	
 	@Override
 	public void add(KEY key, VALUE value) {

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotEmpty;
 import com.bakdata.conquery.io.jackson.Injectable;
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.io.mina.ChunkingOutputStream;
-import com.bakdata.conquery.io.storage.Store;
+import com.bakdata.conquery.io.storage.ConqueryStore;
 import com.bakdata.conquery.io.storage.StoreInfo;
 import com.bakdata.conquery.io.storage.xodus.stores.SerializingStore.IterationStatistic;
 import com.bakdata.conquery.models.config.XodusStoreFactory;
@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.primitives.Ints;
 import jetbrains.exodus.env.Environment;
+import jetbrains.exodus.env.Store;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -35,7 +36,7 @@ import org.apache.commons.collections4.IteratorUtils;
  * Store for big files. Files are stored in chunks of 100MB, it therefore requires two stores: one for metadata maintained in {@link BigStoreMetaKeys} the other for the data. BigStoreMeta contains a list of {@link UUID} which describe a single value in the store, to be read in order.
  */
 @Getter
-public class BigStore<KEY, VALUE> implements Store<KEY, VALUE>, Closeable {
+public class BigStore<KEY, VALUE> implements ConqueryStore<KEY, VALUE>, Closeable {
 
 	private final SerializingStore<KEY, BigStoreMetaKeys> metaStore;
 	private final SerializingStore<UUID, byte[]> dataStore;
@@ -48,7 +49,7 @@ public class BigStore<KEY, VALUE> implements Store<KEY, VALUE>, Closeable {
 	private int chunkByteSize;
 
 
-	public BigStore(XodusStoreFactory config, Validator validator, Environment env, StoreInfo storeInfo, Collection<jetbrains.exodus.env.Store> openStores, Consumer<Environment> envCloseHook, Consumer<Environment> envRemoveHook) {
+	public BigStore(XodusStoreFactory config, Validator validator, Environment env, StoreInfo storeInfo) {
 		this.storeInfo = storeInfo;
 
 		// Recommendation by the author of Xodus is to have logFileSize at least be 4 times the biggest file size.
@@ -62,7 +63,7 @@ public class BigStore<KEY, VALUE> implements Store<KEY, VALUE>, Closeable {
 
 		metaStore = new SerializingStore<>(
 				config,
-				new XodusStore(env, metaStoreInfo, openStores, envCloseHook, envRemoveHook), validator,
+				config.createXodusStore(env,metaStoreInfo), validator,
 				metaStoreInfo
 		);
 
@@ -74,7 +75,7 @@ public class BigStore<KEY, VALUE> implements Store<KEY, VALUE>, Closeable {
 
 		dataStore = new SerializingStore<>(
 				config,
-				new XodusStore(env, dataStoreInfo, openStores, envCloseHook, envRemoveHook), validator,
+				config.createXodusStore(env,dataStoreInfo), validator,
 				dataStoreInfo
 		);
 

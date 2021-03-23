@@ -28,7 +28,7 @@ public abstract class IdentifiableStore<VALUE extends Identifiable<?>> extends K
     @NonNull
     protected ThrowingConsumer<VALUE> onRemove = (v) -> {};
 
-    public IdentifiableStore(Store<IId<VALUE>, VALUE> store, CentralRegistry centralRegistry) {
+    public IdentifiableStore(ConqueryStore<IId<VALUE>, VALUE> store, CentralRegistry centralRegistry) {
         super(store);
         store.inject(centralRegistry);
         this.centralRegistry = centralRegistry;

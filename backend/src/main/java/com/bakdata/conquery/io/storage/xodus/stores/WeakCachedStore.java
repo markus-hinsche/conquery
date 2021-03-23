@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import com.bakdata.conquery.io.jackson.Injectable;
-import com.bakdata.conquery.io.storage.Store;
+import com.bakdata.conquery.io.storage.ConqueryStore;
 import com.bakdata.conquery.io.storage.xodus.stores.SerializingStore.IterationStatistic;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,16 +15,16 @@ import io.dropwizard.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Weakly cached store, using {@link LoadingCache} to maintain values. Is a wrapper around the supplied {@link Store}.
+ * Weakly cached store, using {@link LoadingCache} to maintain values. Is a wrapper around the supplied {@link ConqueryStore}.
  */
 @Slf4j
-public class WeakCachedStore<KEY, VALUE> implements Store<KEY, VALUE> {
+public class WeakCachedStore<KEY, VALUE> implements ConqueryStore<KEY, VALUE> {
 
 	private final LoadingCache<KEY, Optional<VALUE>> cache;
 
-	private final Store<KEY, VALUE> store;
+	private final ConqueryStore<KEY, VALUE> store;
 
-	public WeakCachedStore(Store<KEY, VALUE> store, Duration weakCacheDuration) {
+	public WeakCachedStore(ConqueryStore<KEY, VALUE> store, Duration weakCacheDuration) {
 		this.store = store;
 		this.cache = CacheBuilder.newBuilder()
 				.weakValues()
