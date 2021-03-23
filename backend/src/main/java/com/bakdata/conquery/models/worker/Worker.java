@@ -2,6 +2,7 @@ package com.bakdata.conquery.models.worker;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -90,13 +91,13 @@ public class Worker implements MessageSender.Transforming<NamespaceMessage, Netw
 		@NonNull ThreadPoolDefinition queryThreadPoolDefinition,
 		@NonNull ExecutorService executorService,
 		@NonNull StoreFactory config,
-		@NonNull String storagePrefix,
+		@NonNull Path storagePrefix,
 		@NonNull String directory,
 		@NonNull Validator validator,
 		boolean failOnError,
 		int entityBucketSize) {
 
-		WorkerStorage workerStorage = new WorkerStorage(validator, config, List.of(storagePrefix,directory));
+		WorkerStorage workerStorage = new WorkerStorage(validator, config, storagePrefix.resolve(directory));
 
 		WorkerInformation info = new WorkerInformation();
 		info.setDataset(dataset.getId());

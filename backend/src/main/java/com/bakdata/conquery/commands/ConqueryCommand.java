@@ -1,5 +1,6 @@
 package com.bakdata.conquery.commands;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public abstract class ConqueryCommand extends ConfiguredCommand<ConqueryConfig> 
 	protected abstract void run(Environment environment, Namespace namespace, ConqueryConfig configuration) throws Exception;
 
 	@NotNull
-	public static List<String> getStoragePathParts(boolean useNameForStoragePrefix, String name) {
-		return useNameForStoragePrefix ? List.of(name) : Collections.emptyList();
+	public static Path getStoragePathParts(boolean useNameForStoragePrefix, String name) {
+		return useNameForStoragePrefix ? Path.of(name) : Path.of("./");
 	}
 }

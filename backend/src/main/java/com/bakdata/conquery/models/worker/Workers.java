@@ -1,5 +1,6 @@
 package com.bakdata.conquery.models.worker;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -60,7 +61,7 @@ public class Workers extends IdResolveContext {
 		return worker;
 	}
 
-	public Worker createWorker(Dataset dataset, StoreFactory storageConfig, @NonNull String storagePrefix, @NonNull String name, Validator validator, boolean failOnError) {
+	public Worker createWorker(Dataset dataset, StoreFactory storageConfig, @NonNull Path storagePrefix, @NonNull String name, Validator validator, boolean failOnError) {
 		final Worker worker = Worker.newWorker(dataset, queryThreadPoolDefinition, jobsThreadPool, storageConfig, storagePrefix, name, validator, failOnError, entityBucketSize);
 
 		addWorker(worker);

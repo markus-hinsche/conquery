@@ -34,6 +34,7 @@ import javax.validation.Validator;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ import static org.mockserver.model.ParameterBody.params;
 @Slf4j
 public class OIDCResourceOwnerPasswordCredentialRealmTest {
 
-	private static final MetaStorage STORAGE = new MetaStorage(null, new NonPersistentStoreFactory(), Collections.emptyList(), null);
+	private static final MetaStorage STORAGE = new MetaStorage(null, new NonPersistentStoreFactory(), Path.of("./"), null);
 	private static final OIDCResourceOwnerPasswordCredentialRealmFactory CONFIG = new OIDCResourceOwnerPasswordCredentialRealmFactory();
 	private static final Validator VALIDATOR = BaseValidator.newValidator();
 	private static final TestRealm REALM = new TestRealm(STORAGE, CONFIG);

@@ -1,6 +1,7 @@
 package com.bakdata.conquery.models;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -83,7 +84,7 @@ public class SerializationTests {
 	 */
 	@Test
 	public void user() throws IOException, JSONException{
-		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Collections.emptyList(), null);
+		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Path.of("./"), null);
 		User user = new User("user", "user");
 		user.addPermission(storage, DatasetPermission.onInstance(Ability.READ, new DatasetId("test")));
 		user
@@ -104,7 +105,7 @@ public class SerializationTests {
 	
 	@Test
 	public void group() throws IOException, JSONException {
-		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Collections.emptyList(), null);
+		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Path.of("./"), null);
 		Group group = new Group("group", "group");
 		group.addPermission(storage, DatasetPermission.onInstance(Ability.READ, new DatasetId("test")));
 		group

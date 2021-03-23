@@ -1,6 +1,8 @@
 package com.bakdata.conquery.commands;
 
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.concurrent.*;
 
 import javax.validation.Validator;
@@ -106,7 +108,9 @@ public class ShardNode extends ConqueryCommand implements IoHandler, Managed {
 				getConfig().getQueries().getExecutionPool().getMaxThreads(),
 				getConfig().getCluster().getEntityBucketSize());
 
-		for(WorkerStorage workerStorage : config.getStorage().loadWorkerStorages(this, ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName())) ) {
+		final Collection<WorkerStorage> workerStorages = config.getStorage().loadWorkerStorages(this, getStoragePrefix());
+
+		for(WorkerStorage workerStorage : workerStorages) {
 			workers.createWorker(workerStorage, config.isFailOnError());
 		}
 
@@ -118,7 +122,7 @@ public class ShardNode extends ConqueryCommand implements IoHandler, Managed {
 		setLocation(session);
 		if (message instanceof MessageToShardNode) {
 			MessageToShardNode srm = (MessageToShardNode) message;
-			log.trace("{} recieved {} from {}", getName(), message.getClass().getSimpleName(), session.getRemoteAddress());
+			log.trace("{} received {} from {}", getName(), message.getClass().getSimpleName(), session.getRemoteAddress());
 			ReactingJob<MessageToShardNode, NetworkMessageContext.ShardNodeNetworkContext> job = new ReactingJob<>(srm, context);
 
 			if (((Message) message).isSlowMessage()) {
@@ -146,7 +150,7 @@ public class ShardNode extends ConqueryCommand implements IoHandler, Managed {
 		setLocation(session);
 		NetworkSession networkSession = new NetworkSession(session);
 
-		context = new NetworkMessageContext.ShardNodeNetworkContext(jobManager, networkSession, workers, config, validator, useNameForStoragePrefix ? getName() : "");
+		context = new NetworkMessageContext.ShardNodeNetworkContext(jobManager, networkSession, workers, config, validator, getStoragePrefix());
 		log.info("Connected to ManagerNode @ {}", session.getRemoteAddress());
 
 		// Authenticate with ManagerNode
@@ -158,6 +162,10 @@ public class ShardNode extends ConqueryCommand implements IoHandler, Managed {
 			log.info("Sending worker identity '{}'", info.getName());
 			networkSession.send(new RegisterWorker(info));
 		}
+	}
+
+	private Path getStoragePrefix() {
+		return ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName());
 	}
 
 	@Override

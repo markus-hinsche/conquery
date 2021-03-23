@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
@@ -75,7 +76,7 @@ public class AdminProcessor {
 	private final Validator validator;
 	private final ObjectWriter jsonWriter = Jackson.MAPPER.writer();
 	private final int entityBucketSize;
-	private final String storagePrefix;
+	private final Path storagePrefix;
 
 	public synchronized void addTable(Table table, Namespace namespace) throws JSONException {
 		Dataset dataset = namespace.getDataset();
@@ -116,7 +117,7 @@ public class AdminProcessor {
 		dataset.setName(name);
 
 		// store dataset in own storage
-		NamespaceStorage datasetStorage = new NamespaceStorage(storage.getValidator(), config.getStorage(), List.of(storagePrefix, "dataset_" + name));
+		NamespaceStorage datasetStorage = new NamespaceStorage(storage.getValidator(), config.getStorage(), storagePrefix.resolve("dataset_" + name));
 
 		datasetStorage.loadData();
 		datasetStorage.setMetaStorage(storage);

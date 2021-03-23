@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Validator;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class MetaStorage implements ConqueryStorage{
     @Getter
     protected final Validator validator;
 
-    public MetaStorage(Validator validator, StoreFactory storageFactory, List<String> pathName, DatasetRegistry datasetRegistry) {
+    public MetaStorage(Validator validator, StoreFactory storageFactory, Path pathName, DatasetRegistry datasetRegistry) {
         this.datasetRegistry = datasetRegistry;
         this.validator = validator;
 

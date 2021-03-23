@@ -1,5 +1,7 @@
 package com.bakdata.conquery.models.messages.network;
 
+import java.nio.file.Path;
+
 import javax.validation.Validator;
 
 import com.bakdata.conquery.commands.ManagerNode;
@@ -40,9 +42,9 @@ public abstract class NetworkMessageContext<MESSAGE extends NetworkMessage<?>> e
 		/**
 		 * Important in Standalone mode so, shards can differentiate their storages.
 		 */
-		private final String storagePrefix;
+		private final Path storagePrefix;
 
-		public ShardNodeNetworkContext(JobManager jobManager, NetworkSession session, Workers workers, ConqueryConfig config, Validator validator, String storagePrefix) {
+		public ShardNodeNetworkContext(JobManager jobManager, NetworkSession session, Workers workers, ConqueryConfig config, Validator validator, Path storagePrefix) {
 			super(jobManager, session, config.getCluster().getBackpressure());
 			this.workers = workers;
 			this.config = config;

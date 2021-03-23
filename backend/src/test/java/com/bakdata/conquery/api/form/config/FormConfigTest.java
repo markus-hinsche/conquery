@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
@@ -106,7 +107,7 @@ public class FormConfigTest {
 		when(namespacesMock.injectInto(any(ObjectMapper.class))).thenCallRealMethod();
 		when(namespacesMock.inject(any(MutableInjectableValues.class))).thenCallRealMethod();
 
-		storage = new MetaStorage(null, new NonPersistentStoreFactory(), Collections.emptyList(), namespacesMock);
+		storage = new MetaStorage(null, new NonPersistentStoreFactory(), Path.of("./"), namespacesMock);
 
 
 		((MutableInjectableValues)FormConfigProcessor.getMAPPER().getInjectableValues())

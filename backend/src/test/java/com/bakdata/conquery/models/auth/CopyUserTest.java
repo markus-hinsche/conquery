@@ -10,6 +10,7 @@ import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.util.NonPersistentStoreFactory;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +19,7 @@ public class CopyUserTest {
 
 	@Test
 	void testUserCopy(){
-		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Collections.emptyList(), null);
+		MetaStorage storage = new MetaStorage(null, new NonPersistentStoreFactory(), Path.of("./"), null);
 
 		// Create test role
 		Role role = new Role("role", "role");

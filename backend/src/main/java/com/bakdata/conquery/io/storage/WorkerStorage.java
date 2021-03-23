@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Validator;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 public class WorkerStorage extends NamespacedStorage {
@@ -29,7 +29,7 @@ public class WorkerStorage extends NamespacedStorage {
     @Getter
     private final boolean registerImports = false;
 
-    public WorkerStorage(Validator validator, StoreFactory storageFactory, List<String> pathName) {
+    public WorkerStorage(Validator validator, StoreFactory storageFactory, Path pathName) {
         super(validator, storageFactory, pathName);
 
         worker = storageFactory.createWorkerInformationStore(pathName);

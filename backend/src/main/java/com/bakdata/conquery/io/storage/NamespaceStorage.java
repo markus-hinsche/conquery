@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import javax.validation.Validator;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class NamespaceStorage extends NamespacedStorage {
     @Getter
     private final boolean registerImports = true;
 
-    public NamespaceStorage(Validator validator, StoreFactory storageFactory, List<String> pathName) {
+    public NamespaceStorage(Validator validator, StoreFactory storageFactory, Path pathName) {
         super(validator, storageFactory, pathName);
 
         idMapping = storageFactory.createIdMappingStore(pathName);

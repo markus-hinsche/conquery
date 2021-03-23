@@ -2,6 +2,7 @@ package com.bakdata.conquery.resources.admin;
 
 import java.util.Collections;
 
+import com.bakdata.conquery.commands.ConqueryCommand;
 import com.bakdata.conquery.commands.ManagerNode;
 import com.bakdata.conquery.io.cps.CPSBase;
 import com.bakdata.conquery.io.freemarker.Freemarker;
@@ -75,7 +76,7 @@ public class AdminServlet {
 				manager.getMaintenanceService(),
 				manager.getValidator(),
 				manager.getConfig().getCluster().getEntityBucketSize(),
-				manager.isUseNameForStoragePrefix() ? manager.getName() : ""
+				manager.getStoragePrefix()
 		);
 
 		// inject required services

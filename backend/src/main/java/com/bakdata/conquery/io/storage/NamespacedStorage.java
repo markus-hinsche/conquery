@@ -1,6 +1,7 @@
 package com.bakdata.conquery.io.storage;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +52,7 @@ public abstract class NamespacedStorage implements ConqueryStorage {
     protected IdentifiableStore<Import> imports;
     protected IdentifiableStore<Concept<?>> concepts;
 
-    public NamespacedStorage(Validator validator, StoreFactory storageFactory, List<String> pathName) {
+    public NamespacedStorage(Validator validator, StoreFactory storageFactory, Path pathName) {
         this.validator = validator;
 
         dataset = storageFactory.createDatasetStore(pathName);

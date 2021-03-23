@@ -54,7 +54,8 @@ public class RestartTest implements ProgrammaticIntegrationTest {
 				manager.getMaintenanceService(),
 				manager.getValidator(),
 				ConqueryConfig.getInstance().getCluster().getEntityBucketSize(),
-				manager.isUseNameForStoragePrefix() ? manager.getName() : ""
+				manager.getStoragePrefix()
+
 		);
 
 
@@ -151,5 +152,6 @@ public class RestartTest implements ProgrammaticIntegrationTest {
 															  .getIdMapping();
 		assertThat(persistentIdMapAfterRestart).isEqualTo(persistentIdMap);
 	}
+
 }
 

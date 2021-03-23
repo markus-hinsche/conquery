@@ -1,11 +1,15 @@
 package com.bakdata.conquery.models.config;
 
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+
 import com.bakdata.conquery.commands.ManagerNode;
 import com.bakdata.conquery.commands.ShardNode;
 import com.bakdata.conquery.io.cps.CPSBase;
+import com.bakdata.conquery.io.storage.IdentifiableStore;
 import com.bakdata.conquery.io.storage.NamespaceStorage;
 import com.bakdata.conquery.io.storage.WorkerStorage;
-import com.bakdata.conquery.io.storage.IdentifiableStore;
 import com.bakdata.conquery.io.storage.xodus.stores.SingletonStore;
 import com.bakdata.conquery.models.auth.entities.Group;
 import com.bakdata.conquery.models.auth.entities.Role;
@@ -29,42 +33,58 @@ import com.bakdata.conquery.models.worker.WorkerInformation;
 import com.bakdata.conquery.models.worker.WorkerToBucketsMap;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.util.Collection;
-import java.util.List;
-
 @CPSBase
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type")
 public interface StoreFactory {
 
-	default void init(ManagerNode managerNode) {};
-	default void init(ShardNode shardNode) {};
+	default void init(ManagerNode managerNode) {
+	}
 
-	Collection<NamespaceStorage> loadNamespaceStorages(ManagerNode managerNode, List<String> pathName);
+	;
 
-	Collection<WorkerStorage> loadWorkerStorages(ShardNode shardNode, List<String> pathName);
+	default void init(ShardNode shardNode) {
+	}
+
+
+	Collection<NamespaceStorage> loadNamespaceStorages(ManagerNode managerNode, Path pathName);
+
+	Collection<WorkerStorage> loadWorkerStorages(ShardNode shardNode, Path pathName);
 
 	// NamespacedStorage (Important for serdes communication between manager and shards)
-	SingletonStore<Dataset> createDatasetStore(List<String> pathName);
-	IdentifiableStore<SecondaryIdDescription> createSecondaryIdDescriptionStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Table> createTableStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Dictionary> createDictionaryStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Concept<?>> createConceptStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Import> createImportStore(CentralRegistry centralRegistry, List<String> pathName);
+	SingletonStore<Dataset> createDatasetStore(Path pathName);
+
+	IdentifiableStore<SecondaryIdDescription> createSecondaryIdDescriptionStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Table> createTableStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Dictionary> createDictionaryStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Concept<?>> createConceptStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Import> createImportStore(CentralRegistry centralRegistry, Path pathName);
 
 	// WorkerStorage
-	IdentifiableStore<CBlock> createCBlockStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Bucket> createBucketStore(CentralRegistry centralRegistry, List<String> pathName);
-	SingletonStore<WorkerInformation> createWorkerInformationStore(List<String> pathName);
+	IdentifiableStore<CBlock> createCBlockStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Bucket> createBucketStore(CentralRegistry centralRegistry, Path pathName);
+
+	SingletonStore<WorkerInformation> createWorkerInformationStore(Path pathName);
 
 	// NamespaceStorage
-	SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName);
-	SingletonStore<WorkerToBucketsMap> createWorkerToBucketsStore(List<String> pathName);
-	SingletonStore<StructureNode[]> createStructureStore(List<String> pathName, SingletonNamespaceCollection centralRegistry);
+	SingletonStore<PersistentIdMap> createIdMappingStore(Path pathName);
+
+	SingletonStore<WorkerToBucketsMap> createWorkerToBucketsStore(Path pathName);
+
+	SingletonStore<StructureNode[]> createStructureStore(Path pathName, SingletonNamespaceCollection centralRegistry);
 
 	// MetaStorage
-    IdentifiableStore<ManagedExecution<?>> createExecutionsStore(CentralRegistry centralRegistry, DatasetRegistry datasetRegistry, List<String> pathName);
-	IdentifiableStore<FormConfig> createFormConfigStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<User> createUserStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Role> createRoleStore(CentralRegistry centralRegistry, List<String> pathName);
-	IdentifiableStore<Group> createGroupStore(CentralRegistry centralRegistry, List<String> pathName);
+	IdentifiableStore<ManagedExecution<?>> createExecutionsStore(CentralRegistry centralRegistry, DatasetRegistry datasetRegistry, Path pathName);
+
+	IdentifiableStore<FormConfig> createFormConfigStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<User> createUserStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Role> createRoleStore(CentralRegistry centralRegistry, Path pathName);
+
+	IdentifiableStore<Group> createGroupStore(CentralRegistry centralRegistry, Path pathName);
 }

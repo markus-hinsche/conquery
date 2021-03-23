@@ -1,8 +1,10 @@
 package com.bakdata.conquery.commands;
 
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -53,6 +55,7 @@ import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Central node of Conquery. Hosts the frontend, api, meta data and takes care of query distribution to 
@@ -126,7 +129,9 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		loadNamespaces();
 
 		log.info("Started meta storage");
-		this.storage = new MetaStorage(validator, config.getStorage(), ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()), datasetRegistry);
+
+		this.storage = new MetaStorage(validator, config.getStorage(), getStoragePrefix(), datasetRegistry);
+
 		this.storage.loadData();
 		log.info("MetaStorage loaded {}", this.storage);
 
@@ -169,6 +174,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 			Throwables.throwIfUnchecked(e);
 			throw new RuntimeException(e);
 		}
+
 		environment.admin().addTask(formScanner);
 		environment.admin().addTask(
 				new QueryCleanupTask(storage, Duration.of(
@@ -185,7 +191,11 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 	}
 
 	public void loadNamespaces() {
-		for( NamespaceStorage namespaceStorage : config.getStorage().loadNamespaceStorages(this, ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()))) {
+		final Path storagePath = getStoragePrefix();
+		final Collection<NamespaceStorage> namespaceStorages =
+				config.getStorage().loadNamespaceStorages(this, storagePath);
+
+		for (NamespaceStorage namespaceStorage : namespaceStorages) {
 			Namespace ns = new Namespace(namespaceStorage, config.isFailOnError());
 
 			datasetRegistry.add(ns);
@@ -272,5 +282,10 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		} catch (Exception e) {
 			log.error(storage + " could not be closed", e);
 		}
+	}
+
+	@NotNull
+	public Path getStoragePrefix() {
+		return ConqueryCommand.getStoragePathParts(isUseNameForStoragePrefix(), getName());
 	}
 }
