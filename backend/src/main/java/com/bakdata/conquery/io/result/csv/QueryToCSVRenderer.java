@@ -3,10 +3,10 @@ package com.bakdata.conquery.io.result.csv;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.bakdata.conquery.io.csv.CsvIo;
@@ -14,12 +14,13 @@ import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.execution.ExecutionState;
 import com.bakdata.conquery.models.identifiable.mapping.ExternalEntityId;
 import com.bakdata.conquery.models.identifiable.mapping.IdMappingConfig;
+import com.bakdata.conquery.models.query.EntityData;
 import com.bakdata.conquery.models.query.ManagedQuery;
 import com.bakdata.conquery.models.query.PrintSettings;
 import com.bakdata.conquery.models.query.resultinfo.ResultInfo;
 import com.bakdata.conquery.models.query.resultinfo.ResultInfoCollector;
 import com.bakdata.conquery.models.query.results.ContainedEntityResult;
-import com.bakdata.conquery.models.worker.Namespace;
+import com.bakdata.conquery.models.query.results.SinglelineContainedEntityResult;
 import com.univocity.parsers.csv.CsvWriter;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,17 +64,24 @@ public class QueryToCSVRenderer {
 		);
 	}
 
-	private static Stream<String> createCSVBody(CsvWriter writer, PrintSettings cfg, ResultInfoCollector infos, ManagedQuery query, Function<ContainedEntityResult,ExternalEntityId> idMapper) {
-		Namespace namespace = Objects.requireNonNull(query.getNamespace());
-		return query.getResults()
-			.stream()
-			.flatMap(ContainedEntityResult::filterCast)
-			.map(result -> Pair.of(idMapper.apply(result), result))
-			.sorted(Comparator.comparing(Pair::getKey))
-			.flatMap(res -> createCSVLine(writer, cfg, infos, res));
+	private static Stream<String> createCSVBody(CsvWriter writer, PrintSettings cfg, ResultInfoCollector infos, ManagedQuery query, Function<ContainedEntityResult, ExternalEntityId> idMapper) {
+		final EntityData data = query.getData();
+
+		//TODO this can also be wrapped into EntityData!
+		return IntStream.range(0, query.getLastResultCount().intValue())
+				  .mapToObj(line -> {
+					  final Object[] values = data.getLine(line);
+
+					  return (ContainedEntityResult) new SinglelineContainedEntityResult(data.getEntity(line), values);
+				  })
+					.map(result -> Pair.of(idMapper.apply(result), result))
+					.sorted(Map.Entry.comparingByKey())
+					.flatMap(res -> createCSVLine(writer, cfg, infos, res));
 	}
 
-	
+
+
+
 	private static Stream<String> createCSVLine(CsvWriter writer, PrintSettings cfg, ResultInfoCollector infos, Pair<ExternalEntityId, ContainedEntityResult> idResult) {
 		return idResult
 			.getValue()

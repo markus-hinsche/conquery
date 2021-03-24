@@ -1,12 +1,13 @@
 package com.bakdata.conquery.models.forms.managed;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalInt;
 
 import com.bakdata.conquery.apiv1.forms.FeatureGroup;
 import com.bakdata.conquery.apiv1.forms.IndexPlacement;
 import com.bakdata.conquery.apiv1.forms.export_form.ExportForm;
 import com.bakdata.conquery.models.common.CDateSet;
-import com.bakdata.conquery.models.common.daterange.CDateRange;
 import com.bakdata.conquery.models.error.ConqueryError;
 import com.bakdata.conquery.models.forms.util.DateContext;
 import com.bakdata.conquery.models.forms.util.ResultModifier;
@@ -110,13 +111,13 @@ public class RelativeFormQueryPlan implements QueryPlan {
 			Object[] mergedFull = new Object[size];
 
 			if (featurePlan.getAggregatorSize() > 0) {
-				setFeatureValues(mergedFull, featureResult.getValues().get(resultStartIndex));
+				setFeatureValues(mergedFull, featureResult.getResults().get(resultStartIndex));
 			}
 
 			if (outcomePlan.getAggregatorSize() > 0) {
 				setOutcomeValues(
 						mergedFull,
-						outcomeResult.getValues().get(resultStartIndex)
+						outcomeResult.getResults().get(resultStartIndex)
 				);
 			}
 
@@ -125,15 +126,15 @@ public class RelativeFormQueryPlan implements QueryPlan {
 		}
 
 		// append all other lines directly
-		for (int i = resultStartIndex; i < featureResult.getValues().size(); i++) {
+		for (int i = resultStartIndex; i < featureResult.getResults().size(); i++) {
 			Object[] result = new Object[size];
-			setFeatureValues(result, featureResult.getValues().get(i));
+			setFeatureValues(result, featureResult.getResults().get(i));
 			values.add(result);
 		}
 
-		for (int i = resultStartIndex; i < outcomeResult.getValues().size(); i++) {
+		for (int i = resultStartIndex; i < outcomeResult.getResults().size(); i++) {
 			Object[] result = new Object[size];
-			setOutcomeValues(result, outcomeResult.getValues().get(i));
+			setOutcomeValues(result, outcomeResult.getResults().get(i));
 			values.add(result);
 		}
 

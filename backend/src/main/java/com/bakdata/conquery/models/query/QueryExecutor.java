@@ -54,6 +54,7 @@ public class QueryExecutor implements Closeable {
 		}
 
 		ListenableFuture<List<EntityResult>> future = Futures.allAsList(futures);
+
 		result.setFuture(future);
 		future.addListener(result::finish, MoreExecutors.directExecutor());
 		return result;

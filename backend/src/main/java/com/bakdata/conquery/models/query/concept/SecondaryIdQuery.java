@@ -1,7 +1,6 @@
 package com.bakdata.conquery.models.query.concept;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -19,6 +18,7 @@ import com.bakdata.conquery.models.datasets.Table;
 import com.bakdata.conquery.models.error.ConqueryError;
 import com.bakdata.conquery.models.externalservice.ResultType;
 import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
+import com.bakdata.conquery.models.query.EntityData;
 import com.bakdata.conquery.models.query.IQuery;
 import com.bakdata.conquery.models.query.QueryPlanContext;
 import com.bakdata.conquery.models.query.QueryResolveContext;
@@ -29,8 +29,6 @@ import com.bakdata.conquery.models.query.queryplan.ConceptQueryPlan;
 import com.bakdata.conquery.models.query.queryplan.SecondaryIdQueryPlan;
 import com.bakdata.conquery.models.query.resultinfo.ResultInfoCollector;
 import com.bakdata.conquery.models.query.resultinfo.SimpleResultInfo;
-import com.bakdata.conquery.models.query.results.ContainedEntityResult;
-import com.bakdata.conquery.models.query.results.EntityResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -152,12 +150,8 @@ public class SecondaryIdQuery extends IQuery {
 	}
 
 	@Override
-	public long countResults(List<EntityResult> results) {
-		return results.stream()
-					  .flatMap(ContainedEntityResult::filterCast)
-					  .map(ContainedEntityResult::listResultLines)
-					  .mapToLong(List::size)
-					  .sum();
+	public long countResults(EntityData results) {
+		return results.size();
 	}
 
 	@Override

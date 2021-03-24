@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
@@ -25,6 +24,7 @@ import c10n.C10N;
 import com.bakdata.conquery.apiv1.QueryDescription;
 import com.bakdata.conquery.internationalization.CQElementC10n;
 import com.bakdata.conquery.io.cps.CPSType;
+import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.io.storage.MetaStorage;
 import com.bakdata.conquery.models.auth.entities.User;
 import com.bakdata.conquery.models.auth.permissions.Ability;
@@ -48,7 +48,6 @@ import com.bakdata.conquery.models.query.concept.specific.CQReusedQuery;
 import com.bakdata.conquery.models.query.queryplan.QueryPlan;
 import com.bakdata.conquery.models.query.resultinfo.ResultInfoCollector;
 import com.bakdata.conquery.models.query.results.ContainedEntityResult;
-import com.bakdata.conquery.models.query.results.EntityResult;
 import com.bakdata.conquery.models.query.results.ShardResult;
 import com.bakdata.conquery.models.query.visitor.QueryVisitor;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
@@ -91,10 +90,12 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 	private transient int executingThreads;
 	@JsonIgnore
 	private transient ConqueryConfig config;
-	@JsonIgnore
+
+	@InternalOnly
 	private transient List<ColumnDescriptor> columnDescriptions;
+
 	@JsonIgnore
-	private transient List<EntityResult> results = new ArrayList<>();
+	private transient EntityData data;
 
 	public ManagedQuery(IQuery query, UserId owner, DatasetId submittedDataset) {
 		super(owner, submittedDataset);
@@ -107,6 +108,16 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 		this.namespace = namespaces.get(getDataset());
 		this.involvedWorkers = namespace.getWorkers().size();
 		query.resolve(new QueryResolveContext(getDataset(), namespaces, null));
+
+		columnDescriptions = generateColumnDescriptions(namespaces);
+
+		//TODO use column description to try and create specialized.
+		data = new EntityData(columnDescriptions.stream()
+												.skip(1)
+												.map(desc -> new ArrayList<>())
+												.toArray(List[]::new));
+
+
 		if (label == null) {
 			label = makeAutoLabel(namespaces, new PrintSettings(true, Locale.ROOT,namespaces));
 		}
@@ -114,7 +125,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 
 	@Override
 	public void addResult(@NonNull MetaStorage storage, ShardResult result) {
-		log.debug("Received Result[size={}] for Query[{}]", result.getResults().size(), result.getQueryId());
+		log.debug("Received Result[size={}] for Query[{}]", result.getSize(), result.getQueryId());
 
 		if (result.getError().isPresent()) {
 			fail(storage, result.getError().get());
@@ -122,7 +133,10 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 
 		synchronized (this) {
 			executingThreads--;
-			results.addAll(result.getResults());
+
+			data.addAll(result.getData());
+
+
 			if (executingThreads == 0 && state == ExecutionState.RUNNING) {
 				finish(storage, ExecutionState.DONE);
 			}
@@ -131,7 +145,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 
 	@Override
 	protected void finish(@NonNull MetaStorage storage, ExecutionState executionState) {
-		lastResultCount = query.countResults(results);
+		lastResultCount = query.countResults(data);
 
 		super.finish(storage, executionState);
 	}
@@ -144,17 +158,15 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 		}
 
 
-		if (results != null) {
-			results.clear();
-		}
-		else {
-			results = new ArrayList<>();
+		if (data != null) {
+			data.clear();
 		}
 	}
 
-	public Stream<ContainedEntityResult> fetchContainedEntityResult() {
-		return results.stream().flatMap(ContainedEntityResult::filterCast);
-	}
+//TODO
+//	public Stream<ContainedEntityResult> fetchContainedEntityResult() {
+//		return results.stream().flatMap(ContainedEntityResult::filterCast);
+//	}
 
 	@Override
 	protected void setStatusBase(@NonNull MetaStorage storage, @NonNull User user, @NonNull ExecutionStatus status, UriBuilder url, Map<DatasetId, Set<Ability>> datasetAbilities) {
@@ -223,6 +235,9 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 	public ShardResult getInitializedShardResult(Entry<ManagedExecutionId, QueryPlan> entry) {
 		ShardResult result = new ShardResult();
 		result.setQueryId(getId());
+
+		result.setData(new EntityData(columnDescriptions.stream().skip(1).map(columnDescriptor -> new ArrayList<>()).toArray(List[]::new)));
+
 		return result;
 	}
 

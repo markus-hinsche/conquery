@@ -2,7 +2,6 @@ package com.bakdata.conquery.models.query.results;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +13,7 @@ import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
 import com.bakdata.conquery.models.identifiable.ids.specific.WorkerId;
 import com.bakdata.conquery.models.messages.namespaces.NamespaceMessage;
 import com.bakdata.conquery.models.messages.namespaces.specific.CollectQueryResult;
+import com.bakdata.conquery.models.query.EntityData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -32,8 +32,8 @@ public class ShardResult {
 	@ToString.Include
 	private ManagedExecutionId queryId;
 
-	private List<EntityResult> results = new ArrayList<>();
-	
+	private EntityData data;
+
 	@ToString.Include
 	private LocalDateTime startTime = LocalDateTime.now();
 	@ToString.Include
@@ -45,10 +45,12 @@ public class ShardResult {
 
 	@ToString.Include
 	private WorkerId workerId;
-	
-	public synchronized void addResult(EntityResult result) {
-		results.add(result);
+
+	@JsonIgnore
+	public long getSize() {
+		return data.size();
 	}
+
 
 	public synchronized void finish() {
 		if (finishTime != null) {
@@ -62,7 +64,6 @@ public class ShardResult {
 
 		try {
 			final List<EntityResult> entityResults = Uninterruptibles.getUninterruptibly(future);
-			results = new ArrayList<>(entityResults.size());
 
 			// Filter the results, skipping not contained results and sending failed results when they appear.
 			for (EntityResult entityResult : entityResults) {
@@ -70,14 +71,20 @@ public class ShardResult {
 				if(entityResult.isFailed()) {
 					// Set the first encountered Error as failure of the whole result.
 					error = Optional.of(entityResult.asFailed().getError());
-					results.clear();
+					data = null;
 					break;
 				}
 				else if (!entityResult.isContained()){
 					continue;
 				}
 
-				results.add(entityResult);
+				final ContainedEntityResult containedEntityResult = entityResult.asContained();
+
+				containedEntityResult
+							.streamValues()
+							.forEach(line -> {
+								data.addLine(containedEntityResult.getEntityId(), line);
+							});
 			}
 
 		} catch (ConqueryError e) {
@@ -90,7 +97,8 @@ public class ShardResult {
 
 	private void setFinishTime() {
 		finishTime = LocalDateTime.now();
-		log.info("Query {} finished {} with {} results within {}", queryId, error.isEmpty()? "successful" : "faulty", results.size(), Duration.between(startTime, finishTime));
+
+		log.info("Query {} finished {} with {} results within {}", queryId, error.isEmpty()? "successful" : "faulty", data != null ? data.size() : 0, Duration.between(startTime, finishTime));
 	}
 
 	public synchronized void send(MessageSender<NamespaceMessage> session) {

@@ -71,11 +71,11 @@ public class ArrowRenderer {
     }
 
     private static Stream<EntityResult> getResults(ManagedExecution<?> exec) {
-        if (exec instanceof ManagedQuery) {
-            return ((ManagedQuery) exec).getResults().stream();
-        } else if (exec instanceof ManagedForm && ((ManagedForm) exec).getSubQueries().size() == 1) {
-            return ((ManagedForm) exec).getSubQueries().values().iterator().next().stream().flatMap(mq -> mq.getResults().stream());
-        }
+//        if (exec instanceof ManagedQuery) {
+//            return ((ManagedQuery) exec).getResults().stream();
+//        } else if (exec instanceof ManagedForm && ((ManagedForm) exec).getSubQueries().size() == 1) {
+//            return ((ManagedForm) exec).getSubQueries().values().iterator().next().stream().flatMap(mq -> mq.getResults().stream());
+//        }
         throw new IllegalStateException("The provided execution cannot be rendered as a single table. Was: " + exec.getId());
     }
 

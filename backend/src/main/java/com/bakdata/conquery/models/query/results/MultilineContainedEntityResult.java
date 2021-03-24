@@ -21,17 +21,17 @@ public class MultilineContainedEntityResult implements ContainedEntityResult {
 	@Min(0)
 	private final int entityId;
 	@NotNull
-	private final List<Object[]> values;
+	private final List<Object[]> results;
 
 	//this is needed because of https://github.com/FasterXML/jackson-databind/issues/2024
-	public MultilineContainedEntityResult(int entityId, List<Object[]> values) {
+	public MultilineContainedEntityResult(int entityId, List<Object[]> results) {
 		this.entityId = entityId;
-		this.values = Objects.requireNonNullElse(values, Collections.emptyList());
+		this.results = Objects.requireNonNullElse(results, Collections.emptyList());
 	}
 
 	@Override
 	public Stream<Object[]> streamValues() {
-		return values.stream();
+		return results.stream();
 	}
 
 	@Override
@@ -47,16 +47,16 @@ public class MultilineContainedEntityResult implements ContainedEntityResult {
 	@Override
 	public int columnCount() {
 		// We look at the first result line to determine the number of columns
-		return values.get(0).length;
+		return results.get(0).length;
 	}
 
 	@Override
 	public void modifyResultLinesInplace(UnaryOperator<Object[]> lineModifier) {
-		values.replaceAll(lineModifier);
+		results.replaceAll(lineModifier);
 	}
 
 	@Override
 	public List<Object[]> listResultLines() {
-		return values;
+		return results;
 	}
 }

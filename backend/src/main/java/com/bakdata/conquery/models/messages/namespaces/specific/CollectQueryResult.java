@@ -24,7 +24,7 @@ public class CollectQueryResult extends NamespaceMessage.Slow {
 
 	@Override
 	public void react(Namespace context) throws Exception {
-		log.info("Received {} of size {}", result, result.getResults().size());
+		log.info("Received {} of size {}", result, result.getSize());
 		context.getQueryManager().addQueryResult(result);
 	}
 }
