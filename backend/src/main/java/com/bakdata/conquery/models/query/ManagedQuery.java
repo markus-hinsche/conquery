@@ -163,7 +163,6 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 		}
 	}
 
-//TODO
 //	public Stream<ContainedEntityResult> fetchContainedEntityResult() {
 //		return results.stream().flatMap(ContainedEntityResult::filterCast);
 //	}
