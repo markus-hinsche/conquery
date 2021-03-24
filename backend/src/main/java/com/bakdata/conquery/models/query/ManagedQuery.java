@@ -113,7 +113,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 
 		//TODO use column description to try and create specialized.
 		data = new EntityData(columnDescriptions.stream()
-												.skip(1)
+												.dropWhile(desc -> desc.getType().equalsIgnoreCase("ID"))
 												.map(desc -> new ArrayList<>())
 												.toArray(List[]::new));
 
@@ -235,7 +235,9 @@ public class ManagedQuery extends ManagedExecution<ShardResult> {
 		ShardResult result = new ShardResult();
 		result.setQueryId(getId());
 
-		result.setData(new EntityData(columnDescriptions.stream().skip(1).map(columnDescriptor -> new ArrayList<>()).toArray(List[]::new)));
+		result.setData(new EntityData(columnDescriptions.stream()
+														.dropWhile(desc -> desc.getType().equalsIgnoreCase("ID"))
+														.map(columnDescriptor -> new ArrayList<>()).toArray(List[]::new)));
 
 		return result;
 	}
