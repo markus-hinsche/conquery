@@ -103,20 +103,22 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 	}
 
 	public void run(ConqueryConfig config, Environment environment) throws InterruptedException {
+		this.config = config;
+		config.initialize(this);
 
-		datasetRegistry = new DatasetRegistry(config.getCluster().getEntityBucketSize());
+
+		this.environment = environment;
+		this.validator = environment.getValidator();
 
 		//inject datasets into the objectmapper
 		((MutableInjectableValues)environment.getObjectMapper().getInjectableValues())
 				.add(IdResolveContext.class, datasetRegistry);
 
+		datasetRegistry = new DatasetRegistry(config.getCluster().getEntityBucketSize());
 
 		this.jobManager = new JobManager("ManagerNode", config.isFailOnError());
-		this.environment = environment;
-		this.validator = environment.getValidator();
+
 		this.formScanner = new FormScanner();
-		this.config = config;
-		config.initialize(this);
 
 		// Initialization of internationalization
 		I18n.init();

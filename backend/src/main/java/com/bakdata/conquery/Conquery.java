@@ -15,7 +15,6 @@ import com.bakdata.conquery.commands.StandaloneCommand;
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.io.jackson.MutableInjectableValues;
 import com.bakdata.conquery.models.config.ConqueryConfig;
-import com.bakdata.conquery.util.DateFormats;
 import com.bakdata.conquery.util.UrlRewriteBundle;
 import io.dropwizard.Application;
 import io.dropwizard.ConfiguredBundle;
@@ -25,6 +24,8 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -62,9 +63,16 @@ public class Conquery extends Application<ConqueryConfig> {
 
 		((MutableInjectableValues)bootstrap.getObjectMapper().getInjectableValues()).add(Validator.class, bootstrap.getValidatorFactory().getValidator());
 
+		bootstrap.addBundle(new SwaggerBundle<>() {
+			@Override
+			protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(ConqueryConfig configuration) {
+				return configuration.getSwagger();
+			}
+		});
+
 		// do some setup in other classes after initialization but before running a
 		// command
-		bootstrap.addBundle(new ConfiguredBundle<ConqueryConfig>() {
+		bootstrap.addBundle(new ConfiguredBundle<>() {
 
 			@Override
 			public void run(ConqueryConfig configuration, Environment environment) throws Exception {

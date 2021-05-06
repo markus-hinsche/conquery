@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.1.9
+servers:
+  - url: http://localhost:8081/admin
+    description: Admin API
+  - url: http://localhost:8080/api
+    description: The api
+paths:
