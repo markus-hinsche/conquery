@@ -1,5 +1,13 @@
 package com.bakdata.conquery.models.config;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import com.bakdata.conquery.commands.ManagerNode;
 import com.bakdata.conquery.commands.ShardNode;
 import com.bakdata.conquery.io.jackson.serializer.CDateSetDeserializer;
@@ -19,15 +27,9 @@ import com.google.common.collect.MoreCollectors;
 import io.dropwizard.Configuration;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -61,6 +63,8 @@ public class ConqueryConfig extends Configuration {
 	@Valid
 	@NotNull
 	private FrontendConfig frontend = new FrontendConfig();
+
+	public SwaggerBundleConfiguration swagger;
 
 	private ConqueryMetricsConfig metricsConfig = new ConqueryMetricsConfig();
 
