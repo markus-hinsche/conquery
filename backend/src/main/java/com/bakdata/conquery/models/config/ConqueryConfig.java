@@ -27,7 +27,6 @@ import com.google.common.collect.MoreCollectors;
 import io.dropwizard.Configuration;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,8 +62,6 @@ public class ConqueryConfig extends Configuration {
 	@Valid
 	@NotNull
 	private FrontendConfig frontend = new FrontendConfig();
-
-	public SwaggerBundleConfiguration swagger;
 
 	private ConqueryMetricsConfig metricsConfig = new ConqueryMetricsConfig();
 

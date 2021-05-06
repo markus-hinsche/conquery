@@ -1,6 +1,8 @@
 package com.bakdata.conquery;
 
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.tools.ToolProvider;
 import javax.validation.Validator;
@@ -24,8 +26,6 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerBundle;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -62,13 +62,6 @@ public class Conquery extends Application<ConqueryConfig> {
 		bootstrap.addCommand(new RecodeStoreCommand());
 
 		((MutableInjectableValues)bootstrap.getObjectMapper().getInjectableValues()).add(Validator.class, bootstrap.getValidatorFactory().getValidator());
-
-		bootstrap.addBundle(new SwaggerBundle<>() {
-			@Override
-			protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(ConqueryConfig configuration) {
-				return configuration.getSwagger();
-			}
-		});
 
 		// do some setup in other classes after initialization but before running a
 		// command

@@ -15,7 +15,6 @@ import com.bakdata.conquery.models.concepts.Concept;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.worker.Namespace;
 import com.bakdata.conquery.resources.hierarchies.HAdmin;
-import io.swagger.annotations.Api;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +23,6 @@ import lombok.Setter;
 
 @Getter @Setter
 @Path("datasets/{" + DATASET + "}/concepts/{" + CONCEPT + "}")
-@Api()
 public class AdminConceptsResource extends HAdmin {
 	
 	@PathParam(DATASET)

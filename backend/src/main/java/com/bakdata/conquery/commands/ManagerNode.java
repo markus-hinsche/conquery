@@ -1,10 +1,14 @@
 package com.bakdata.conquery.commands;
 
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Validator;
 
@@ -36,6 +40,7 @@ import com.bakdata.conquery.models.worker.Worker;
 import com.bakdata.conquery.resources.ResourcesProvider;
 import com.bakdata.conquery.resources.admin.AdminServlet;
 import com.bakdata.conquery.resources.admin.ShutdownTask;
+import com.bakdata.conquery.resources.admin.rest.AdminDatasetResource;
 import com.bakdata.conquery.resources.unprotected.AuthServlet;
 import com.bakdata.conquery.tasks.ClearFilterSourceSearch;
 import com.bakdata.conquery.tasks.PermissionCleanupTask;
@@ -47,6 +52,12 @@ import com.google.common.base.Throwables;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -104,21 +115,39 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 
 	public void run(ConqueryConfig config, Environment environment) throws InterruptedException {
 		this.config = config;
-		config.initialize(this);
 
 
 		this.environment = environment;
 		this.validator = environment.getValidator();
 
+		OpenAPI oas = new OpenAPI();
+		Info adminInfo = new Info()
+							.title("Conquery Admin API")
+							.description("Api to manage Conquery.");
+
+		oas.info(adminInfo);
+
+
+		SwaggerConfiguration oasConfig = new SwaggerConfiguration()
+												 .openAPI(oas)
+												 .prettyPrint(true)
+												 .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
+
+
+		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
+
+		datasetRegistry = new DatasetRegistry(config.getCluster().getEntityBucketSize());
+
 		//inject datasets into the objectmapper
 		((MutableInjectableValues)environment.getObjectMapper().getInjectableValues())
 				.add(IdResolveContext.class, datasetRegistry);
 
-		datasetRegistry = new DatasetRegistry(config.getCluster().getEntityBucketSize());
 
 		this.jobManager = new JobManager("ManagerNode", config.isFailOnError());
 
 		this.formScanner = new FormScanner();
+
+		config.initialize(this);
 
 		// Initialization of internationalization
 		I18n.init();
