@@ -10,7 +10,6 @@ import com.bakdata.conquery.models.identifiable.mapping.SufficientExternalEntity
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-
 import lombok.Data;
 
 public class PersistentIdMapSerializer extends JsonSerializer<PersistentIdMap> {

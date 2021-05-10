@@ -57,7 +57,7 @@ public interface StoreFactory {
 	SingletonStore<WorkerInformation> createWorkerInformationStore(List<String> pathName);
 
 	// NamespaceStorage
-	SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName);
+	SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName, CentralRegistry centralRegistry);
 	SingletonStore<WorkerToBucketsMap> createWorkerToBucketsStore(List<String> pathName);
 	SingletonStore<StructureNode[]> createStructureStore(List<String> pathName, SingletonNamespaceCollection centralRegistry);
 

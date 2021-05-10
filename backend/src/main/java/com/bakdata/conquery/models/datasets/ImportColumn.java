@@ -3,6 +3,7 @@ package com.bakdata.conquery.models.datasets;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.models.events.stores.root.ColumnStore;
 import com.bakdata.conquery.models.identifiable.NamedImpl;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
@@ -10,6 +11,8 @@ import com.bakdata.conquery.models.identifiable.ids.specific.ImportColumnId;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +25,8 @@ public class ImportColumn extends NamedImpl<ImportColumnId> implements Namespace
 
 	// Only used on ManagerNode for com.bakdata.conquery.models.concepts.filters.specific.AbstractSelectFilter.addImport
 	// Can Probably be removed.
-	private final transient ColumnStore typeDescription;
+	@InternalOnly
+	private final ColumnStore typeDescription;
 
 	private final long lines;
 

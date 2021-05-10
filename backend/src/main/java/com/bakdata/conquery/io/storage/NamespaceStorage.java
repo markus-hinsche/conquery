@@ -3,7 +3,6 @@ package com.bakdata.conquery.io.storage;
 import com.bakdata.conquery.io.storage.xodus.stores.SingletonStore;
 import com.bakdata.conquery.models.concepts.StructureNode;
 import com.bakdata.conquery.models.config.StoreFactory;
-import com.bakdata.conquery.models.exceptions.JSONException;
 import com.bakdata.conquery.models.identifiable.mapping.PersistentIdMap;
 import com.bakdata.conquery.models.worker.SingletonNamespaceCollection;
 import com.bakdata.conquery.models.worker.WorkerToBucketsMap;
@@ -32,7 +31,7 @@ public class NamespaceStorage extends NamespacedStorage {
     public NamespaceStorage(Validator validator, StoreFactory storageFactory, List<String> pathName) {
         super(validator, storageFactory, pathName);
 
-        idMapping = storageFactory.createIdMappingStore(pathName);
+        idMapping = storageFactory.createIdMappingStore(pathName, centralRegistry);
         structure = storageFactory.createStructureStore(pathName, new SingletonNamespaceCollection(getCentralRegistry()));
         workerToBuckets = storageFactory.createWorkerToBucketsStore(pathName);
     }

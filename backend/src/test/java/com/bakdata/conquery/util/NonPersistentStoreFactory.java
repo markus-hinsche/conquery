@@ -95,7 +95,7 @@ public class NonPersistentStoreFactory implements StoreFactory {
     }
 
     @Override
-    public SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName) {
+    public SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName, CentralRegistry centralRegistry) {
         return ID_MAPPING.singleton(new NonPersistentStore());
     }
 

@@ -41,6 +41,7 @@ import com.bakdata.conquery.resources.ResourcesProvider;
 import com.bakdata.conquery.resources.admin.AdminServlet;
 import com.bakdata.conquery.resources.admin.ShutdownTask;
 import com.bakdata.conquery.resources.admin.rest.AdminDatasetResource;
+import com.bakdata.conquery.resources.api.APIResource;
 import com.bakdata.conquery.resources.unprotected.AuthServlet;
 import com.bakdata.conquery.tasks.ClearFilterSourceSearch;
 import com.bakdata.conquery.tasks.PermissionCleanupTask;
@@ -123,6 +124,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		OpenAPI oas = new OpenAPI();
 		Info adminInfo = new Info()
 							.title("Conquery Admin API")
+							.version("2.0.0") // TODO get from git
 							.description("Api to manage Conquery.");
 
 		oas.info(adminInfo);
@@ -131,7 +133,8 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		SwaggerConfiguration oasConfig = new SwaggerConfiguration()
 												 .openAPI(oas)
 												 .prettyPrint(true)
-												 .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
+												 .filterClass(ConquerySpecFilter.class.getCanonicalName())
+												 .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName(), APIResource.class.getPackageName()));
 
 
 		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));

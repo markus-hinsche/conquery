@@ -33,6 +33,8 @@ import com.bakdata.conquery.models.identifiable.ids.specific.FormConfigId;
 import com.bakdata.conquery.models.identifiable.ids.specific.GroupId;
 import com.bakdata.conquery.util.VariableDefaultValue;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -71,6 +73,7 @@ public class FormConfig extends IdentifiableImpl<FormConfigId> implements Sharea
 	 * formular, when the user saved it.
 	 */
 	@NotNull
+	@ApiModelProperty(hidden = true)
 	private JsonNode values;
 	@MetaIdRef
 	private User owner;
