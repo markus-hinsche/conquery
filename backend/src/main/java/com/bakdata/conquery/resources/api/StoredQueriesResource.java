@@ -31,11 +31,12 @@ import com.bakdata.conquery.models.execution.ManagedExecution;
 import com.bakdata.conquery.resources.hierarchies.HDatasets;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.PATCH;
+import io.swagger.annotations.Api;
 
 @Path("datasets/{" + DATASET + "}/stored-queries")
 @Consumes(AdditionalMediaTypes.JSON)
 @Produces(AdditionalMediaTypes.JSON)
-
+@Api(tags = "api")
 public class StoredQueriesResource extends HDatasets {
 
 	@Inject

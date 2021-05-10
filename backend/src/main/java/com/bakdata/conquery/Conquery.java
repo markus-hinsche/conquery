@@ -1,9 +1,5 @@
 package com.bakdata.conquery;
 
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javax.tools.ToolProvider;
 import javax.validation.Validator;
 
@@ -23,7 +19,6 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.JsonConfigurationFactory;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import lombok.Getter;
@@ -85,19 +80,6 @@ public class Conquery extends Application<ConqueryConfig> {
 
 	protected void registerFrontend(Bootstrap<ConqueryConfig> bootstrap) {
 		bootstrap.addBundle(new UrlRewriteBundle());
-		bootstrap.addBundle(new ConfiguredBundle<ConqueryConfig>() {
-			@Override
-			public void run(ConqueryConfig configuration, Environment environment) throws Exception {
-				String uriPath = "/app/";
-				environment.servlets()
-						.addServlet("app", new AssetServlet("/frontend/app/", uriPath, "static/index.html", StandardCharsets.UTF_8))
-						.addMapping(uriPath + '*');
-			}
-
-			@Override
-			public void initialize(Bootstrap<?> bootstrap) {
-			}
-		});
 	}
 
 	@Override

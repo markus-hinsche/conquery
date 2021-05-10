@@ -16,13 +16,13 @@ import com.bakdata.conquery.models.auth.entities.User;
 import com.bakdata.conquery.models.forms.frontendconfiguration.FormProcessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.auth.Auth;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.annotations.Api;
 
 @Path("datasets/{" + DATASET + "}/form-queries")
 @Consumes(AdditionalMediaTypes.JSON)
 @Produces(AdditionalMediaTypes.JSON)
 @PermitAll
-@Slf4j
+@Api(tags = "api")
 public class FormResource {
 	
 	private final FormProcessor processor;

@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.bakdata.conquery.apiv1.MeProcessor;
 import com.bakdata.conquery.apiv1.MeProcessor.FEMeInformation;
 import com.bakdata.conquery.resources.hierarchies.HAuthorized;
+import io.swagger.annotations.Api;
 import lombok.Setter;
 
 /**
@@ -18,6 +19,7 @@ import lombok.Setter;
  */
 @Path("me")
 @Setter
+@Api(tags = "api")
 public class MeResource extends HAuthorized {
 
 	@Inject

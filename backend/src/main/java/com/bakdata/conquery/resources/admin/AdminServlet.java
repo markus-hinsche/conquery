@@ -41,6 +41,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
  */
 @Getter
 @Slf4j
+//TODO rewrite as HTTPServlet?
 public class AdminServlet {
 
 	private final AdminProcessor adminProcessor;

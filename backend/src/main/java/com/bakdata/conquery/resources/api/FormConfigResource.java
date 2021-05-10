@@ -31,10 +31,12 @@ import com.bakdata.conquery.models.forms.frontendconfiguration.FormConfigProcess
 import com.bakdata.conquery.models.forms.frontendconfiguration.FormConfigProcessor.PostResponse;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.PATCH;
+import io.swagger.annotations.Api;
 
 @Consumes(ExtraMimeTypes.JSON_STRING)
 @Produces(ExtraMimeTypes.JSON_STRING)
 @Path("datasets/{" + DATASET + "}/form-configs")
+@Api(tags = "api")
 public class FormConfigResource {
 	
 	@PathParam(DATASET)

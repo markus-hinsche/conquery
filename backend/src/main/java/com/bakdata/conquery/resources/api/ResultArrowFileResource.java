@@ -18,10 +18,12 @@ import com.bakdata.conquery.models.auth.entities.User;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.execution.ManagedExecution;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Path("datasets/{" + DATASET + "}/result/")
+@Api(tags = "api")
 public class ResultArrowFileResource {
 	@Inject
 	private ResultArrowProcessor processor;

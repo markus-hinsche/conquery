@@ -30,12 +30,14 @@ import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.execution.FullExecutionStatus;
 import com.bakdata.conquery.models.execution.ManagedExecution;
 import io.dropwizard.auth.Auth;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
 @Path("datasets/{" + DATASET + "}/queries")
 @Consumes(AdditionalMediaTypes.JSON)
 @Produces(AdditionalMediaTypes.JSON)
 @Slf4j
+@Api(tags = "api")
 public class QueryResource {
 
 	private final QueryProcessor processor;

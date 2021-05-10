@@ -25,6 +25,7 @@ import com.bakdata.conquery.models.api.description.FEList;
 import com.bakdata.conquery.models.concepts.tree.TreeConcept;
 import com.bakdata.conquery.resources.api.ConceptsProcessor.ResolvedConceptsResult;
 import com.bakdata.conquery.resources.hierarchies.HConcepts;
+import io.swagger.annotations.Api;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +33,7 @@ import lombok.Setter;
 @Produces({ ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING })
 @Consumes({ ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING })
 @Path("datasets/{" + DATASET + "}/concepts/{" + CONCEPT + "}")
+@Api(tags = "api")
 public class ConceptResource extends HConcepts {
 
 	@Inject
