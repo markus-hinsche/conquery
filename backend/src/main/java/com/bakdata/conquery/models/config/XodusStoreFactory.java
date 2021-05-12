@@ -303,7 +303,7 @@ public class XodusStoreFactory implements StoreFactory {
     }
 
     @Override
-    public SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName) {
+    public SingletonStore<PersistentIdMap> createIdMappingStore(List<String> pathName, CentralRegistry registry) {
         return ID_MAPPING.singleton(createStore(findEnvironment(pathName), validator, ID_MAPPING));
     }
 

@@ -1,14 +1,11 @@
 package com.bakdata.conquery.commands;
 
 import java.net.InetSocketAddress;
-import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Validator;
 
@@ -56,9 +53,8 @@ import io.dropwizard.setup.Environment;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -69,7 +65,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 /**
- * Central node of Conquery. Hosts the frontend, api, meta data and takes care of query distribution to 
+ * Central node of Conquery. Hosts the frontend, api, meta data and takes care of query distribution to
  * {@link ShardNode}s and respectively the {@link Worker}s hosted on them. The {@link ManagerNode} can also
  * forward queries or results to statistic backends. Finally it collects the results of queries for access over the api.
  */
@@ -121,28 +117,42 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		this.environment = environment;
 		this.validator = environment.getValidator();
 
-		OpenAPI oas = new OpenAPI();
-		Info adminInfo = new Info()
-							.title("Conquery Admin API")
-							.version("2.0.0") // TODO get from git
-							.description("Api to manage Conquery.");
+		OpenAPI oasAdmin = new OpenAPI();
 
-		oas.info(adminInfo);
-
-
-		SwaggerConfiguration oasConfig = new SwaggerConfiguration()
-												 .openAPI(oas)
-												 .prettyPrint(true)
-												 .filterClass(ConquerySpecFilter.class.getCanonicalName())
-												 .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName(), APIResource.class.getPackageName()));
+		oasAdmin.info(new Info()
+							  .title("Conquery Admin API")
+							  .version("2.0.0") // TODO get from git
+							  .description("Api to manage Conquery."));
+		oasAdmin.addTagsItem(new Tag().name("admin"));
 
 
-		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
+		SwaggerConfiguration oasAdminConfig = new SwaggerConfiguration()
+													  .openAPI(oasAdmin)
+													  .prettyPrint(true)
+													  .filterClass(ConquerySpecFilter.class.getCanonicalName())
+													  .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
+
+
+		OpenAPI oasApi = new OpenAPI().info(new Info()
+													.title("Conquery API")
+													.version("2.0.0")
+													.description("Api to use Conquery."))
+									  .addTagsItem(new Tag().name("api"));
+
+
+		SwaggerConfiguration oasApiConfig = new SwaggerConfiguration()
+													.openAPI(oasApi)
+													.prettyPrint(true)
+													.filterClass(ConquerySpecFilter.class.getCanonicalName())
+													.resourcePackages(Set.of(APIResource.class.getPackageName()));
+
+
+		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasApiConfig));
 
 		datasetRegistry = new DatasetRegistry(config.getCluster().getEntityBucketSize());
 
 		//inject datasets into the objectmapper
-		((MutableInjectableValues)environment.getObjectMapper().getInjectableValues())
+		((MutableInjectableValues) environment.getObjectMapper().getInjectableValues())
 				.add(IdResolveContext.class, datasetRegistry);
 
 
@@ -158,11 +168,10 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		RESTServer.configure(config, environment.jersey().getResourceConfig());
 
 
-
 		this.maintenanceService = environment
-				.lifecycle()
-				.scheduledExecutorService("Maintenance Service")
-				.build();
+										  .lifecycle()
+										  .scheduledExecutorService("Maintenance Service")
+										  .build();
 
 		environment.lifecycle().manage(this);
 
@@ -191,8 +200,9 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 				ResourcesProvider provider = resourceProvider.getConstructor().newInstance();
 				provider.registerResources(this);
 				providers.add(provider);
-			} catch (Exception e) {
-				log.error("Failed to register Resource {}",resourceProvider, e);
+			}
+			catch (Exception e) {
+				log.error("Failed to register Resource {}", resourceProvider, e);
 			}
 		}
 
@@ -220,7 +230,8 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 
 	private void loadMetaStorage() {
 		log.info("Started meta storage");
-		this.storage = new MetaStorage(validator, config.getStorage(), ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()), datasetRegistry);
+		this.storage =
+				new MetaStorage(validator, config.getStorage(), ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()), datasetRegistry);
 		this.storage.loadData();
 		log.info("MetaStorage loaded {}", this.storage);
 
@@ -231,7 +242,8 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 	}
 
 	public void loadNamespaces() {
-		for( NamespaceStorage namespaceStorage : config.getStorage().loadNamespaceStorages(ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()))) {
+		for (NamespaceStorage namespaceStorage : config.getStorage()
+													   .loadNamespaceStorages(ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()))) {
 			Namespace ns = new Namespace(namespaceStorage, config.isFailOnError());
 			datasetRegistry.add(ns);
 		}
@@ -239,7 +251,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
-		ConqueryMDC.setLocation("ManagerNode["+session.getLocalAddress().toString()+"]");
+		ConqueryMDC.setLocation("ManagerNode[" + session.getLocalAddress().toString() + "]");
 		log.info("New client {} connected, waiting for identity", session.getRemoteAddress());
 	}
 
@@ -261,20 +273,24 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		if (message instanceof MessageToManagerNode) {
 			MessageToManagerNode mrm = (MessageToManagerNode) message;
 			log.trace("ManagerNode received {} from {}", message.getClass().getSimpleName(), session.getRemoteAddress());
-			ReactingJob<MessageToManagerNode, NetworkMessageContext.ManagerNodeNetworkContext> job = new ReactingJob<>(mrm, new NetworkMessageContext.ManagerNodeNetworkContext(
-					jobManager,
-					new NetworkSession(session),
-					datasetRegistry, config.getCluster().getBackpressure()
-			));
+			ReactingJob<MessageToManagerNode, NetworkMessageContext.ManagerNodeNetworkContext>
+					job =
+					new ReactingJob<>(mrm, new NetworkMessageContext.ManagerNodeNetworkContext(
+							jobManager,
+							new NetworkSession(session),
+							datasetRegistry, config.getCluster().getBackpressure()
+					));
 
 			// TODO: 01.07.2020 FK: distribute messages/jobs to their respective JobManagers (if they have one)
 			if (mrm.isSlowMessage()) {
 				((SlowMessage) mrm).setProgressReporter(job.getProgressReporter());
 				jobManager.addSlowJob(job);
-			} else {
+			}
+			else {
 				jobManager.addFastJob(job);
 			}
-		} else {
+		}
+		else {
 			log.error("Unknown message type {} in {}", message.getClass(), message);
 			return;
 		}
@@ -302,21 +318,24 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 
 		try {
 			acceptor.dispose();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error(acceptor + " could not be closed", e);
 		}
 
 		for (ResourcesProvider provider : providers) {
 			try {
 				provider.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				log.error(provider + " could not be closed", e);
 			}
 
 		}
 		try {
 			storage.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error(storage + " could not be closed", e);
 		}
 	}

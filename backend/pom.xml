@@ -79,6 +79,7 @@
                 <!-- /RELEASE_VERSION -->
                 <executions>
                     <execution>
+                        <id>openapi-java-server</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -91,7 +92,23 @@
                             </configOptions>
                             <apiPackage>com.bakdata.conquery.resources.admin.gen</apiPackage>
                             <skipValidateSpec>true</skipValidateSpec>
-                            <generateModels>false</generateModels>
+                            <generateModels>true</generateModels>
+                            <generateApis>true</generateApis>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openapi-python-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>python</generatorName>
+                            <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
+                            <configOptions>
+                                <sourceFolder>src/gen/python/main</sourceFolder>
+                            </configOptions>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <generateModels>true</generateModels>
                             <generateApis>true</generateApis>
                         </configuration>
                     </execution>
