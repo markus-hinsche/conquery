@@ -1,13 +1,13 @@
 package com.bakdata.conquery.models.identifiable;
 
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-public abstract class IdentifiableImpl<ID extends IId<? extends IdentifiableImpl<? extends ID>>> implements Identifiable<ID> {
+public abstract class IdentifiableImpl<ID extends Id<? extends IdentifiableImpl<? extends ID>>> implements Identifiable<ID> {
 	
 	@JsonIgnore
 	protected transient ID cachedId;
@@ -18,7 +18,7 @@ public abstract class IdentifiableImpl<ID extends IId<? extends IdentifiableImpl
 	@JsonIgnore @Override
 	public ID getId() {
 		if(cachedId == null) {
-			cachedId = IId.intern(createId());
+			cachedId = Id.intern(createId());
 		}
 		return cachedId;
 	}

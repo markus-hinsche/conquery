@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bakdata.conquery.models.datasets.ImportColumn;
 import com.bakdata.conquery.models.identifiable.ids.AId;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedId;
 
@@ -29,7 +29,7 @@ public class ImportColumnId extends AId<ImportColumn> implements NamespacedId {
 		components.add(column);
 	}
 	
-	public static enum Parser implements IId.Parser<ImportColumnId> {
+	public static enum Parser implements Id.Parser<ImportColumnId> {
 		INSTANCE;
 		
 		@Override

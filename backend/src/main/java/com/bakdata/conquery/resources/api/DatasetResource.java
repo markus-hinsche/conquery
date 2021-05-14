@@ -12,13 +12,14 @@ import com.bakdata.conquery.io.jersey.ExtraMimeTypes;
 import com.bakdata.conquery.models.api.description.FERoot;
 import com.bakdata.conquery.resources.hierarchies.HDatasets;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Setter;
 
 @Setter
 @Produces({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Consumes({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Path("datasets/{" + DATASET + "}")
-@Api(tags = "api")
+@Tag(name = "api")
 public class DatasetResource extends HDatasets {
 	
 	@Inject

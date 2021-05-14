@@ -3,9 +3,6 @@ package com.bakdata.conquery.io.storage;
 import com.bakdata.conquery.io.jackson.Injectable;
 import com.bakdata.conquery.io.storage.xodus.stores.CachedStore;
 import com.bakdata.conquery.io.storage.xodus.stores.SingletonStore;
-import com.bakdata.conquery.io.storage.xodus.stores.WeakCachedStore;
-import com.bakdata.conquery.io.storage.xodus.stores.CachedStore;
-import com.bakdata.conquery.io.storage.xodus.stores.SingletonStore;
 import com.bakdata.conquery.models.auth.entities.Group;
 import com.bakdata.conquery.models.auth.entities.Role;
 import com.bakdata.conquery.models.auth.entities.User;
@@ -22,7 +19,7 @@ import com.bakdata.conquery.models.execution.ManagedExecution;
 import com.bakdata.conquery.models.forms.configs.FormConfig;
 import com.bakdata.conquery.models.identifiable.CentralRegistry;
 import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.BucketId;
 import com.bakdata.conquery.models.identifiable.ids.specific.CBlockId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
@@ -80,7 +77,7 @@ public enum StoreInfo implements IStoreInfo {
     /**
      * Store for identifiable values, with injectors. Store is also cached.
      */
-    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store<IId<T>, T> baseStore, CentralRegistry centralRegistry, Injectable... injectables) {
+    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store<Id<T>, T> baseStore, CentralRegistry centralRegistry, Injectable... injectables) {
 
         for (Injectable injectable : injectables) {
             baseStore.inject(injectable);
@@ -94,7 +91,7 @@ public enum StoreInfo implements IStoreInfo {
     /**
      * Store for identifiable values, without injectors. Store is also cached.
      */
-    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store<IId<T>, T> baseStore, CentralRegistry centralRegistry) {
+    public <T extends Identifiable<?>> DirectIdentifiableStore<T> identifiable(Store<Id<T>, T> baseStore, CentralRegistry centralRegistry) {
         return identifiable(baseStore, centralRegistry, new SingletonNamespaceCollection(centralRegistry));
     }
 

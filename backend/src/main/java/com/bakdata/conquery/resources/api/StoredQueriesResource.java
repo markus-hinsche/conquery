@@ -28,15 +28,19 @@ import com.bakdata.conquery.models.exceptions.JSONException;
 import com.bakdata.conquery.models.execution.ExecutionStatus;
 import com.bakdata.conquery.models.execution.FullExecutionStatus;
 import com.bakdata.conquery.models.execution.ManagedExecution;
+import com.bakdata.conquery.models.identifiable.ids.Id;
+import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
 import com.bakdata.conquery.resources.hierarchies.HDatasets;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.PATCH;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("datasets/{" + DATASET + "}/stored-queries")
 @Consumes(AdditionalMediaTypes.JSON)
 @Produces(AdditionalMediaTypes.JSON)
-@Api(tags = "api")
+@Tag(name = "api")
 public class StoredQueriesResource extends HDatasets {
 
 	@Inject
@@ -58,7 +62,7 @@ public class StoredQueriesResource extends HDatasets {
 	@Path("{" + QUERY + "}")
 	public FullExecutionStatus patchQuery(@PathParam(QUERY) ManagedExecution<?> query, MetaDataPatch patch) throws JSONException {
 		processor.patchQuery(user, query, patch);
-		
+
 		return processor.getQueryFullStatus(query, user, RequestAwareUriBuilder.fromRequest(servletRequest));
 	}
 

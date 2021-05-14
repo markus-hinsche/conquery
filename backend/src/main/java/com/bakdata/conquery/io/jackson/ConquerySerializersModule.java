@@ -10,7 +10,7 @@ import com.bakdata.conquery.io.jackson.serializer.ConqueryDoubleSerializer;
 import com.bakdata.conquery.io.jackson.serializer.CurrencyUnitDeserializer;
 import com.bakdata.conquery.io.jackson.serializer.CurrencyUnitSerializer;
 import com.bakdata.conquery.io.jackson.serializer.IdKeyDeserializer;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -48,7 +48,7 @@ public class ConquerySerializersModule extends SimpleModule {
 		//register IdKeySerializer for all id types
 		List<Class<?>> idTypes = CPSTypeIdResolver
 			.SCAN_RESULT
-			.getClassesImplementing(IId.class.getName())
+			.getClassesImplementing(Id.class.getName())
 			.loadClasses();
 
 		for(Class<?> type : idTypes) {

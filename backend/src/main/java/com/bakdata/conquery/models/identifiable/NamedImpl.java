@@ -1,13 +1,13 @@
 package com.bakdata.conquery.models.identifiable;
 
 import com.bakdata.conquery.models.exceptions.validators.ValidName;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 
 import lombok.*;
 
 @AllArgsConstructor @NoArgsConstructor
 @ToString
-public abstract class NamedImpl<ID extends IId<? extends IdentifiableImpl<? extends ID>>> extends IdentifiableImpl<ID> implements Named<ID> {
+public abstract class NamedImpl<ID extends Id<? extends IdentifiableImpl<? extends ID>>> extends IdentifiableImpl<ID> implements Named<ID> {
 
 	@ValidName
 	@Getter(onMethod_ = @Override)

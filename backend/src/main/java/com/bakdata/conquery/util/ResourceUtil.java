@@ -4,7 +4,7 @@ import javax.ws.rs.NotFoundException;
 
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.execution.ManagedExecution;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
@@ -19,7 +19,7 @@ public class ResourceUtil {
 		this.namespaces = namespaces;
 	}
 
-	public static void throwNotFoundIfNull(@NonNull IId<?> id, Object identifiable) {
+	public static void throwNotFoundIfNull(@NonNull Id<?> id, Object identifiable) {
 		if (identifiable == null) {
 			throw new NotFoundException(id.toString());
 		}

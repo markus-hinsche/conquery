@@ -11,12 +11,13 @@ import com.bakdata.conquery.models.auth.permissions.Authorized;
 import com.bakdata.conquery.models.auth.permissions.ConqueryPermission;
 import com.bakdata.conquery.resources.admin.rest.AdminProcessor;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * This class ensures that all users have the admin permission in order to
  * access admin resources.
  */
-@Api(tags = "admin")
+@Tag(name = "admin")
 public abstract class HAdmin extends HAuthorized implements Authorized {
 
 	@Inject

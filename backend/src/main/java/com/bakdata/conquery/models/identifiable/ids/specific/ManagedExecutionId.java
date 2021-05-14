@@ -5,13 +5,15 @@ import java.util.UUID;
 
 import com.bakdata.conquery.models.execution.ManagedExecution;
 import com.bakdata.conquery.models.identifiable.ids.AId;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @AllArgsConstructor @Getter @EqualsAndHashCode(callSuper=false)
+@Schema(implementation = String.class, name = "ManagedExecutionId")
 public class ManagedExecutionId extends AId<ManagedExecution<?>> {
 
 	private final DatasetId dataset;
@@ -23,7 +25,7 @@ public class ManagedExecutionId extends AId<ManagedExecution<?>> {
 		components.add(execution);
 	}
 	
-	public static enum Parser implements IId.Parser<ManagedExecutionId> {
+	public static enum Parser implements Id.Parser<ManagedExecutionId> {
 		INSTANCE;
 		
 		@Override

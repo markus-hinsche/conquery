@@ -20,11 +20,12 @@ import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ManagedExecutionId;
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Path("datasets/{" + DATASET + "}/result/")
-@Api(tags = "api")
+@Tag(name = "api")
 public class ResultExcelResource {
 	@Inject
 	private ResultExcelProcessor processor;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bakdata.conquery.models.concepts.Connector;
 import com.bakdata.conquery.models.identifiable.ids.AId;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedId;
 
@@ -29,7 +29,7 @@ public class ConnectorId extends AId<Connector> implements NamespacedId {
 		components.add(connector);
 	}
 	
-	public static enum Parser implements IId.Parser<ConnectorId> {
+	public static enum Parser implements Id.Parser<ConnectorId> {
 		INSTANCE;
 		
 		@Override

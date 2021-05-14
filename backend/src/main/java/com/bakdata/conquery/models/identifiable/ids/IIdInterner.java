@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.bakdata.conquery.models.identifiable.ids.IId.Parser;
+import com.bakdata.conquery.models.identifiable.ids.Id.Parser;
 
 public enum IIdInterner {
 	
@@ -13,11 +13,11 @@ public enum IIdInterner {
 	private final Map<Parser<?>, ParserIIdInterner<?>> perParserInterner = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings("unchecked")
-	public static <ID extends IId<?>> ParserIIdInterner<ID> forParser(Parser<ID> parser) {
+	public static <ID extends Id<?>> ParserIIdInterner<ID> forParser(Parser<ID> parser) {
 		return (ParserIIdInterner<ID>) INSTANCE.perParserInterner.computeIfAbsent(parser, k->new ParserIIdInterner<>());
 	}
 	
-	public static class ParserIIdInterner<ID extends IId<?>> {
+	public static class ParserIIdInterner<ID extends Id<?>> {
 		private final Map<List<String>, ID> interned = new ConcurrentHashMap<>();
 		
 		public ID putIfAbsent(List<String> components, ID id) {

@@ -30,7 +30,7 @@ import com.bakdata.conquery.models.events.stores.root.IntegerStore;
 import com.bakdata.conquery.models.events.stores.root.StringStore;
 import com.bakdata.conquery.models.exceptions.JSONException;
 import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.BucketId;
 import com.bakdata.conquery.models.identifiable.ids.specific.DictionaryId;
 import com.bakdata.conquery.models.identifiable.ids.specific.WorkerId;
@@ -78,7 +78,7 @@ public class ImportJob extends Job {
 		// 2) The Dictionaries to be imported and transformed
 		// 3) The ColumnStores themselves which contain references to the previously imported dictionaries.
 
-		final Map<IId<?>, Identifiable<?>> replacements = new HashMap<>();
+		final Map<Id<?>, Identifiable<?>> replacements = new HashMap<>();
 
 		replacements.put(Dataset.PLACEHOLDER.getId(), getDataset());
 

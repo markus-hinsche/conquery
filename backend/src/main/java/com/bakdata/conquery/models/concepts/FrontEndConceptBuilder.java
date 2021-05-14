@@ -19,7 +19,6 @@ import com.bakdata.conquery.models.api.description.FESelect;
 import com.bakdata.conquery.models.api.description.FETable;
 import com.bakdata.conquery.models.api.description.FEValidityDate;
 import com.bakdata.conquery.models.api.description.FEValue;
-import com.bakdata.conquery.models.auth.AuthorizationHelper;
 import com.bakdata.conquery.models.auth.entities.User;
 import com.bakdata.conquery.models.auth.permissions.Ability;
 import com.bakdata.conquery.models.concepts.filters.Filter;
@@ -30,7 +29,7 @@ import com.bakdata.conquery.models.datasets.Column;
 import com.bakdata.conquery.models.exceptions.ConceptConfigurationException;
 import com.bakdata.conquery.models.identifiable.Identifiable;
 import com.bakdata.conquery.models.identifiable.IdentifiableImpl;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptTreeChildId;
 import com.bakdata.conquery.models.identifiable.ids.specific.StructureNodeId;
@@ -48,7 +47,7 @@ public class FrontEndConceptBuilder {
 	public static FERoot createRoot(NamespaceStorage storage, User user) {
 
 		FERoot root = new FERoot();
-		Map<IId<?>, FENode> roots = root.getConcepts();
+		Map<Id<?>, FENode> roots = root.getConcepts();
 		
 		List<? extends Concept<?>> allConcepts = new ArrayList<>(storage.getAllConcepts());
 		// Remove any hidden concepts
@@ -142,7 +141,7 @@ public class FrontEndConceptBuilder {
 	}
 
 	@Nullable
-	private static FENode createStructureNode(StructureNode cn, Map<IId<?>, FENode> roots) {
+	private static FENode createStructureNode(StructureNode cn, Map<Id<?>, FENode> roots) {
 		List<ConceptId> unstructured = new ArrayList<>();
 		for(ConceptId id : cn.getContainedRoots()) {
 			if(!roots.containsKey(id)) {
@@ -168,8 +167,8 @@ public class FrontEndConceptBuilder {
 				ArrayUtils.addAll(
 					cn.getChildren().stream()
 						.map(IdentifiableImpl::getId)
-						.toArray(IId[]::new),
-						unstructured.toArray(IId[]::new)
+						.toArray(Id[]::new),
+						unstructured.toArray(Id[]::new)
 				)
 			)
 			.build();

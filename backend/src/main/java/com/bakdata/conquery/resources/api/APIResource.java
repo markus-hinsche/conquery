@@ -12,12 +12,14 @@ import com.bakdata.conquery.apiv1.IdLabel;
 import com.bakdata.conquery.io.jersey.ExtraMimeTypes;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.resources.hierarchies.HAuthorized;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Setter;
 
 @Setter
 @Produces({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Consumes({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Path("/")
+@Tag(name = "api")
 public class APIResource extends HAuthorized {
 	
 	@Inject

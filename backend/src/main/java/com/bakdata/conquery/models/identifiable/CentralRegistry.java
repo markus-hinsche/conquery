@@ -8,7 +8,7 @@ import java.util.function.Function;
 import com.bakdata.conquery.io.jackson.Injectable;
 import com.bakdata.conquery.io.jackson.MutableInjectableValues;
 import com.bakdata.conquery.models.error.ConqueryError.ExecutionCreationResolveError;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.worker.IdResolveContext;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,31 +22,31 @@ import lombok.extern.slf4j.Slf4j;
 public class CentralRegistry implements Injectable {
 
 	private final IdMap map = new IdMap<>();
-	private final ConcurrentMap<IId<?>, Function<IId, Identifiable>> cacheables = new ConcurrentHashMap<>();
+	private final ConcurrentMap<Id<?>, Function<Id, Identifiable>> cacheables = new ConcurrentHashMap<>();
 
 	public synchronized CentralRegistry register(Identifiable<?> ident) {
 		map.add(ident);
 		return this;
 	}
 
-	public synchronized void registerCacheable(IId id, Function<IId, Identifiable> supplier) {
+	public synchronized void registerCacheable(Id id, Function<Id, Identifiable> supplier) {
 		cacheables.put(id, supplier);
 	}
 
-	protected  <T extends Identifiable<?>> T get(IId<T> name) {
+	protected  <T extends Identifiable<?>> T get(Id<T> name) {
 		Object res = map.get(name);
 		if (res != null) {
 			return (T) res;
 		}
 
-		Function<IId, Identifiable> supplier = cacheables.get(name);
+		Function<Id, Identifiable> supplier = cacheables.get(name);
 		if (supplier == null) {
 			return null;
 		}
 		return (T) supplier.apply(name);
 	}
 
-	public <T extends Identifiable<?>> T resolve(IId<T> name) {
+	public <T extends Identifiable<?>> T resolve(Id<T> name) {
 		final T result = get(name);
 
 		if(result == null){
@@ -56,12 +56,12 @@ public class CentralRegistry implements Injectable {
 		return result;
 	}
 
-	public <T extends Identifiable<?>> Optional<T> getOptional(IId<T> name) {
+	public <T extends Identifiable<?>> Optional<T> getOptional(Id<T> name) {
 		return Optional.ofNullable(get(name));
 	}
 
 	public void remove(Identifiable<?> ident) {
-		IId<?> id = ident.getId();
+		Id<?> id = ident.getId();
 		synchronized (this) {
 			map.remove(id);
 			cacheables.remove(id);

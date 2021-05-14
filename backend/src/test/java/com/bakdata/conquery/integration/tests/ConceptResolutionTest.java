@@ -11,7 +11,7 @@ import com.bakdata.conquery.integration.json.ConqueryTestSpec;
 import com.bakdata.conquery.integration.json.JsonIntegrationTest;
 import com.bakdata.conquery.models.concepts.tree.TreeConcept;
 import com.bakdata.conquery.models.exceptions.ValidatorHelper;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.resources.api.ConceptsProcessor;
 import com.bakdata.conquery.resources.api.ConceptsProcessor.ResolvedConceptsResult;
@@ -45,7 +45,7 @@ public class ConceptResolutionTest extends IntegrationTest.Simple implements Pro
 		
 		//check the resolved values
 		assertThat(resolved).isNotNull();
-		assertThat(resolved.getResolvedConcepts().stream().map(IId::toString)).containsExactlyInAnyOrder("ConceptResolutionTest.test_tree.test_child1");
+		assertThat(resolved.getResolvedConcepts().stream().map(Id::toString)).containsExactlyInAnyOrder("ConceptResolutionTest.test_tree.test_child1");
 		assertThat(resolved.getUnknownCodes()).containsExactlyInAnyOrder("unknown");
 		
 	}

@@ -3,10 +3,7 @@ package com.bakdata.conquery.apiv1;
 
 import javax.validation.constraints.NotEmpty;
 
-import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.Labeled;
-import com.bakdata.conquery.models.identifiable.NamedImpl;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  * @param <I> The id type to use
  */
 @Getter @RequiredArgsConstructor
-public class IdLabel<I extends IId<?>> implements Comparable<IdLabel<I>> {
+public class IdLabel<I extends Id<?>> implements Comparable<IdLabel<I>> {
 	@NotEmpty
 	private final I id;
 	@NotEmpty

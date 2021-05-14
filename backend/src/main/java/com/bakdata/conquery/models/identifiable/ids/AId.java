@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class AId<TYPE> implements IId<TYPE> {
+public abstract class AId<TYPE> implements Id<TYPE> {
 
 	@Override
 	public abstract boolean equals(Object obj);
@@ -23,7 +23,7 @@ public abstract class AId<TYPE> implements IId<TYPE> {
 	public String toString() {
 		List<Object> components = getComponents();
 		components.replaceAll(o->ConqueryEscape.escape(Objects.toString(o)));
-		return IId.JOINER.join(components);
+		return Id.JOINER.join(components);
 	}
 
 	public List<Object> getComponents() {

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bakdata.conquery.io.storage.MetaStorage;
 import com.bakdata.conquery.models.auth.entities.Group;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class GroupId extends PermissionOwnerId<Group> {
 		components.add(group);
 	}
 	
-	enum Parser implements IId.Parser<GroupId> {
+	enum Parser implements Id.Parser<GroupId> {
 		INSTANCE;
 		
 		@Override

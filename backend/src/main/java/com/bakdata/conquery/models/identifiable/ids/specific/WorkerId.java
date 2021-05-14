@@ -3,7 +3,7 @@ package com.bakdata.conquery.models.identifiable.ids.specific;
 import java.util.List;
 
 import com.bakdata.conquery.models.identifiable.ids.AId;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import com.bakdata.conquery.models.worker.WorkerInformation;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class WorkerId extends AId<WorkerInformation> {
 		components.add(worker);
 	}
 	
-	public static enum Parser implements IId.Parser<WorkerId> {
+	public static enum Parser implements Id.Parser<WorkerId> {
 		INSTANCE;
 		
 		@Override

@@ -23,6 +23,7 @@ import com.bakdata.conquery.models.concepts.filters.specific.AbstractSelectFilte
 import com.bakdata.conquery.resources.api.ConceptsProcessor.ResolvedConceptsResult;
 import com.bakdata.conquery.resources.hierarchies.HFilters;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 @Produces({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Consumes({ExtraMimeTypes.JSON_STRING, ExtraMimeTypes.SMILE_STRING})
 @Path("datasets/{" + DATASET + "}/concepts/{" + CONCEPT + "}/tables/{" + TABLE + "}/filters/{" + FILTER + "}")
-@Api(tags = "api")
+@Tag(name = "api")
 public class FilterResource extends HFilters {
 	
 	@Inject

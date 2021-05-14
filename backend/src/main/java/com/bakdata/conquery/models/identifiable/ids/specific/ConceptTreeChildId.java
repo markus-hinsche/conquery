@@ -3,7 +3,7 @@ package com.bakdata.conquery.models.identifiable.ids.specific;
 import java.util.List;
 
 import com.bakdata.conquery.models.concepts.tree.ConceptTreeChild;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedId;
 
@@ -33,7 +33,7 @@ public class ConceptTreeChildId extends ConceptElementId<ConceptTreeChild> imple
 		components.add(name);
 	}
 	
-	public static enum Parser implements IId.Parser<ConceptTreeChildId> {
+	public static enum Parser implements Id.Parser<ConceptTreeChildId> {
 		INSTANCE;
 		
 		@Override

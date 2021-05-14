@@ -3,7 +3,7 @@ package com.bakdata.conquery.io.storage;
 import com.bakdata.conquery.io.jackson.Injectable;
 import com.bakdata.conquery.models.identifiable.CentralRegistry;
 import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent=true) @Setter @Getter
 public class IdentifiableCachedStore<VALUE extends Identifiable<?>> extends IdentifiableStore<VALUE> {
 
-	public IdentifiableCachedStore(CentralRegistry centralRegistry, Store<IId<VALUE>, VALUE> store, Injectable... injectables) {
+	public IdentifiableCachedStore(CentralRegistry centralRegistry, Store<Id<VALUE>, VALUE> store, Injectable... injectables) {
 		super(store, centralRegistry);
 		for(Injectable injectable : injectables) {
 			store.inject(injectable);
@@ -23,8 +23,8 @@ public class IdentifiableCachedStore<VALUE extends Identifiable<?>> extends Iden
 	}
 
 	@Override
-	protected IId<VALUE> extractKey(VALUE value) {
-		return (IId<VALUE>)value.getId();
+	protected Id<VALUE> extractKey(VALUE value) {
+		return (Id<VALUE>)value.getId();
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class IdentifiableCachedStore<VALUE extends Identifiable<?>> extends Iden
 	protected void added(VALUE value) {
 		try {
 			if(value != null) {
-				final IId<VALUE> key = extractKey(value);
+				final Id<VALUE> key = extractKey(value);
 				centralRegistry.registerCacheable(key, this::get);
 			}
 		} catch(Exception e) {
@@ -53,7 +53,7 @@ public class IdentifiableCachedStore<VALUE extends Identifiable<?>> extends Iden
 	@Override
 	public void loadData() {
 		store.fillCache();
-		for(IId<VALUE> key : getAllKeys()) {
+		for(Id<VALUE> key : getAllKeys()) {
 			centralRegistry.registerCacheable(key, this::get);
 		}
 	}

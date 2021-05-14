@@ -14,7 +14,7 @@ import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.exceptions.JSONException;
 import com.bakdata.conquery.models.exceptions.ValidatorHelper;
 import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.worker.SingletonNamespaceCollection;
 import com.bakdata.conquery.util.support.StandaloneSupport;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -126,7 +126,7 @@ public abstract class ConqueryTestSpec {
 
 		@Override
 		public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType, String valueToConvert, String failureMsg) throws IOException {
-			IId.Parser parser = IId.<IId<Identifiable<?>>>createParser((Class) targetType);
+			Id.Parser parser = Id.<Id<Identifiable<?>>>createParser((Class) targetType);
 			return parser.parsePrefixed(support.getDataset().getId().toString(), valueToConvert);
 		}
 	}

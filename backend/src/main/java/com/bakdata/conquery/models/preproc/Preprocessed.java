@@ -23,7 +23,7 @@ import com.bakdata.conquery.models.events.stores.root.StringStore;
 import com.bakdata.conquery.models.events.stores.specific.string.StringTypeEncoded;
 import com.bakdata.conquery.models.identifiable.Identifiable;
 import com.bakdata.conquery.models.identifiable.InjectingCentralRegistry;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.jobs.ImportJob;
 import com.bakdata.conquery.models.preproc.parser.ColumnValues;
 import com.bakdata.conquery.models.preproc.parser.Parser;
@@ -94,7 +94,7 @@ public class Preprocessed {
 	 * This is heavily tied to {@link Preprocessed#write(File)} and {@link ImportJob#execute()}
 	 * @return
 	 */
-	public static PreprocessedReader createReader(File importFile, Map<IId<?>, Identifiable<?>> replacements) throws IOException {
+	public static PreprocessedReader createReader(File importFile, Map<Id<?>, Identifiable<?>> replacements) throws IOException {
 		final InputStream in = new GZIPInputStream(new FileInputStream(importFile));
 
 		final InjectingCentralRegistry injectingCentralRegistry = new InjectingCentralRegistry(replacements);

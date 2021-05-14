@@ -3,7 +3,7 @@ package com.bakdata.conquery.models.error;
 import com.bakdata.conquery.io.cps.CPSBase;
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.forms.util.DateContext;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.query.entity.Entity;
 import com.bakdata.conquery.models.query.queryplan.QueryPlan;
 import com.bakdata.conquery.util.VariableDefaultValue;
@@ -149,7 +149,7 @@ public abstract class ConqueryError extends RuntimeException implements Conquery
 			super(TEMPLATE);
 		}
 
-		public ExecutionCreationResolveError(IId<?> unresolvableElementId) {
+		public ExecutionCreationResolveError(Id<?> unresolvableElementId) {
 			this();
 			getContext().put(FAILED_ELEMENT, unresolvableElementId.toString());
 			getContext().put(FAILED_ELEMENT_CLASS, unresolvableElementId.getClass().getSimpleName());

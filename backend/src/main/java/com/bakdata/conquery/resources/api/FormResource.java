@@ -17,12 +17,13 @@ import com.bakdata.conquery.models.forms.frontendconfiguration.FormProcessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("datasets/{" + DATASET + "}/form-queries")
 @Consumes(AdditionalMediaTypes.JSON)
 @Produces(AdditionalMediaTypes.JSON)
 @PermitAll
-@Api(tags = "api")
+@Tag(name = "api")
 public class FormResource {
 	
 	private final FormProcessor processor;

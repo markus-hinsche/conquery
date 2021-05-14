@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.models.datasets.Dataset;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
 import com.bakdata.conquery.models.query.concept.CQElement;
@@ -38,7 +38,7 @@ public class QueryTranslator {
 							 .stream()
 							 .map(NamespacedIdentifiable::getDataset)
 							 .map(Dataset::getId)
-							 .map(IId::toString)
+							 .map(Id::toString)
 							 // ?<= -- non-capturing assertion, to start with "
 							 // ?= --  non-capturing assertion to end with [."]
 							 .map(n -> Pattern.compile("(?<=(\"))" + Pattern.quote(n) + "(?=([.\"]))"))

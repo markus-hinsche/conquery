@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bakdata.conquery.io.storage.MetaStorage;
 import com.bakdata.conquery.models.auth.entities.Role;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class RoleId extends PermissionOwnerId<Role> {
 		components.add(role);
 	}
 	
-	enum Parser implements IId.Parser<RoleId> {
+	enum Parser implements Id.Parser<RoleId> {
 		INSTANCE;
 		
 		@Override

@@ -12,17 +12,18 @@ import com.bakdata.conquery.util.ConqueryEscape;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 @JsonDeserialize(using = IdDeserializer.class)
-public interface IId<TYPE> {
+public interface Id<TYPE> {
 
 	char JOIN_CHAR = '.';
 	Joiner JOINER = Joiner.on(JOIN_CHAR);
 	Map<Class<?>, Class<?>> CLASS_TO_ID_MAP = new ConcurrentHashMap<>();
 
-	static <ID extends IId<?>> ID intern(ID id) {
+	static <ID extends Id<?>> ID intern(ID id) {
 		@SuppressWarnings("unchecked")
 		ID old = IIdInterner.<ID>forParser((Parser<ID>) createParser(id.getClass())).putIfAbsent(id.collectComponents(), id);
 		if (old == null) {
@@ -32,13 +33,13 @@ public interface IId<TYPE> {
 		return old;
 	}
 
-	static <T extends IId<?>> Parser<T> createParser(Class<T> idClass) {
+	static <T extends Id<?>> Parser<T> createParser(Class<T> idClass) {
 		return (Parser<T>) idClass.getDeclaredClasses()[0].getEnumConstants()[0];
 	}
 
 	List<String> collectComponents();
 
-	static void checkConflict(IId<?> id, IId<?> cached) {
+	static void checkConflict(Id<?> id, Id<?> cached) {
 		if (!cached.equals(id)) {
 			throw new IllegalStateException("The cached id '"
 											+ cached
@@ -49,7 +50,7 @@ public interface IId<TYPE> {
 		}
 	}
 
-	static <T extends IId<?>> Class<T> findIdClass(Class<?> cl) {
+	static <T extends Id<?>> Class<T> findIdClass(Class<?> cl) {
 		Class<?> result = CLASS_TO_ID_MAP.get(cl);
 
 		if (result != null) {
@@ -63,7 +64,7 @@ public interface IId<TYPE> {
 
 		try {
 			Class<?> returnType = MethodUtils.getAccessibleMethod(cl, methodName).getReturnType();
-			if (!IId.class.isAssignableFrom(returnType) || IId.class.equals(returnType)) {
+			if (!Id.class.isAssignableFrom(returnType) || Id.class.equals(returnType)) {
 				throw new IllegalStateException("The type `" +  returnType + "` of `" + cl + "#" + methodName + "` is not a specific subtype of IId");
 			}
 
@@ -81,7 +82,7 @@ public interface IId<TYPE> {
 		}
 	}
 
-	interface Parser<ID extends IId<?>> {
+	interface Parser<ID extends Id<?>> {
 
 		default ID parse(String id) {
 			return parse(split(id));
@@ -93,7 +94,7 @@ public interface IId<TYPE> {
 
 		static String[] split(String id) {
 			Objects.requireNonNull(id, "An empty id was provided for parsing.");
-			String[] parts = StringUtils.split(id, IId.JOIN_CHAR);
+			String[] parts = StringUtils.split(id, Id.JOIN_CHAR);
 			for (int i = 0; i < parts.length; ++i) {
 				parts[i] = ConqueryEscape.unescape(parts[i]);
 
@@ -126,10 +127,10 @@ public interface IId<TYPE> {
 				throw new IllegalStateException(
 						String.format(
 								"After parsing '%s' as id '%s' of type %s there are parts remaining: '%s'",
-								IId.JOINER.join(allParts),
+								Id.JOINER.join(allParts),
 								id,
 								id.getClass().getSimpleName(),
-								IId.JOINER.join(remaining.getRemaining())
+								Id.JOINER.join(remaining.getRemaining())
 						)
 				);
 			}

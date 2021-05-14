@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.bakdata.conquery.io.cps.CPSTypeIdResolver;
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.models.identifiable.Identifiable;
-import com.bakdata.conquery.models.identifiable.ids.IId.Parser;
+import com.bakdata.conquery.models.identifiable.ids.Id.Parser;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptTreeChildId;
 import com.bakdata.conquery.models.identifiable.ids.specific.DatasetId;
@@ -168,10 +168,10 @@ public class IdTests {
 	}
 	
 	@ParameterizedTest @MethodSource
-	public void reflectionTest(Class<?> modelClass, Class<? extends IId<?>> expectedIdClass) {
+	public void reflectionTest(Class<?> modelClass, Class<? extends Id<?>> expectedIdClass) {
 		
-		Class<? extends IId<?>> idClass = IId.findIdClass(modelClass);
+		Class<? extends Id<?>> idClass = Id.findIdClass(modelClass);
 		assertThat(idClass).isSameAs(expectedIdClass);
-		assertThat(IId.createParser(idClass)).isInstanceOf(Parser.class);
+		assertThat(Id.createParser(idClass)).isInstanceOf(Parser.class);
 	}
 }

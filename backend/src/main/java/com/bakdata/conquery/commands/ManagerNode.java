@@ -117,22 +117,6 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		this.environment = environment;
 		this.validator = environment.getValidator();
 
-		OpenAPI oasAdmin = new OpenAPI();
-
-		oasAdmin.info(new Info()
-							  .title("Conquery Admin API")
-							  .version("2.0.0") // TODO get from git
-							  .description("Api to manage Conquery."));
-		oasAdmin.addTagsItem(new Tag().name("admin"));
-
-
-		SwaggerConfiguration oasAdminConfig = new SwaggerConfiguration()
-													  .openAPI(oasAdmin)
-													  .prettyPrint(true)
-													  .filterClass(ConquerySpecFilter.class.getCanonicalName())
-													  .resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
-
-
 		OpenAPI oasApi = new OpenAPI().info(new Info()
 													.title("Conquery API")
 													.version("2.0.0")
@@ -144,7 +128,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.openAPI(oasApi)
 													.prettyPrint(true)
 													.filterClass(ConquerySpecFilter.class.getCanonicalName())
-													.resourcePackages(Set.of(APIResource.class.getPackageName()));
+													.resourcePackages(Set.of(APIResource.class.getPackageName(), AdminDatasetResource.class.getPackageName()));
 
 
 		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasApiConfig));

@@ -8,11 +8,12 @@ import com.bakdata.conquery.apiv1.AdditionalMediaTypes;
 import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.config.FrontendConfig;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @Path("config")
 @Produces(AdditionalMediaTypes.JSON)
-@Api(tags = "api")
+@Tag(name = "api")
 @RequiredArgsConstructor
 public class ConfigResource {
 

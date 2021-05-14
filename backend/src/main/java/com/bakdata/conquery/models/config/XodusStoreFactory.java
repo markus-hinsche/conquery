@@ -49,7 +49,7 @@ import com.bakdata.conquery.models.events.CBlock;
 import com.bakdata.conquery.models.execution.ManagedExecution;
 import com.bakdata.conquery.models.forms.configs.FormConfig;
 import com.bakdata.conquery.models.identifiable.CentralRegistry;
-import com.bakdata.conquery.models.identifiable.ids.IId;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.mapping.PersistentIdMap;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.SingletonNamespaceCollection;
@@ -259,13 +259,13 @@ public class XodusStoreFactory implements StoreFactory {
 
 		final SingletonNamespaceCollection namespaceCollection = new SingletonNamespaceCollection(centralRegistry);
 
-		final BigStore<IId<Dictionary>, Dictionary> bigStore;
+		final BigStore<Id<Dictionary>, Dictionary> bigStore;
 
 		synchronized (openStoresInEnv) {
 			bigStore = new BigStore<>(this, validator, environment, DICTIONARIES, openStoresInEnv.get(environment), this::closeEnvironment, this::removeEnvironment, namespaceCollection.injectInto(objectMapper));
 		}
 
-		final Store<IId<Dictionary>, Dictionary> result;
+		final Store<Id<Dictionary>, Dictionary> result;
 
 		if (useWeakDictionaryCaching) {
 			result = new WeakCachedStore<>(bigStore, getWeakCacheDuration());
