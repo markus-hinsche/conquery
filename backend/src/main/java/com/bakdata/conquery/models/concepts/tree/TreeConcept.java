@@ -10,11 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.concepts.Concept;
+import com.bakdata.conquery.models.concepts.ConceptElement;
 import com.bakdata.conquery.models.concepts.SelectHolder;
+import com.bakdata.conquery.models.concepts.conditions.PrefixCondition;
 import com.bakdata.conquery.models.concepts.select.concept.UniversalSelect;
 import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.events.stores.root.StringStore;
@@ -26,12 +29,15 @@ import com.bakdata.conquery.models.identifiable.IdMap;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptTreeChildId;
 import com.bakdata.conquery.util.CalculatedValue;
+import com.bakdata.conquery.util.dict.SuccinctTrie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 
 /**
  * This is a single node or concept in a concept tree.
@@ -213,5 +219,18 @@ public class TreeConcept extends Concept<ConceptTreeConnector> implements Concep
 	public ConceptTreeNode<?> getElementByLocalId(@NonNull int[] ids) {
 		int mostSpecific = ids[ids.length - 1];
 		return localIdMap.get(mostSpecific);
+	}
+
+	@JsonIgnore
+	public boolean isValidTree() {
+		final IdMap<ConceptTreeChildId, ConceptTreeChild> children = getAllChildren();
+
+		Trie<String, ConceptElement<?>> prefix = new PatriciaTrie<>();
+
+		// DFS: go to leafs, adding all prefixes. After children check if prefix.prefixMap only returns my children, then validate they are not overlapped.
+
+
+
+		return false;
 	}
 }

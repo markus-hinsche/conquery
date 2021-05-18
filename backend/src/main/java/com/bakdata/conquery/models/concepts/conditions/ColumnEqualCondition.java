@@ -1,5 +1,6 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,9 +18,9 @@ import lombok.Setter;
 /**
  * This condition requires the value of another column to be equal to a given value.
  */
-@CPSType(id="COLUMN_EQUAL", base=CTCondition.class)
+@CPSType(id="COLUMN_EQUAL", base= ConceptTreeCondition.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ColumnEqualCondition implements CTCondition {
+public class ColumnEqualCondition implements ConceptTreeCondition {
 
 	@Setter @Getter @NotEmpty
 	private Set<String> values;
@@ -38,5 +39,10 @@ public class ColumnEqualCondition implements CTCondition {
 			return false;
 		}
 		return values.contains(checkedValue.toString());
+	}
+
+	@Override
+	public Collection<String> getPrefixTree() {
+		return values;
 	}
 }

@@ -1,6 +1,8 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -23,8 +25,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 /**
  * A condition that is a groovy script and thus able to represent everything.
  */
-@Slf4j @CPSType(id="GROOVY", base=CTCondition.class)
-public class GroovyCondition implements CTCondition {
+@Slf4j @CPSType(id="GROOVY", base= ConceptTreeCondition.class)
+public class GroovyCondition implements ConceptTreeCondition {
 
 	public static final String[] AUTO_IMPORTS = Stream.of(
 		LocalDate.class,
@@ -67,6 +69,11 @@ public class GroovyCondition implements CTCondition {
 		} catch(Exception e) {
 			throw new ConceptConfigurationException(node, "Could not execute condition \""+script+"\" on "+rowMap.getValue(), e);
 		}
+	}
+
+	@Override
+	public Collection<String> getPrefixTree() {
+		return Collections.emptySet();
 	}
 
 

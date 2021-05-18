@@ -4,10 +4,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.bakdata.conquery.models.concepts.ConceptElement;
-import com.bakdata.conquery.models.concepts.conditions.CTCondition;
+import com.bakdata.conquery.models.concepts.conditions.ConceptTreeCondition;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.exceptions.ConceptConfigurationException;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptTreeChildId;
@@ -16,35 +17,33 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.TrieUtils;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 
+@Getter
+@Setter
 public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> implements ConceptTreeNode<ConceptTreeChildId> {
 
 	@JsonIgnore
 	private transient int[] prefix;
-	@JsonManagedReference //@Valid
-	@Getter
-	@Setter
+
+	@JsonManagedReference @Valid
 	private List<ConceptTreeChild> children = Collections.emptyList();
-	@JsonIgnore
-	@Getter
-	@Setter
-	private int localId;
-	@JsonBackReference
-	@Getter
-	@Setter
-	private ConceptTreeNode<?> parent;
-	@JsonIgnore
-	@Getter
-	@Setter
-	private int depth = 0;
-	@Getter
-	@NotNull
-	@Setter
-	private CTCondition condition = null;
 
 	@JsonIgnore
-	@Getter
-	@Setter
+	private int localId;
+
+	@JsonBackReference
+	private ConceptTreeNode<?> parent;
+
+	@JsonIgnore
+	private int depth = 0;
+
+	@NotNull
+	private ConceptTreeCondition condition = null;
+
+	@JsonIgnore
 	private TreeChildPrefixIndex childIndex;
 
 	@Override
@@ -99,5 +98,15 @@ public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> impleme
 	@Override
 	public Dataset getDataset() {
 		return getConcept().getDataset();
+	}
+
+	@JsonIgnore
+	public Trie<String, String> getPrefixTree() {
+		if(condition == null){
+			return new PatriciaTrie<>();
+		}
+
+		//TODO implement this
+		return null;
 	}
 }

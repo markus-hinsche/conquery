@@ -1,9 +1,9 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.models.concepts.tree.ConceptTreeNode;
@@ -15,15 +15,20 @@ import lombok.Setter;
 /**
  * This condition matches if its child does not.
  */
-@CPSType(id="NOT", base=CTCondition.class)
-public class NotCondition implements CTCondition {
+@CPSType(id="NOT", base= ConceptTreeCondition.class)
+public class NotCondition implements ConceptTreeCondition {
 
 	@Setter @Getter @Valid
-	private CTCondition condition;
+	private ConceptTreeCondition condition;
 
 	@Override
 	public boolean matches(String value, CalculatedValue<Map<String, Object>> rowMap) throws ConceptConfigurationException {
 		return !condition.matches(value, rowMap);
+	}
+
+	@Override
+	public Collection<String> getPrefixTree() {
+		return condition.getPrefixTree();
 	}
 
 	@Override

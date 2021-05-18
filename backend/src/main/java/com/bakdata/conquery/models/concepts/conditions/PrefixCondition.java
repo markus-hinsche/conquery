@@ -1,5 +1,8 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
@@ -13,9 +16,9 @@ import lombok.ToString;
 /**
  * This condition requires each value to start with one of the given values.
  */
-@CPSType(id="PREFIX_LIST", base=CTCondition.class)
+@CPSType(id="PREFIX_LIST", base= ConceptTreeCondition.class)
 @ToString
-public class PrefixCondition implements CTCondition {
+public class PrefixCondition implements ConceptTreeCondition {
 
 	@Setter @Getter @NotEmpty
 	private String[] prefixes;
@@ -30,5 +33,10 @@ public class PrefixCondition implements CTCondition {
 		return false;
 	}
 
-	
+	@Override
+	public Collection<String> getPrefixTree() {
+		return new HashSet<>(Arrays.asList(prefixes));
+	}
+
+
 }

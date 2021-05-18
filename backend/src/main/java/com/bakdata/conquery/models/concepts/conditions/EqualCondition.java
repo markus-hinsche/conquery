@@ -1,5 +1,6 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,9 +17,9 @@ import lombok.Setter;
 /**
  * This condition requires each value to be exactly as given in the list.
  */
-@CPSType(id="EQUAL", base=CTCondition.class)
+@CPSType(id="EQUAL", base= ConceptTreeCondition.class)
 @AllArgsConstructor
-public class EqualCondition implements CTCondition {
+public class EqualCondition implements ConceptTreeCondition {
 
 	@Setter @Getter @NotEmpty
 	private Set<String> values;
@@ -33,5 +34,10 @@ public class EqualCondition implements CTCondition {
 	@Override
 	public boolean matches(String value, CalculatedValue<Map<String, Object>> rowMap) {
 		return values.contains(value);
+	}
+
+	@Override
+	public Collection<String> getPrefixTree() {
+		return values;
 	}
 }
