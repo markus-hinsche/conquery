@@ -18,14 +18,6 @@ public class ConquerySpecFilter extends AbstractSpecFilter {
 
 	@Override
 	public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-		if(schema.getName().equalsIgnoreCase("ColumnStore")){
-			return Optional.empty();
-		}
-
-		if(schema.getName().equalsIgnoreCase("JsonNode")){
-			return Optional.empty();
-		}
-
 		return super.filterSchema(schema, params, cookies, headers);
 	}
 
@@ -36,12 +28,10 @@ public class ConquerySpecFilter extends AbstractSpecFilter {
 			return super.filterSchemaProperty(property, schema, propName, params, cookies, headers);
 		}
 
-		if(property.get$ref().endsWith("ColumnStore")){
-			return Optional.empty();
-		}
-
 		if(property.get$ref().endsWith("JsonNode")){
-			return Optional.empty();
+			property.set$ref(null);
+			property.setType("object");
+			return Optional.of(property);
 		}
 
 		return super.filterSchemaProperty(property, schema, propName, params, cookies, headers);

@@ -73,7 +73,6 @@ public class FormConfig extends IdentifiableImpl<FormConfigId> implements Sharea
 	 * formular, when the user saved it.
 	 */
 	@NotNull
-	@ApiModelProperty(hidden = true)
 	private JsonNode values;
 	@MetaIdRef
 	private User owner;

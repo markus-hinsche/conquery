@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+@Schema(format = "string", pattern = "[a-z0-9](\\.[a-z0-9]+)*")
 @JsonDeserialize(using = IdDeserializer.class)
 public interface Id<TYPE> {
 

@@ -10,11 +10,13 @@ import com.bakdata.conquery.io.jackson.serializer.NsIdRef;
 import com.bakdata.conquery.models.events.MajorTypeId;
 import com.bakdata.conquery.models.events.stores.root.ColumnStore;
 import com.bakdata.conquery.models.identifiable.Labeled;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
 import com.bakdata.conquery.models.identifiable.ids.specific.ColumnId;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dropwizard.validation.ValidationMethod;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,10 +31,12 @@ public class Column extends Labeled<ColumnId> implements NamespacedIdentifiable<
 	@JsonBackReference
 	@NotNull
 	@ToString.Exclude
+	@Schema(hidden = true)
 	private Table table;
 	@NotNull
 	private MajorTypeId type;
 
+	@Schema(hidden = true)
 	@InternalOnly
 	private int position = UNKNOWN_POSITION;
 	/**
@@ -45,6 +49,7 @@ public class Column extends Labeled<ColumnId> implements NamespacedIdentifiable<
 	 * table
 	 */
 	@NsIdRef
+	@Schema(implementation = Id.class)
 	private SecondaryIdDescription secondaryId;
 
 	@Override

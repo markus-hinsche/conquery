@@ -3,6 +3,7 @@ package com.bakdata.conquery.commands;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +27,7 @@ import com.bakdata.conquery.models.auth.AuthorizationController;
 import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.forms.frontendconfiguration.FormScanner;
 import com.bakdata.conquery.models.i18n.I18n;
+import com.bakdata.conquery.models.identifiable.Identifiable;
 import com.bakdata.conquery.models.jobs.JobManager;
 import com.bakdata.conquery.models.jobs.ReactingJob;
 import com.bakdata.conquery.models.messages.SlowMessage;
@@ -39,7 +41,6 @@ import com.bakdata.conquery.resources.ResourcesProvider;
 import com.bakdata.conquery.resources.admin.AdminServlet;
 import com.bakdata.conquery.resources.admin.ShutdownTask;
 import com.bakdata.conquery.resources.admin.rest.AdminDatasetResource;
-import com.bakdata.conquery.resources.api.APIResource;
 import com.bakdata.conquery.resources.unprotected.AuthServlet;
 import com.bakdata.conquery.tasks.ClearFilterSourceSearch;
 import com.bakdata.conquery.tasks.PermissionCleanupTask;
@@ -51,10 +52,15 @@ import com.google.common.base.Throwables;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Getter;
 import lombok.NonNull;
@@ -129,7 +135,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.openAPI(oasApi)
 													.prettyPrint(true)
 													.filterClass(ConquerySpecFilter.class.getCanonicalName())
-													.resourcePackages(Set.of(APIResource.class.getPackageName(), AdminDatasetResource.class.getPackageName()));
+													.resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
 
 
 		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasApiConfig));

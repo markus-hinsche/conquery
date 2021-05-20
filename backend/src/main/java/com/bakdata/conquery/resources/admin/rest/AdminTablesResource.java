@@ -22,10 +22,14 @@ import com.bakdata.conquery.io.jersey.ExtraMimeTypes;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.datasets.Table;
+import com.bakdata.conquery.models.identifiable.Identifiable;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.bakdata.conquery.models.worker.Namespace;
 import com.bakdata.conquery.resources.hierarchies.HAdmin;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -83,7 +87,7 @@ public class AdminTablesResource extends HAdmin {
 
 	@DELETE
 	@Path("imports/{"+IMPORT_ID+"}")
-	public void deleteImportView(@PathParam(IMPORT_ID) Import imp) {
+	public void deleteImport(@Parameter(schema = @Schema(implementation = Id.class)) @PathParam(IMPORT_ID) Import imp) {
 		processor.deleteImport(imp);
 	}
 

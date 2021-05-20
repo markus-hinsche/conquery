@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ public class ImportColumn extends NamedImpl<ImportColumnId> implements Namespace
 	// Only used on ManagerNode for com.bakdata.conquery.models.concepts.filters.specific.AbstractSelectFilter.addImport
 	// Can Probably be removed.
 	@InternalOnly
+	@Schema(hidden = true)
 	private final ColumnStore typeDescription;
 
 	private final long lines;
