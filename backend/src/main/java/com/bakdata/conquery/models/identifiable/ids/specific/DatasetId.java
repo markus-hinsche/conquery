@@ -9,11 +9,13 @@ import com.bakdata.conquery.models.identifiable.ids.IdIterator;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @AllArgsConstructor @Getter @EqualsAndHashCode(callSuper=false, doNotUseGetters=true)
+@Schema(implementation = Id.class, name = "DatasetId")
 public class DatasetId extends AId<Dataset> implements NamespacedId {
 
 	private final String name;

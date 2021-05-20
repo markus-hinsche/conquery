@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -28,7 +29,7 @@ public class Table extends Labeled<TableId>  implements NamespacedIdentifiable<T
 	// TODO: 10.01.2020 fk: register imports here?
 
 	@NsIdRef
-	@NonNull //Null may be null at load time
+	@NonNull @Nullable// may be null at load time, but cannot be set to null
 	private Dataset dataset;
 	@NotNull @Valid @JsonManagedReference
 	private Column[] columns = new Column[0];

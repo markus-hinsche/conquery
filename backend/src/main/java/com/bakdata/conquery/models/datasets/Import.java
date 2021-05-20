@@ -7,12 +7,14 @@ import javax.validation.constraints.NotNull;
 
 import com.bakdata.conquery.io.jackson.serializer.NsIdRef;
 import com.bakdata.conquery.models.identifiable.NamedImpl;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
 import com.bakdata.conquery.models.identifiable.ids.specific.DictionaryId;
 import com.bakdata.conquery.models.identifiable.ids.specific.ImportId;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,6 +31,7 @@ public class Import extends NamedImpl<ImportId> implements NamespacedIdentifiabl
 
 	@Valid
 	@NotNull
+	@Schema(implementation = Id.class)
 	@NsIdRef
 	private final Table table;
 

@@ -1,14 +1,17 @@
 package com.bakdata.conquery.commands;
 
+import java.lang.reflect.ParameterizedType;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
+import javax.ws.rs.PathParam;
 
 import com.bakdata.conquery.io.cps.CPSTypeIdResolver;
 import com.bakdata.conquery.io.jackson.InternalOnly;
@@ -28,6 +31,7 @@ import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.forms.frontendconfiguration.FormScanner;
 import com.bakdata.conquery.models.i18n.I18n;
 import com.bakdata.conquery.models.identifiable.Identifiable;
+import com.bakdata.conquery.models.identifiable.ids.Id;
 import com.bakdata.conquery.models.jobs.JobManager;
 import com.bakdata.conquery.models.jobs.ReactingJob;
 import com.bakdata.conquery.models.messages.SlowMessage;
@@ -129,6 +133,34 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.version("2.0.0")
 													.description("Api to use Conquery."))
 									  .addTagsItem(new Tag().name("api"));
+
+		ModelConverters.getInstance().addConverter(new ModelConverter() {
+			@Override
+			public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+				if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations()).noneMatch(PathParam.class::isInstance)) {
+					return chain.next().resolve(type, context, chain);
+				}
+
+				Class<? extends Identifiable<?>> clazz = null;
+
+				if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
+					clazz = (Class<? extends Identifiable<?>>) type.getType();
+				}
+
+				if (type.getType() instanceof ParameterizedType
+					&& Identifiable.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
+					clazz = (Class<? extends Identifiable<?>>) ((ParameterizedType) type.getType()).getRawType();
+				}
+
+				if (clazz == null) {
+					return chain.next().resolve(type, context, chain);
+				}
+
+				// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
+				// Maybe I need to register them earlier via CPS-scan results and create the Schemas manually?
+				return chain.next().resolve(type.resolveAsRef(true).type(Id.class),context,chain);
+			}
+		});
 
 
 		SwaggerConfiguration oasApiConfig = new SwaggerConfiguration()
@@ -235,7 +267,10 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 	public void loadNamespaces() {
 		for (NamespaceStorage namespaceStorage : config.getStorage()
 													   .loadNamespaceStorages(ConqueryCommand.getStoragePathParts(useNameForStoragePrefix, getName()))) {
-			Namespace ns = new Namespace(namespaceStorage, config.isFailOnError(), config.configureObjectMapper(Jackson.BINARY_MAPPER).writerWithView(InternalOnly.class));
+			Namespace
+					ns =
+					new Namespace(namespaceStorage, config.isFailOnError(), config.configureObjectMapper(Jackson.BINARY_MAPPER)
+																				  .writerWithView(InternalOnly.class));
 			datasetRegistry.add(ns);
 		}
 	}

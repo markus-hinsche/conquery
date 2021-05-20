@@ -68,8 +68,8 @@ public class NsIdReferenceDeserializer<ID extends NamespacedId & Id<T>, T extend
 
 	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) throws JsonMappingException {
-		JavaType type = Optional
-								.ofNullable(ctxt.getContextualType())
+
+		JavaType type = Optional.ofNullable(ctxt.getContextualType())
 								.orElseGet(property::getType);
 
 		BeanDescription descr = ctxt.getConfig().introspect(type);

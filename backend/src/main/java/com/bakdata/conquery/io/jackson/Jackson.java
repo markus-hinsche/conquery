@@ -18,6 +18,7 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.swagger.v3.core.jackson.SwaggerModule;
 import org.apache.shiro.authz.Permission;
 
 public class Jackson {
@@ -54,6 +55,7 @@ public class Jackson {
 			.registerModule(new ParameterNamesModule())
 			.registerModule(new GuavaModule())
 			.registerModule(new AfterburnerModule())
+			.registerModule(new SwaggerModule())
 			.registerModule(ConquerySerializersModule.INSTANCE)
 			.setSerializationInclusion(Include.ALWAYS)
 			.setDefaultPropertyInclusion(Include.ALWAYS)

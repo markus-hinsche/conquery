@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.bakdata.conquery.apiv1.AdditionalMediaTypes;
+import com.bakdata.conquery.io.jackson.serializer.IdParam;
+import com.bakdata.conquery.io.jackson.serializer.NsIdRef;
 import com.bakdata.conquery.io.jersey.ExtraMimeTypes;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.datasets.Import;
@@ -39,12 +41,16 @@ import lombok.Setter;
 @Getter @Setter
 @Path("datasets/{" + DATASET + "}/tables/{" + TABLE + "}")
 public class AdminTablesResource extends HAdmin {
-	
+
+	@IdParam
 	@PathParam(DATASET)
 	protected Dataset dataset;
-	protected Namespace namespace;
+
+	@IdParam
 	@PathParam(TABLE)
 	protected Table table;
+
+	protected Namespace namespace;
 
 	@PostConstruct
 	@Override
@@ -87,7 +93,7 @@ public class AdminTablesResource extends HAdmin {
 
 	@DELETE
 	@Path("imports/{"+IMPORT_ID+"}")
-	public void deleteImport(@Parameter(schema = @Schema(implementation = Id.class)) @PathParam(IMPORT_ID) Import imp) {
+	public void deleteImport(@NsIdRef @PathParam(IMPORT_ID) Import imp) {
 		processor.deleteImport(imp);
 	}
 

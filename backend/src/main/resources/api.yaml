@@ -1,42 +1,27 @@
 openapi: 3.0.1
 info:
-  title: Conquery Admin API
-  description: Api to manage Conquery.
+  title: Conquery API
+  description: Api to use Conquery.
   version: 2.0.0
+tags:
+  - name: api
 paths:
   /datasets/{dataset}/concepts/{concept}:
-    get:
-      operationId: getNode
-      parameters:
-      - name: concept
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ConceptObject'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-            application/x-jackson-smile: {}
     delete:
+      tags:
+        - admin
       operationId: removeConcept
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: concept
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ConceptObject'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: concept
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConceptObject'
       responses:
         default:
           description: default response
@@ -45,31 +30,39 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/concepts:
     get:
-      operationId: getRoot
+      tags:
+        - admin
+      operationId: listConcepts
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       responses:
         default:
           description: default response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FERoot'
+                type: array
+                items:
+                  type: string
             application/x-jackson-smile:
               schema:
-                $ref: '#/components/schemas/FERoot'
+                type: array
+                items:
+                  type: string
     post:
+      tags:
+        - admin
       operationId: addConcept
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           application/json:
@@ -86,18 +79,20 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/imports:
     post:
+      tags:
+        - admin
       operationId: addImport
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: file
-        in: query
-        schema:
-          type: string
-          format: binary
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: file
+          in: query
+          schema:
+            type: string
+            format: binary
       responses:
         default:
           description: default response
@@ -106,13 +101,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/secondaryId:
     post:
+      tags:
+        - admin
       operationId: addSecondaryId
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           application/json:
@@ -129,13 +126,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/tables:
     get:
+      tags:
+        - admin
       operationId: listTables
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       responses:
         default:
           description: default response
@@ -151,13 +150,15 @@ paths:
                 items:
                   type: string
     post:
+      tags:
+        - admin
       operationId: addTable
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           application/json:
@@ -174,13 +175,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}:
     delete:
+      tags:
+        - admin
       operationId: delete
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       responses:
         default:
           description: default response
@@ -189,18 +192,20 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/secondaryId/{secondaryId}:
     delete:
+      tags:
+        - admin
       operationId: deleteSecondaryId
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: secondaryId
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/SecondaryIdDescription'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: secondaryId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SecondaryIdDescription'
       responses:
         default:
           description: default response
@@ -209,13 +214,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/mapping:
     post:
+      tags:
+        - admin
       operationId: setIdMapping
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           '*/*':
@@ -232,13 +239,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/structure:
     post:
+      tags:
+        - admin
       operationId: setStructure
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           application/json:
@@ -260,13 +269,15 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/label:
     post:
+      tags:
+        - admin
       operationId: setlabel
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
       requestBody:
         content:
           application/json:
@@ -283,7 +294,9 @@ paths:
             application/x-jackson-smile: {}
   /datasets:
     get:
-      operationId: getDatasets
+      tags:
+        - admin
+      operationId: listDatasets
       responses:
         default:
           description: default response
@@ -292,20 +305,22 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/IdLabelDatasetId'
+                  type: string
             application/x-jackson-smile:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/IdLabelDatasetId'
+                  type: string
     post:
+      tags:
+        - admin
       operationId: addDataset
       requestBody:
         content:
           multipart/form-data:
             schema:
               required:
-              - dataset_name
+                - dataset_name
               type: object
               properties:
                 dataset_name:
@@ -318,23 +333,25 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/tables/{table}/imports/{importId}:
     delete:
-      operationId: deleteImportView
+      tags:
+        - admin
+      operationId: deleteImport
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: table
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Table'
-      - name: importId
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Import'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: table
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Table'
+        - name: importId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -343,18 +360,20 @@ paths:
             application/x-jackson-smile: {}
   /datasets/{dataset}/tables/{table}/imports:
     get:
+      tags:
+        - admin
       operationId: listImports
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: table
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Table'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: table
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Table'
       responses:
         default:
           description: default response
@@ -366,23 +385,25 @@ paths:
                   type: string
   /datasets/{dataset}/tables/{table}:
     delete:
+      tags:
+        - admin
       operationId: remove
       parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: table
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Table'
-      - name: force
-        in: query
-        schema:
-          type: boolean
-          default: false
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dataset'
+        - name: table
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Table'
+        - name: force
+          in: query
+          schema:
+            type: boolean
+            default: false
       responses:
         default:
           description: default response
@@ -391,13 +412,15 @@ paths:
             application/x-jackson-smile: {}
   /roles/{roleId}:
     delete:
+      tags:
+        - admin
       operationId: deleteRole
       parameters:
-      - name: roleId
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Role'
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Role'
       responses:
         default:
           description: default response
@@ -405,6 +428,8 @@ paths:
             '*/*': {}
   /roles:
     get:
+      tags:
+        - admin
       operationId: getRoles
       responses:
         default:
@@ -416,6 +441,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Role'
     post:
+      tags:
+        - admin
       operationId: postRoles
       requestBody:
         content:
@@ -459,635 +486,21 @@ paths:
     delete:
       operationId: removeUser
       parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/User'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/User'
       responses:
         default:
           description: default response
           content:
             '*/*': {}
-  /datasets/{dataset}/concepts/{concept}/resolve:
-    post:
-      operationId: resolve
-      parameters:
-      - name: concept
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ConceptObject'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConceptCodeList'
-          application/x-jackson-smile:
-            schema:
-              $ref: '#/components/schemas/ConceptCodeList'
-        required: true
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResolvedConceptsResult'
-            application/x-jackson-smile:
-              schema:
-                $ref: '#/components/schemas/ResolvedConceptsResult'
-  /config/frontend:
-    get:
-      operationId: getFrontendConfig
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FrontendConfig'
-  /datasets/{dataset}/concepts/{concept}/tables/{table}/filters/{filter}/autocomplete:
-    post:
-      operationId: autocompleteTextFilter
-      parameters:
-      - name: filter
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FilterObject'
-      - name: table
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Table'
-      - name: concept
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ConceptObject'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: page
-        in: query
-        schema:
-          type: object
-          properties:
-            empty:
-              type: boolean
-            present:
-              type: boolean
-            asInt:
-              type: integer
-              format: int32
-      - name: pageSize
-        in: query
-        schema:
-          type: object
-          properties:
-            empty:
-              type: boolean
-            present:
-              type: boolean
-            asInt:
-              type: integer
-              format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StringContainer'
-          application/x-jackson-smile:
-            schema:
-              $ref: '#/components/schemas/StringContainer'
-        required: true
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FEValue'
-            application/x-jackson-smile:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FEValue'
-  /datasets/{dataset}/concepts/{concept}/tables/{table}/filters/{filter}/resolve:
-    post:
-      operationId: resolveFilterValues
-      parameters:
-      - name: filter
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FilterObject'
-      - name: table
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Table'
-      - name: concept
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ConceptObject'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FilterValues'
-          application/x-jackson-smile:
-            schema:
-              $ref: '#/components/schemas/FilterValues'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResolvedConceptsResult'
-            application/x-jackson-smile:
-              schema:
-                $ref: '#/components/schemas/ResolvedConceptsResult'
-  /datasets/{dataset}/form-configs/{form-config}:
-    get:
-      operationId: getConfig
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: form-config
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FormConfig'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FormConfigFullRepresentation'
-    delete:
-      operationId: deleteConfig
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: form-config
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FormConfig'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-    patch:
-      operationId: patchConfig
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: form-config
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FormConfig'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FormConfigFullRepresentation'
-  /datasets/{dataset}/form-configs:
-    get:
-      operationId: getConfigByUserAndType
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: formType
-        in: query
-        schema:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  parallel:
-                    type: boolean
-    post:
-      operationId: postConfig
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /datasets/{dataset}/form-queries:
-    get:
-      operationId: getFormFEConfigs
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/JsonNode'
-  /me:
-    get:
-      operationId: getUserInformation
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FEMeInformation'
-  /datasets/{dataset}/queries/{query}:
-    get:
-      operationId: getStatus
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FullExecutionStatus'
-    delete:
-      operationId: cancel
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FullExecutionStatus'
-  /datasets/{dataset}/queries:
-    post:
-      operationId: postQuery
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8: {}
-  /datasets/{dataset}/result/{query}.arrf:
-    get:
-      operationId: get
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      - name: pretty
-        in: query
-        schema:
-          type: boolean
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/vnd.apache.arrow.file: {}
-  /datasets/{dataset}/result/{query}.arrs:
-    get:
-      operationId: get_1
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      - name: pretty
-        in: query
-        schema:
-          type: boolean
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/vnd.apache.arrow.stream: {}
-  /datasets/{dataset}/result/{query}.csv:
-    get:
-      operationId: getAsCsv
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecution'
-      - name: user-agent
-        in: header
-        schema:
-          type: string
-      - name: charset
-        in: query
-        schema:
-          type: string
-      - name: pretty
-        in: query
-        schema:
-          type: boolean
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            text/csv; charset=utf-8: {}
-  /datasets/{dataset}/result/{query}.xlsx:
-    get:
-      operationId: get_2
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: query
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pretty
-        in: query
-        schema:
-          type: boolean
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/vnd.apache.arrow.file: {}
-  /datasets/{dataset}/stored-queries/{query}:
-    get:
-      operationId: getSingleQueryInfo
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FullExecutionStatus'
-    delete:
-      operationId: deleteQuery
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8: {}
-    patch:
-      operationId: patchQuery
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/MetaDataPatch'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FullExecutionStatus'
-  /datasets/{dataset}/stored-queries:
-    get:
-      operationId: getAllQueries
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExecutionStatus'
-  /datasets/{dataset}/stored-queries/{query}/reexecute:
-    post:
-      operationId: reexecute
-      parameters:
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: dataset
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/Dataset'
-      - name: query
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ManagedExecutionObject'
-      requestBody:
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FullExecutionStatus'
 components:
   schemas:
     Dataset:
       required:
-      - label
+        - label
       type: object
       properties:
         name:
@@ -1096,8 +509,8 @@ components:
           type: string
     ConceptObject:
       required:
-      - label
-      - type
+        - label
+        - type
       type: object
       properties:
         name:
@@ -1118,11 +531,11 @@ components:
             type: object
         dataset:
           $ref: '#/components/schemas/Dataset'
-        defaultSelects:
+        selects:
           type: array
           items:
             $ref: '#/components/schemas/Select'
-        selects:
+        defaultSelects:
           type: array
           items:
             $ref: '#/components/schemas/Select'
@@ -1139,8 +552,8 @@ components:
           type: string
     Select:
       required:
-      - label
-      - type
+        - label
+        - type
       type: object
       properties:
         name:
@@ -1166,7 +579,7 @@ components:
             type: object
     SecondaryIdDescription:
       required:
-      - label
+        - label
       type: object
       properties:
         name:
@@ -1179,9 +592,9 @@ components:
           type: string
     Column:
       required:
-      - label
-      - table
-      - type
+        - label
+        - table
+        - type
       type: object
       properties:
         name:
@@ -1193,14 +606,14 @@ components:
         type:
           type: string
           enum:
-          - STRING
-          - INTEGER
-          - BOOLEAN
-          - REAL
-          - DECIMAL
-          - MONEY
-          - DATE
-          - DATE_RANGE
+            - STRING
+            - INTEGER
+            - BOOLEAN
+            - REAL
+            - DECIMAL
+            - MONEY
+            - DATE
+            - DATE_RANGE
         position:
           type: integer
           format: int32
@@ -1210,8 +623,8 @@ components:
           $ref: '#/components/schemas/SecondaryIdDescription'
     Table:
       required:
-      - columns
-      - label
+        - columns
+        - label
       type: object
       properties:
         name:
@@ -1226,8 +639,8 @@ components:
             $ref: '#/components/schemas/Column'
     StructureNode:
       required:
-      - dataset
-      - label
+        - dataset
+        - label
       type: object
       properties:
         name:
@@ -1253,51 +666,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/KeyValue'
-    Import:
-      required:
-      - columns
-      - dictionaries
-      - table
+    Id:
+      pattern: '[a-z0-9](\.[a-z0-9]+)*'
       type: object
-      properties:
-        name:
-          type: string
-        table:
-          $ref: '#/components/schemas/Table'
-        numberOfEntities:
-          type: integer
-          format: int64
-        numberOfEntries:
-          type: integer
-          format: int64
-        columns:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImportColumn'
-        dictionaries:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-    ImportColumn:
-      required:
-      - parent
-      type: object
-      properties:
-        name:
-          type: string
-        parent:
-          $ref: '#/components/schemas/Import'
-        lines:
-          type: integer
-          format: int64
-        memorySizeBytes:
-          minimum: 0
-          type: integer
-          format: int64
+      format: string
     ConqueryPermission:
       required:
-      - type
+        - type
       type: object
       properties:
         creationTime:
@@ -1308,12 +683,12 @@ components:
           type: array
           items:
             type: string
-        instances:
+        abilities:
           uniqueItems: true
           type: array
           items:
             type: string
-        abilities:
+        instances:
           uniqueItems: true
           type: array
           items:
@@ -1324,9 +699,9 @@ components:
         propertyName: type
     Role:
       required:
-      - label
-      - name
-      - permissions
+        - label
+        - name
+        - permissions
       type: object
       properties:
         name:
@@ -1340,7 +715,7 @@ components:
             $ref: '#/components/schemas/ConqueryPermission'
     CredentialType:
       required:
-      - type
+        - type
       type: object
       properties:
         type:
@@ -1349,9 +724,9 @@ components:
         propertyName: type
     ProtoUser:
       required:
-      - credentials
-      - name
-      - permissions
+        - credentials
+        - name
+        - permissions
       type: object
       properties:
         label:
@@ -1369,9 +744,9 @@ components:
             $ref: '#/components/schemas/CredentialType'
     User:
       required:
-      - label
-      - name
-      - permissions
+        - label
+        - name
+        - permissions
       type: object
       properties:
         name:
@@ -1385,690 +760,6 @@ components:
             $ref: '#/components/schemas/ConqueryPermission'
         roles:
           uniqueItems: true
-          type: array
-          items:
-            type: string
-    IdLabelDatasetId:
-      required:
-      - id
-      - label
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-    FEValue:
-      type: object
-      properties:
-        label:
-          type: string
-        value:
-          type: string
-        templateValues:
-          type: object
-          additionalProperties:
-            type: string
-        optionValue:
-          type: string
-    ResolvedConceptsResult:
-      type: object
-      properties:
-        resolvedConcepts:
-          type: array
-          items:
-            type: string
-        resolvedFilter:
-          $ref: '#/components/schemas/ResolvedFilterResult'
-        unknownCodes:
-          type: array
-          items:
-            type: string
-    ResolvedFilterResult:
-      type: object
-      properties:
-        tableId:
-          type: string
-        filterId:
-          type: string
-        value:
-          type: array
-          items:
-            $ref: '#/components/schemas/FEValue'
-    ConceptCodeList:
-      type: object
-      properties:
-        concepts:
-          type: array
-          items:
-            type: string
-    CurrencyConfig:
-      type: object
-      properties:
-        prefix:
-          type: string
-        thousandSeparator:
-          type: string
-        decimalSeparator:
-          type: string
-        decimalScale:
-          type: integer
-          format: int32
-    FrontendConfig:
-      required:
-      - currency
-      type: object
-      properties:
-        version:
-          type: string
-        currency:
-          $ref: '#/components/schemas/CurrencyConfig'
-    FEFilter:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        type:
-          type: string
-          enum:
-          - SELECT
-          - MULTI_SELECT
-          - BIG_MULTI_SELECT
-          - INTEGER_RANGE
-          - REAL_RANGE
-          - NONE
-          - STRING
-          - MONEY_RANGE
-        unit:
-          type: string
-        description:
-          type: string
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/FEValue'
-        min:
-          type: integer
-          format: int32
-        max:
-          type: integer
-          format: int32
-        template:
-          $ref: '#/components/schemas/FilterTemplate'
-        pattern:
-          type: string
-        allowDropFile:
-          type: boolean
-    FENode:
-      type: object
-      properties:
-        parent:
-          $ref: '#/components/schemas/IIdObject'
-        label:
-          type: string
-        description:
-          type: string
-        active:
-          type: boolean
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/IIdObject'
-        additionalInfos:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        matchingEntries:
-          type: integer
-          format: int64
-        dateRange:
-          $ref: '#/components/schemas/RangeLocalDate'
-        tables:
-          type: array
-          items:
-            $ref: '#/components/schemas/FETable'
-        detailsAvailable:
-          type: boolean
-        codeListResolvable:
-          type: boolean
-        selects:
-          type: array
-          items:
-            $ref: '#/components/schemas/FESelect'
-    FERoot:
-      type: object
-      properties:
-        secondaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/FESecondaryId'
-        concepts:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/FENode'
-    FESecondaryId:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        description:
-          type: string
-    FESelect:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        description:
-          type: string
-        resultType:
-          $ref: '#/components/schemas/ResultType'
-    FETable:
-      type: object
-      properties:
-        id:
-          type: string
-        connectorId:
-          type: string
-        label:
-          type: string
-        dateColumn:
-          $ref: '#/components/schemas/FEValidityDate'
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/FEFilter'
-        selects:
-          type: array
-          items:
-            $ref: '#/components/schemas/FESelect'
-        supportedSecondaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-    FEValidityDate:
-      type: object
-      properties:
-        defaultValue:
-          type: string
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/FEValue'
-    FilterTemplate:
-      type: object
-      properties:
-        filePath:
-          type: string
-        columns:
-          type: array
-          items:
-            type: string
-        columnValue:
-          type: string
-        value:
-          type: string
-        optionValue:
-          type: string
-    IIdObject:
-      type: object
-    RangeLocalDate:
-      type: object
-      properties:
-        min:
-          type: string
-          format: date
-        max:
-          type: string
-          format: date
-    ResultType:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    Connector:
-      required:
-      - label
-      - selects
-      - validityDates
-      type: object
-      properties:
-        name:
-          type: string
-        label:
-          type: string
-        validityDates:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidityDate'
-        concept:
-          $ref: '#/components/schemas/ConceptObject'
-        selects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Select'
-        table:
-          $ref: '#/components/schemas/Table'
-        defaultSelects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Select'
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/FilterObject'
-    FilterObject:
-      required:
-      - label
-      - type
-      type: object
-      properties:
-        name:
-          type: string
-        label:
-          type: string
-        unit:
-          type: string
-        description:
-          type: string
-        connector:
-          $ref: '#/components/schemas/Connector'
-        pattern:
-          type: string
-        allowDropFile:
-          type: boolean
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    ValidityDate:
-      required:
-      - column
-      - label
-      type: object
-      properties:
-        name:
-          type: string
-        label:
-          type: string
-        column:
-          $ref: '#/components/schemas/Column'
-        connector:
-          $ref: '#/components/schemas/Connector'
-    StringContainer:
-      type: object
-      properties:
-        text:
-          type: string
-    FilterValues:
-      type: object
-      properties:
-        values:
-          type: array
-          items:
-            type: string
-    FormConfig:
-      required:
-      - formType
-      - tags
-      - values
-      type: object
-      properties:
-        dataset:
-          $ref: '#/components/schemas/Dataset'
-        formType:
-          type: string
-        formId:
-          type: string
-          format: uuid
-        label:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        shared:
-          type: boolean
-        owner:
-          $ref: '#/components/schemas/User'
-        creationTime:
-          type: string
-          format: date-time
-    FormConfigFullRepresentation:
-      type: object
-      properties:
-        id:
-          type: string
-        formType:
-          type: string
-        label:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        ownerName:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        own:
-          type: boolean
-        shared:
-          type: boolean
-        system:
-          type: boolean
-        groups:
-          type: array
-          items:
-            type: string
-    FormConfigPatch:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-        label:
-          type: string
-        groups:
-          type: array
-          items:
-            type: string
-    FormConfigAPI:
-      required:
-      - formType
-      - tags
-      - values
-      type: object
-      properties:
-        formType:
-          type: string
-        label:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        formId:
-          type: string
-          format: uuid
-        creationTime:
-          type: string
-          format: date-time
-    FEDatasetAbility:
-      type: object
-      properties:
-        canUpload:
-          type: boolean
-    FEMeInformation:
-      type: object
-      properties:
-        userName:
-          type: string
-        hideLogoutButton:
-          type: boolean
-        datasetAbilities:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/FEDatasetAbility'
-        groups:
-          type: array
-          items:
-            $ref: '#/components/schemas/IdLabelGroupId'
-    IdLabelGroupId:
-      required:
-      - id
-      - label
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-    ColumnDescriptor:
-      type: object
-      properties:
-        label:
-          type: string
-        userConceptLabel:
-          type: string
-        defaultLabel:
-          type: string
-        type:
-          type: string
-        selectId:
-          type: string
-    ConqueryErrorInfo:
-      type: object
-      properties:
-        message:
-          type: string
-        context:
-          type: object
-          additionalProperties:
-            type: string
-        id:
-          type: string
-          format: uuid
-        code:
-          type: string
-    FullExecutionStatus:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-        label:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        lastUsed:
-          type: string
-          format: date-time
-        owner:
-          type: string
-        ownerName:
-          type: string
-        shared:
-          type: boolean
-        own:
-          type: boolean
-        system:
-          type: boolean
-        id:
-          type: string
-        status:
-          type: string
-          enum:
-          - NEW
-          - RUNNING
-          - CANCELED
-          - FAILED
-          - DONE
-        numberOfResults:
-          type: integer
-          format: int64
-        requiredTime:
-          type: integer
-          format: int64
-        queryType:
-          type: string
-        secondaryId:
-          type: string
-        resultUrl:
-          type: string
-          format: url
-        progress:
-          type: number
-          format: float
-        columnDescriptions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ColumnDescriptor'
-        canExpand:
-          type: boolean
-        query:
-          $ref: '#/components/schemas/QueryDescription'
-        error:
-          $ref: '#/components/schemas/ConqueryErrorInfo'
-        groups:
-          type: array
-          items:
-            type: string
-        availableSecondaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/SecondaryIdDescription'
-        isPristineLabel:
-          type: boolean
-    QueryDescription:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    ManagedExecutionObject:
-      required:
-      - tags
-      - type
-      type: object
-      properties:
-        dataset:
-          $ref: '#/components/schemas/Dataset'
-        queryId:
-          type: string
-          format: uuid
-        label:
-          type: string
-        creationTime:
-          type: string
-          format: date-time
-        owner:
-          $ref: '#/components/schemas/User'
-        tags:
-          type: array
-          items:
-            type: string
-        shared:
-          type: boolean
-        machineGenerated:
-          type: boolean
-        availableSecondaryIds:
-          $ref: '#/components/schemas/FullExecutionStatus'
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    ManagedExecution:
-      required:
-      - tags
-      - type
-      type: object
-      properties:
-        dataset:
-          $ref: '#/components/schemas/Dataset'
-        queryId:
-          type: string
-          format: uuid
-        label:
-          type: string
-        creationTime:
-          type: string
-          format: date-time
-        owner:
-          $ref: '#/components/schemas/User'
-        tags:
-          type: array
-          items:
-            type: string
-        shared:
-          type: boolean
-        machineGenerated:
-          type: boolean
-        availableSecondaryIds:
-          $ref: '#/components/schemas/FullExecutionStatus'
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    ExecutionStatus:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-        label:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        lastUsed:
-          type: string
-          format: date-time
-        owner:
-          type: string
-        ownerName:
-          type: string
-        shared:
-          type: boolean
-        own:
-          type: boolean
-        system:
-          type: boolean
-        id:
-          type: string
-        status:
-          type: string
-          enum:
-          - NEW
-          - RUNNING
-          - CANCELED
-          - FAILED
-          - DONE
-        numberOfResults:
-          type: integer
-          format: int64
-        requiredTime:
-          type: integer
-          format: int64
-        queryType:
-          type: string
-        secondaryId:
-          type: string
-        resultUrl:
-          type: string
-          format: url
-        isPristineLabel:
-          type: boolean
-    MetaDataPatch:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-        label:
-          type: string
-        groups:
           type: array
           items:
             type: string

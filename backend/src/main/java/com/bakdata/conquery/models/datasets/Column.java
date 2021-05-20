@@ -36,7 +36,7 @@ public class Column extends Labeled<ColumnId> implements NamespacedIdentifiable<
 	@NotNull
 	private MajorTypeId type;
 
-	@Schema(hidden = true)
+
 	@InternalOnly
 	private int position = UNKNOWN_POSITION;
 	/**
@@ -49,7 +49,6 @@ public class Column extends Labeled<ColumnId> implements NamespacedIdentifiable<
 	 * table
 	 */
 	@NsIdRef
-	@Schema(implementation = Id.class)
 	private SecondaryIdDescription secondaryId;
 
 	@Override
