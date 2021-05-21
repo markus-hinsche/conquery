@@ -16,6 +16,7 @@ import com.bakdata.conquery.models.identifiable.ids.specific.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.dropwizard.validation.ValidationMethod;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Table extends Labeled<TableId>  implements NamespacedIdentifiable<TableId> {
 
 	// TODO: 10.01.2020 fk: register imports here?
-
+	@Schema(required = false)
 	@NsIdRef
 	@NonNull @Nullable// may be null at load time, but cannot be set to null
 	private Dataset dataset;

@@ -31,7 +31,7 @@ public class Column extends Labeled<ColumnId> implements NamespacedIdentifiable<
 	@JsonBackReference
 	@NotNull
 	@ToString.Exclude
-	@Schema(hidden = true)
+	@Schema(required = false)
 	private Table table;
 	@NotNull
 	private MajorTypeId type;

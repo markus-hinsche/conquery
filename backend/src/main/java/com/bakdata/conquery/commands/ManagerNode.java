@@ -134,32 +134,55 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.description("Api to use Conquery."))
 									  .addTagsItem(new Tag().name("api"));
 
-		ModelConverters.getInstance().addConverter(new ModelConverter() {
-			@Override
-			public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
-				if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations()).noneMatch(PathParam.class::isInstance)) {
-					return chain.next().resolve(type, context, chain);
-				}
+		// We create the schema for Id Manually as annotaions always coerce it to object which makes apis terrible
+		final Schema<Id<? extends Identifiable<?>>> idSchema = new Schema<>();
 
-				Class<? extends Identifiable<?>> clazz = null;
+		idSchema.setName("Id");
+		idSchema.setType("string");
+		idSchema.setFormat("[a-z0-9](.[a-z0-9]+)*");
 
-				if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
-					clazz = (Class<? extends Identifiable<?>>) type.getType();
-				}
+		ModelConverters.getInstance().addConverter((type, context, chain) -> {
+			Class<? extends Id<?>> clazz = null;
 
-				if (type.getType() instanceof ParameterizedType
-					&& Identifiable.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
-					clazz = (Class<? extends Identifiable<?>>) ((ParameterizedType) type.getType()).getRawType();
-				}
-
-				if (clazz == null) {
-					return chain.next().resolve(type, context, chain);
-				}
-
-				// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
-				// Maybe I need to register them earlier via CPS-scan results and create the Schemas manually?
-				return chain.next().resolve(type.resolveAsRef(true).type(Id.class),context,chain);
+			if (type.getType() instanceof Class && Id.class.isAssignableFrom((Class<?>) type.getType())) {
+				clazz = (Class<? extends Id<?>>) type.getType();
 			}
+
+			if (type.getType() instanceof ParameterizedType
+				&& Id.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
+				clazz = (Class<? extends Id<?>>) ((ParameterizedType) type.getType()).getRawType();
+			}
+
+			if (Id.class.equals(clazz)) {
+				context.defineModel("Id",idSchema,type, "Id");
+			}
+
+			return chain.next().resolve(type,context,chain);
+		});
+
+		ModelConverters.getInstance().addConverter((type, context, chain) -> {
+			if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations()).noneMatch(PathParam.class::isInstance)) {
+				return chain.next().resolve(type, context, chain);
+			}
+
+			Class<? extends Identifiable<?>> clazz = null;
+
+			if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
+				clazz = (Class<? extends Identifiable<?>>) type.getType();
+			}
+
+			if (type.getType() instanceof ParameterizedType
+				&& Identifiable.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
+				clazz = (Class<? extends Identifiable<?>>) ((ParameterizedType) type.getType()).getRawType();
+			}
+
+			if (clazz == null) {
+				return chain.next().resolve(type, context, chain);
+			}
+
+			// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
+			// Maybe I need to register them earlier via CPS-scan results and create the Schemas manually?S
+			return chain.next().resolve(type.resolveAsRef(true).type(Id.class),context,chain);
 		});
 
 

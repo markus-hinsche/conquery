@@ -16,12 +16,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: concept
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/ConceptObject'
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -38,7 +38,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -62,7 +62,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           application/json:
@@ -87,7 +87,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: file
           in: query
           schema:
@@ -109,7 +109,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           application/json:
@@ -134,7 +134,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -158,7 +158,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           application/json:
@@ -183,7 +183,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -200,7 +200,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: secondaryId
           in: path
           required: true
@@ -222,7 +222,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           '*/*':
@@ -247,7 +247,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           application/json:
@@ -277,7 +277,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
       requestBody:
         content:
           application/json:
@@ -305,12 +305,12 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/Id'
             application/x-jackson-smile:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/Id'
     post:
       tags:
         - admin
@@ -341,17 +341,17 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Table'
+            $ref: '#/components/schemas/Id'
         - name: importId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/Import'
       responses:
         default:
           description: default response
@@ -368,12 +368,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Table'
+            $ref: '#/components/schemas/Id'
       responses:
         default:
           description: default response
@@ -393,12 +393,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Dataset'
+            $ref: '#/components/schemas/Id'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Table'
+            $ref: '#/components/schemas/Id'
         - name: force
           in: query
           schema:
@@ -498,15 +498,10 @@ paths:
             '*/*': {}
 components:
   schemas:
-    Dataset:
-      required:
-        - label
-      type: object
-      properties:
-        name:
-          type: string
-        label:
-          type: string
+    Id:
+      pattern: '[a-z0-9](\.[a-z0-9]+)*'
+      type: string
+      format: string
     ConceptObject:
       required:
         - label
@@ -530,12 +525,12 @@ components:
           items:
             type: object
         dataset:
-          $ref: '#/components/schemas/Dataset'
-        selects:
+          $ref: '#/components/schemas/Id'
+        defaultSelects:
           type: array
           items:
             $ref: '#/components/schemas/Select'
-        defaultSelects:
+        selects:
           type: array
           items:
             $ref: '#/components/schemas/Select'
@@ -587,7 +582,7 @@ components:
         label:
           type: string
         dataset:
-          $ref: '#/components/schemas/Dataset'
+          $ref: '#/components/schemas/Id'
         description:
           type: string
     Column:
@@ -620,7 +615,7 @@ components:
         sharedDictionary:
           type: string
         secondaryId:
-          $ref: '#/components/schemas/SecondaryIdDescription'
+          $ref: '#/components/schemas/Id'
     Table:
       required:
         - columns
@@ -632,7 +627,7 @@ components:
         label:
           type: string
         dataset:
-          $ref: '#/components/schemas/Dataset'
+          $ref: '#/components/schemas/Id'
         columns:
           type: array
           items:
@@ -648,7 +643,7 @@ components:
         label:
           type: string
         dataset:
-          $ref: '#/components/schemas/Dataset'
+          $ref: '#/components/schemas/Id'
         description:
           type: string
         children:
@@ -666,10 +661,63 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/KeyValue'
-    Id:
-      pattern: '[a-z0-9](\.[a-z0-9]+)*'
+    ColumnStore:
+      required:
+        - type
       type: object
-      format: string
+      properties:
+        null:
+          type: integer
+          format: int32
+          writeOnly: true
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    Import:
+      required:
+        - columns
+        - dictionaries
+        - table
+      type: object
+      properties:
+        name:
+          type: string
+        table:
+          $ref: '#/components/schemas/Id'
+        numberOfEntities:
+          type: integer
+          format: int64
+        numberOfEntries:
+          type: integer
+          format: int64
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportColumn'
+        dictionaries:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    ImportColumn:
+      required:
+        - parent
+      type: object
+      properties:
+        name:
+          type: string
+        parent:
+          $ref: '#/components/schemas/Import'
+        typeDescription:
+          $ref: '#/components/schemas/ColumnStore'
+        lines:
+          type: integer
+          format: int64
+        memorySizeBytes:
+          minimum: 0
+          type: integer
+          format: int64
     ConqueryPermission:
       required:
         - type
@@ -683,12 +731,12 @@ components:
           type: array
           items:
             type: string
-        abilities:
+        instances:
           uniqueItems: true
           type: array
           items:
             type: string
-        instances:
+        abilities:
           uniqueItems: true
           type: array
           items:
