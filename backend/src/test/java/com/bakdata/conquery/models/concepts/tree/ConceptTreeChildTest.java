@@ -1,10 +1,7 @@
 package com.bakdata.conquery.models.concepts.tree;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 
-import com.bakdata.conquery.models.concepts.conditions.PrefixCondition;
 import com.bakdata.conquery.models.concepts.conditions.PrefixRangeCondition;
 import com.bakdata.conquery.models.datasets.Dataset;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +41,7 @@ class ConceptTreeChildTest {
 
 		parent.setChildren(List.of(child1, child2));
 
-		parent.getPrefixTree(trie);
+		assert parent.isValidPrefixTree(trie);
 
 
 		log.info("{}", trie);

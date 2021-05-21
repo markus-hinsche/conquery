@@ -23,7 +23,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
 @Getter
@@ -131,17 +130,18 @@ public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> impleme
 	}
 
 	@JsonIgnore
-	public Trie<String, ConceptTreeNode<?>> getPrefixTree(PatriciaTrie<ConceptTreeNode<?>> trie) {
+	public boolean isValidPrefixTree(PatriciaTrie<ConceptTreeNode<?>> trie) {
+
+		boolean valid = true;
 
 		if (children != null) {
-			children.forEach(child -> child.getPrefixTree(trie));
+			valid = children.stream().allMatch(child -> child.isValidPrefixTree(trie));
 		}
-
 
 		if (condition instanceof PrefixRangeCondition) {
 
-			validateAreDescendants(trie.headMap(((PrefixRangeCondition) condition).getMin()).values());
-			validateAreDescendants(trie.tailMap(((PrefixRangeCondition) condition).getMax()).values());
+			valid &= validateAreDescendants(trie.headMap(((PrefixRangeCondition) condition).getMin()).values());
+			valid &= validateAreDescendants(trie.tailMap(((PrefixRangeCondition) condition).getMax()).values());
 
 			trie.put(((PrefixRangeCondition) condition).getMin(), this);
 			trie.put(((PrefixRangeCondition) condition).getMax(), this);
@@ -149,23 +149,28 @@ public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> impleme
 
 		if (condition instanceof PrefixCondition) {
 			for (String prefix : ((PrefixCondition) condition).getPrefixes()) {
-				validateAreDescendants(trie.prefixMap(prefix).values());
+				valid &= validateAreDescendants(trie.prefixMap(prefix).values());
 
 				trie.put(prefix, this);
 			}
 		}
 
 
-		return trie;
+		return valid;
 	}
 
-	private void validateAreDescendants(Collection<ConceptTreeNode<?>> values) {
+	private boolean validateAreDescendants(Collection<ConceptTreeNode<?>> values) {
+		boolean valid = true;
+
 		for (ConceptTreeNode<?> node : values) {
 			if (!isDescendant(node)) {
 				continue;
 			}
 
-			throw new TreeValidationException(this, node);
+			log.error("{} not ancestor of {}", this, node);
+			valid = false;
 		}
+
+		return valid;
 	}
 }
