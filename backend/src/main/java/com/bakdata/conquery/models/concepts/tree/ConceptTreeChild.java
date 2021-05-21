@@ -124,6 +124,10 @@ public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> impleme
 		private final ConceptTreeNode<?> parent;
 		private final ConceptTreeNode<?> illegalChild;
 
+		@Override
+		public String getMessage() {
+			return illegalChild.toString() + " is not descendant of " + parent.toString();
+		}
 	}
 
 	@JsonIgnore
