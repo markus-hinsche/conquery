@@ -1,6 +1,5 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,8 +40,4 @@ public class ColumnEqualCondition implements ConceptTreeCondition {
 		return values.contains(checkedValue.toString());
 	}
 
-	@Override
-	public Collection<String> getPrefixTree() {
-		return values;
-	}
 }

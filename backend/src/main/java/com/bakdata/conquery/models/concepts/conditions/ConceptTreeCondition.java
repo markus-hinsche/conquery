@@ -21,6 +21,4 @@ public interface ConceptTreeCondition {
 	
 	public boolean matches(String value, CalculatedValue<Map<String, Object>> rowMap) throws ConceptConfigurationException;
 
-	@JsonIgnore
-	Collection<String> getPrefixTree();
 }

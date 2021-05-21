@@ -1,9 +1,7 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -32,11 +30,6 @@ public class AndCondition implements ConceptTreeCondition {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public Collection<String> getPrefixTree() {
-		return conditions.stream().map(ConceptTreeCondition::getPrefixTree).flatMap(Collection::stream).collect(Collectors.toSet());
 	}
 
 

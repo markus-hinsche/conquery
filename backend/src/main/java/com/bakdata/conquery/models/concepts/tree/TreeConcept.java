@@ -18,6 +18,7 @@ import com.bakdata.conquery.models.concepts.Concept;
 import com.bakdata.conquery.models.concepts.ConceptElement;
 import com.bakdata.conquery.models.concepts.SelectHolder;
 import com.bakdata.conquery.models.concepts.conditions.PrefixCondition;
+import com.bakdata.conquery.models.concepts.conditions.PrefixRangeCondition;
 import com.bakdata.conquery.models.concepts.select.concept.UniversalSelect;
 import com.bakdata.conquery.models.datasets.Import;
 import com.bakdata.conquery.models.events.stores.root.StringStore;
@@ -32,6 +33,7 @@ import com.bakdata.conquery.util.CalculatedValue;
 import com.bakdata.conquery.util.dict.SuccinctTrie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.dropwizard.validation.ValidationMethod;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -222,15 +224,23 @@ public class TreeConcept extends Concept<ConceptTreeConnector> implements Concep
 	}
 
 	@JsonIgnore
+	@ValidationMethod(message = "Children are overlapping.")
 	public boolean isValidTree() {
-		final IdMap<ConceptTreeChildId, ConceptTreeChild> children = getAllChildren();
 
-		Trie<String, ConceptElement<?>> prefix = new PatriciaTrie<>();
+		getPrefixTree(new PatriciaTrie<>());
 
 		// DFS: go to leafs, adding all prefixes. After children check if prefix.prefixMap only returns my children, then validate they are not overlapped.
 
+		return true;
+	}
 
+	@JsonIgnore
+	public Trie<String, ConceptTreeNode<?>> getPrefixTree(PatriciaTrie<ConceptTreeNode<?>> trie) {
 
-		return false;
+		if (children != null) {
+			children.forEach(child -> child.getPrefixTree(trie));
+		}
+
+		return trie;
 	}
 }

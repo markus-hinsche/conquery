@@ -1,6 +1,5 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -24,11 +23,6 @@ public class NotCondition implements ConceptTreeCondition {
 	@Override
 	public boolean matches(String value, CalculatedValue<Map<String, Object>> rowMap) throws ConceptConfigurationException {
 		return !condition.matches(value, rowMap);
-	}
-
-	@Override
-	public Collection<String> getPrefixTree() {
-		return condition.getPrefixTree();
 	}
 
 	@Override

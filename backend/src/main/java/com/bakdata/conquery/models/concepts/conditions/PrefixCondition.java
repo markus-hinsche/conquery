@@ -1,15 +1,14 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
 
 import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.util.CalculatedValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -18,10 +17,11 @@ import lombok.ToString;
  */
 @CPSType(id="PREFIX_LIST", base= ConceptTreeCondition.class)
 @ToString
+@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
 public class PrefixCondition implements ConceptTreeCondition {
 
-	@Setter @Getter @NotEmpty
-	private String[] prefixes;
+	@Getter @NotEmpty
+	private final String[] prefixes;
 
 	@Override
 	public boolean matches(String value, CalculatedValue<Map<String, Object>> rowMap) {
@@ -31,11 +31,6 @@ public class PrefixCondition implements ConceptTreeCondition {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public Collection<String> getPrefixTree() {
-		return new HashSet<>(Arrays.asList(prefixes));
 	}
 
 

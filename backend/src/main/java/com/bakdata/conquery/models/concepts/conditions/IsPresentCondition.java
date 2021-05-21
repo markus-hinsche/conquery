@@ -1,7 +1,5 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import com.bakdata.conquery.io.cps.CPSType;
@@ -25,8 +23,4 @@ public class IsPresentCondition implements ConceptTreeCondition {
 		return rowMap.getValue().containsKey(column);
 	}
 
-	@Override
-	public Collection<String> getPrefixTree() {
-		return Collections.emptySet();
-	}
 }

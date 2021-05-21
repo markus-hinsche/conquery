@@ -1,34 +1,41 @@
 package com.bakdata.conquery.models.concepts.tree;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 
 import com.bakdata.conquery.models.concepts.ConceptElement;
 import com.bakdata.conquery.models.concepts.conditions.ConceptTreeCondition;
+import com.bakdata.conquery.models.concepts.conditions.PrefixCondition;
+import com.bakdata.conquery.models.concepts.conditions.PrefixRangeCondition;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.exceptions.ConceptConfigurationException;
 import com.bakdata.conquery.models.identifiable.ids.specific.ConceptTreeChildId;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.TrieUtils;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
 @Getter
 @Setter
+@Slf4j
 public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> implements ConceptTreeNode<ConceptTreeChildId> {
 
 	@JsonIgnore
 	private transient int[] prefix;
 
-	@JsonManagedReference @Valid
+	@JsonManagedReference
+	@Valid
 	private List<ConceptTreeChild> children = Collections.emptyList();
 
 	@JsonIgnore
@@ -100,13 +107,61 @@ public class ConceptTreeChild extends ConceptElement<ConceptTreeChildId> impleme
 		return getConcept().getDataset();
 	}
 
-	@JsonIgnore
-	public Trie<String, String> getPrefixTree() {
-		if(condition == null){
-			return new PatriciaTrie<>();
+	public boolean isDescendant(ConceptTreeNode<?> other) {
+		if (children == null) {
+			return false;
 		}
 
-		//TODO implement this
-		return null;
+		if (children.contains(other)) {
+			return true;
+		}
+
+		return children.stream().anyMatch(child -> isDescendant(other));
+	}
+
+	@Data
+	public static class TreeValidationException extends ValidationException {
+		private final ConceptTreeNode<?> parent;
+		private final ConceptTreeNode<?> illegalChild;
+
+	}
+
+	@JsonIgnore
+	public Trie<String, ConceptTreeNode<?>> getPrefixTree(PatriciaTrie<ConceptTreeNode<?>> trie) {
+
+		if (children != null) {
+			children.forEach(child -> child.getPrefixTree(trie));
+		}
+
+
+		if (condition instanceof PrefixRangeCondition) {
+
+			validateAreDescendants(trie.headMap(((PrefixRangeCondition) condition).getMin()).values());
+			validateAreDescendants(trie.tailMap(((PrefixRangeCondition) condition).getMax()).values());
+
+			trie.put(((PrefixRangeCondition) condition).getMin(), this);
+			trie.put(((PrefixRangeCondition) condition).getMax(), this);
+		}
+
+		if (condition instanceof PrefixCondition) {
+			for (String prefix : ((PrefixCondition) condition).getPrefixes()) {
+				validateAreDescendants(trie.prefixMap(prefix).values());
+
+				trie.put(prefix, this);
+			}
+		}
+
+
+		return trie;
+	}
+
+	private void validateAreDescendants(Collection<ConceptTreeNode<?>> values) {
+		for (ConceptTreeNode<?> node : values) {
+			if (!isDescendant(node)) {
+				continue;
+			}
+
+			throw new TreeValidationException(this, node);
+		}
 	}
 }

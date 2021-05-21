@@ -1,8 +1,6 @@
 package com.bakdata.conquery.models.concepts.conditions;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -69,11 +67,6 @@ public class GroovyCondition implements ConceptTreeCondition {
 		} catch(Exception e) {
 			throw new ConceptConfigurationException(node, "Could not execute condition \""+script+"\" on "+rowMap.getValue(), e);
 		}
-	}
-
-	@Override
-	public Collection<String> getPrefixTree() {
-		return Collections.emptySet();
 	}
 
 
