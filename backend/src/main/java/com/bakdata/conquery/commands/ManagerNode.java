@@ -1,14 +1,15 @@
 package com.bakdata.conquery.commands;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Predicate;
 
 import javax.validation.Validator;
 import javax.ws.rs.PathParam;
@@ -17,6 +18,7 @@ import com.bakdata.conquery.io.cps.CPSTypeIdResolver;
 import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.io.jackson.Jackson;
 import com.bakdata.conquery.io.jackson.MutableInjectableValues;
+import com.bakdata.conquery.io.jackson.serializer.NsIdRef;
 import com.bakdata.conquery.io.jersey.RESTServer;
 import com.bakdata.conquery.io.mina.BinaryJacksonCoder;
 import com.bakdata.conquery.io.mina.CQProtocolCodecFilter;
@@ -52,13 +54,12 @@ import com.bakdata.conquery.tasks.QueryCleanupTask;
 import com.bakdata.conquery.tasks.ReportConsistencyTask;
 import com.bakdata.conquery.util.io.ConqueryMDC;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.SimpleType;
 import com.google.common.base.Throwables;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.swagger.v3.core.converter.AnnotatedType;
-import io.swagger.v3.core.converter.ModelConverter;
-import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -74,6 +75,7 @@ import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Central node of Conquery. Hosts the frontend, api, meta data and takes care of query distribution to
@@ -134,55 +136,33 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.description("Api to use Conquery."))
 									  .addTagsItem(new Tag().name("api"));
 
-		// We create the schema for Id Manually as annotaions always coerce it to object which makes apis terrible
-		final Schema<Id<? extends Identifiable<?>>> idSchema = new Schema<>();
 
-		idSchema.setName("Id");
-		idSchema.setType("string");
-		idSchema.setFormat("[a-z0-9](.[a-z0-9]+)*");
 
 		ModelConverters.getInstance().addConverter((type, context, chain) -> {
-			Class<? extends Id<?>> clazz = null;
 
-			if (type.getType() instanceof Class && Id.class.isAssignableFrom((Class<?>) type.getType())) {
-				clazz = (Class<? extends Id<?>>) type.getType();
-			}
-
-			if (type.getType() instanceof ParameterizedType
-				&& Id.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
-				clazz = (Class<? extends Id<?>>) ((ParameterizedType) type.getType()).getRawType();
-			}
-
-			if (Id.class.equals(clazz)) {
-				context.defineModel("Id",idSchema,type, "Id");
-			}
-
-			return chain.next().resolve(type,context,chain);
-		});
-
-		ModelConverters.getInstance().addConverter((type, context, chain) -> {
-			if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations()).noneMatch(PathParam.class::isInstance)) {
+			// All PathParams are treated as Id, all NsIdRef are treated as Id
+			if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations())
+														  .noneMatch(((Predicate<Annotation>) PathParam.class::isInstance).or(NsIdRef.class::isInstance))) {
 				return chain.next().resolve(type, context, chain);
 			}
+			//TODO IdRef-Collection is not handled yet
 
-			Class<? extends Identifiable<?>> clazz = null;
-
-			if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
-				clazz = (Class<? extends Identifiable<?>>) type.getType();
-			}
-
-			if (type.getType() instanceof ParameterizedType
-				&& Identifiable.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
-				clazz = (Class<? extends Identifiable<?>>) ((ParameterizedType) type.getType()).getRawType();
-			}
+			Class<? extends Identifiable<?>> clazz = extractIdentifableClass(type);
 
 			if (clazz == null) {
 				return chain.next().resolve(type, context, chain);
 			}
 
+			// We create the schema for Ids manually as annotations always coerce them to object which makes apis terrible
+
+			final Class<Id<?>> idClass = Id.findIdClass(clazz);
+			final Schema<Id<? extends Identifiable<?>>> idSchema = createIdSchema(idClass);
+
+			context.defineModel(idSchema.getName(), idSchema);
+
 			// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
 			// Maybe I need to register them earlier via CPS-scan results and create the Schemas manually?S
-			return chain.next().resolve(type.resolveAsRef(true).type(Id.class),context,chain);
+			return new Schema().$ref(idSchema.getName());
 		});
 
 
@@ -272,6 +252,33 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		ShutdownTask shutdown = new ShutdownTask();
 		environment.admin().addTask(shutdown);
 		environment.lifecycle().addServerLifecycleListener(shutdown);
+	}
+
+	private Class<? extends Identifiable<?>> extractIdentifableClass(AnnotatedType type) {
+		if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
+			return (Class<? extends Identifiable<?>>) type.getType();
+		}
+
+		if (type.getType() instanceof SimpleType && ((SimpleType) type.getType()).isTypeOrSubTypeOf(Identifiable.class)) {
+			return (Class<? extends Identifiable<?>>) ((SimpleType) type.getType()).getRawClass();
+		}
+
+		if (type.getType() instanceof ParameterizedType
+			&& Identifiable.class.isAssignableFrom(((Class<?>) ((ParameterizedType) type.getType()).getRawType()))) {
+			return (Class<? extends Identifiable<?>>) ((ParameterizedType) type.getType()).getRawType();
+		}
+
+		return null;
+	}
+
+	@NotNull
+	private Schema<Id<? extends Identifiable<?>>> createIdSchema(Class<? extends Id<?>> idClass) {
+		final Schema<Id<? extends Identifiable<?>>> idSchema = new Schema<>();
+
+		idSchema.setName(idClass.getSimpleName());
+		idSchema.setType("string");
+		idSchema.setFormat("[a-z0-9](.[a-z0-9]+)*");
+		return idSchema;
 	}
 
 	private void loadMetaStorage() {

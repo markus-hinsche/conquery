@@ -22,6 +22,5 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonSerialize(using = IdReferenceSerializer.class)
 @JsonDeserialize(using = NsIdReferenceDeserializer.class)
 @Target({ElementType.FIELD, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
-@Schema(implementation = Id.class)
 public @interface NsIdRef {
 }
