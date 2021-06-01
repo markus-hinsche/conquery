@@ -21,7 +21,7 @@ import lombok.NonNull;
 /**
  * API representation of a form query.
  */
-public abstract class Form implements QueryDescription {
+public abstract class Form extends QueryDescription {
 	
 	@JsonIgnore
 	public String getFormType() {
@@ -37,7 +37,7 @@ public abstract class Form implements QueryDescription {
 
 	@Override
 	public void authorize(User user, Dataset submittedDataset, @NonNull ClassToInstanceMap<QueryVisitor> visitors) {
-		QueryDescription.super.authorize(user, submittedDataset, visitors);
+		super.authorize(user, submittedDataset, visitors);
 		// Check if user is allowed to create this form
 		user.authorize(FormScanner.FRONTEND_FORM_CONFIGS.get(getFormType()), Ability.CREATE);
 	}

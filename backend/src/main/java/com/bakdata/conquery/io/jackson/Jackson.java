@@ -55,10 +55,10 @@ public class Jackson {
 			.registerModule(new ParameterNamesModule())
 			.registerModule(new GuavaModule())
 			.registerModule(new AfterburnerModule())
-			.registerModule(new SwaggerModule())
 			.registerModule(ConquerySerializersModule.INSTANCE)
 			.setSerializationInclusion(Include.ALWAYS)
 			.setDefaultPropertyInclusion(Include.ALWAYS)
+
 			//.setAnnotationIntrospector(new RestrictingAnnotationIntrospector())
 			.setInjectableValues(new MutableInjectableValues())
 			.addMixIn(Permission.class, ConqueryPermission.class);

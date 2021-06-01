@@ -9,6 +9,7 @@ import com.bakdata.conquery.models.auth.entities.User;
 import com.bakdata.conquery.models.auth.permissions.Ability;
 import com.bakdata.conquery.models.concepts.Concept;
 import com.bakdata.conquery.models.concepts.ConceptElement;
+import com.bakdata.conquery.models.concepts.tree.ConceptTreeNode;
 import com.bakdata.conquery.models.config.ConqueryConfig;
 import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.execution.ManagedExecution;
@@ -16,6 +17,8 @@ import com.bakdata.conquery.models.forms.managed.ManagedForm;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
 import com.bakdata.conquery.models.query.QueryResolveContext;
 import com.bakdata.conquery.models.query.Visitable;
+import com.bakdata.conquery.models.query.concept.ArrayConceptQuery;
+import com.bakdata.conquery.models.query.concept.SecondaryIdQuery;
 import com.bakdata.conquery.models.query.concept.specific.CQExternal;
 import com.bakdata.conquery.models.query.visitor.QueryVisitor;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
@@ -24,11 +27,12 @@ import com.bakdata.conquery.util.QueryUtils.ExternalIdChecker;
 import com.bakdata.conquery.util.QueryUtils.NamespacedIdentifiableCollector;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.ClassToInstanceMap;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NonNull;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type")
 @CPSBase
-public interface QueryDescription extends Visitable {
+public abstract class QueryDescription implements Visitable {
 
 	/**
 	 * Transforms the submitted query to an {@link ManagedExecution}.
@@ -41,24 +45,24 @@ public interface QueryDescription extends Visitable {
 	 * @param submittedDataset
 	 * @return
 	 */
-	ManagedExecution<?> toManagedExecution(User user, Dataset submittedDataset);
+	public abstract ManagedExecution<?> toManagedExecution(User user, Dataset submittedDataset);
 
 	
-	Set<ManagedExecution> collectRequiredQueries();
+	public abstract Set<ManagedExecution> collectRequiredQueries();
 	
 	/**
 	 * Initializes a submitted description using the provided context.
 	 * All parameters that are set in this phase must be annotated with {@link InternalOnly}.
 	 * @param context Holds information which can be used for the initialize the description of the query to be executed.
 	 */
-	void resolve(QueryResolveContext context);
+	public abstract void resolve(QueryResolveContext context);
 	
 	/**
 	 * Allows the implementation to add visitors that traverse the QueryTree.
 	 * All visitors are concatenated so only a single traverse needs to be done.  
 	 * @param visitors The structure to which new visitors need to be added.
 	 */
-	default void addVisitors(@NonNull ClassToInstanceMap<QueryVisitor> visitors) {
+	public void addVisitors(@NonNull ClassToInstanceMap<QueryVisitor> visitors) {
 		// Register visitors for permission checks
 		visitors.putInstance(NamespacedIdentifiableCollector.class, new NamespacedIdentifiableCollector());
 		visitors.putInstance(QueryUtils.ExternalIdChecker.class, new QueryUtils.ExternalIdChecker());
@@ -67,7 +71,7 @@ public interface QueryDescription extends Visitable {
 	/**
 	 * Check implementation specific permissions. Is called after all visitors have been registered and executed.
 	 */
-	default void authorize(User user, Dataset submittedDataset, @NonNull ClassToInstanceMap<QueryVisitor> visitors) {
+	public void authorize(User user, Dataset submittedDataset, @NonNull ClassToInstanceMap<QueryVisitor> visitors) {
 		NamespacedIdentifiableCollector nsIdCollector = QueryUtils.getVisitor(visitors, NamespacedIdentifiableCollector.class);
 		ExternalIdChecker externalIdChecker = QueryUtils.getVisitor(visitors, QueryUtils.ExternalIdChecker.class);
 		if(nsIdCollector == null) {

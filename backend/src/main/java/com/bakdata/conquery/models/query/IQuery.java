@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-public abstract class IQuery implements QueryDescription {
+public abstract class IQuery extends QueryDescription {
 
 	public abstract QueryPlan createQueryPlan(QueryPlanContext context);
 	

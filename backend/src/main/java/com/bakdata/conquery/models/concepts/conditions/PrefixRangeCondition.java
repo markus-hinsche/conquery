@@ -15,7 +15,7 @@ import lombok.Setter;
  * This condition requires each value to start with a prefix between the two given values
  */
 @CPSType(id="PREFIX_RANGE", base=CTCondition.class)
-public class PrefixRangeCondition implements CTCondition {
+public class PrefixRangeCondition extends CTCondition {
 
 	@Getter @Setter @NotEmpty
 	private String min;

@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,6 +15,8 @@ import java.util.function.Predicate;
 import javax.validation.Validator;
 import javax.ws.rs.PathParam;
 
+import com.bakdata.conquery.io.cps.CPSBase;
+import com.bakdata.conquery.io.cps.CPSType;
 import com.bakdata.conquery.io.cps.CPSTypeIdResolver;
 import com.bakdata.conquery.io.jackson.InternalOnly;
 import com.bakdata.conquery.io.jackson.Jackson;
@@ -39,6 +42,7 @@ import com.bakdata.conquery.models.jobs.ReactingJob;
 import com.bakdata.conquery.models.messages.SlowMessage;
 import com.bakdata.conquery.models.messages.network.MessageToManagerNode;
 import com.bakdata.conquery.models.messages.network.NetworkMessageContext;
+import com.bakdata.conquery.models.query.concept.ConceptQuery;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.IdResolveContext;
 import com.bakdata.conquery.models.worker.Namespace;
@@ -47,12 +51,15 @@ import com.bakdata.conquery.resources.ResourcesProvider;
 import com.bakdata.conquery.resources.admin.AdminServlet;
 import com.bakdata.conquery.resources.admin.ShutdownTask;
 import com.bakdata.conquery.resources.admin.rest.AdminDatasetResource;
+import com.bakdata.conquery.resources.api.MeResource;
 import com.bakdata.conquery.resources.unprotected.AuthServlet;
 import com.bakdata.conquery.tasks.ClearFilterSourceSearch;
 import com.bakdata.conquery.tasks.PermissionCleanupTask;
 import com.bakdata.conquery.tasks.QueryCleanupTask;
 import com.bakdata.conquery.tasks.ReportConsistencyTask;
 import com.bakdata.conquery.util.io.ConqueryMDC;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import com.google.common.base.Throwables;
@@ -60,11 +67,16 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Getter;
@@ -136,34 +148,15 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.description("Api to use Conquery."))
 									  .addTagsItem(new Tag().name("api"));
 
+		ModelConverters.getInstance().addPackageToSkip("com.fasterxml.jackson.databind");
 
+		ModelConverters.getInstance().addConverter(new GenericJsonObjectModelConverter());
 
-		ModelConverters.getInstance().addConverter((type, context, chain) -> {
+		// Adds CPS-subtypes to model
+		ModelConverters.getInstance().addConverter(new CPSSubTypeSchemaResolver());
+		ModelConverters.getInstance().addConverter(new CPSBaseSchemaResolver());
 
-			// All PathParams are treated as Id, all NsIdRef are treated as Id
-			if (type.getCtxAnnotations() == null || Arrays.stream(type.getCtxAnnotations())
-														  .noneMatch(((Predicate<Annotation>) PathParam.class::isInstance).or(NsIdRef.class::isInstance))) {
-				return chain.next().resolve(type, context, chain);
-			}
-			//TODO IdRef-Collection is not handled yet
-
-			Class<? extends Identifiable<?>> clazz = extractIdentifableClass(type);
-
-			if (clazz == null) {
-				return chain.next().resolve(type, context, chain);
-			}
-
-			// We create the schema for Ids manually as annotations always coerce them to object which makes apis terrible
-
-			final Class<Id<?>> idClass = Id.findIdClass(clazz);
-			final Schema<Id<? extends Identifiable<?>>> idSchema = createIdSchema(idClass);
-
-			context.defineModel(idSchema.getName(), idSchema);
-
-			// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
-			// Maybe I need to register them earlier via CPS-scan results and create the Schemas manually?S
-			return new Schema().$ref(idSchema.getName());
-		});
+		ModelConverters.getInstance().addConverter(new IdRefPathParamResolver());
 
 
 		SwaggerConfiguration oasApiConfig = new SwaggerConfiguration()
@@ -171,7 +164,6 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 													.prettyPrint(true)
 													.filterClass(ConquerySpecFilter.class.getCanonicalName())
 													.resourcePackages(Set.of(AdminDatasetResource.class.getPackageName()));
-
 
 		environment.jersey().register(new OpenApiResource().openApiConfiguration(oasApiConfig));
 
@@ -194,10 +186,9 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		RESTServer.configure(config, environment.jersey().getResourceConfig());
 
 
-		this.maintenanceService = environment
-										  .lifecycle()
-										  .scheduledExecutorService("Maintenance Service")
-										  .build();
+		this.maintenanceService = environment.lifecycle()
+											 .scheduledExecutorService("Maintenance Service")
+											 .build();
 
 		environment.lifecycle().manage(this);
 
@@ -254,7 +245,7 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		environment.lifecycle().addServerLifecycleListener(shutdown);
 	}
 
-	private Class<? extends Identifiable<?>> extractIdentifableClass(AnnotatedType type) {
+	private static Class<? extends Identifiable<?>> extractIdentifableClass(AnnotatedType type) {
 		if (type.getType() instanceof Class && Identifiable.class.isAssignableFrom((Class<?>) type.getType())) {
 			return (Class<? extends Identifiable<?>>) type.getType();
 		}
@@ -271,8 +262,25 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		return null;
 	}
 
+	private static <T> Class<T> extractClass(AnnotatedType type) {
+
+		if (type.getType() instanceof Class) {
+			return (Class<T>) type.getType();
+		}
+
+		if (type.getType() instanceof JavaType) {
+			return (Class<T>) ((JavaType) type.getType()).getRawClass();
+		}
+
+		if (type.getType() instanceof ParameterizedType) {
+			return (Class<T>) ((ParameterizedType) type.getType()).getRawType();
+		}
+
+		return null;
+	}
+
 	@NotNull
-	private Schema<Id<? extends Identifiable<?>>> createIdSchema(Class<? extends Id<?>> idClass) {
+	private static Schema<Id<? extends Identifiable<?>>> createIdSchema(Class<? extends Id<?>> idClass) {
 		final Schema<Id<? extends Identifiable<?>>> idSchema = new Schema<>();
 
 		idSchema.setName(idClass.getSimpleName());
@@ -393,6 +401,168 @@ public class ManagerNode extends IoHandlerAdapter implements Managed {
 		}
 		catch (Exception e) {
 			log.error(storage + " could not be closed", e);
+		}
+	}
+
+	private static class IdRefPathParamResolver implements ModelConverter {
+		public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+
+			if(type.isResolveAsRef()){
+				return chain.next().resolve(type,context,chain);
+			}
+
+			//TODO NsIdRef is not working yet
+			if (type.getCtxAnnotations() != null && Arrays.stream(type.getCtxAnnotations())
+														  .anyMatch(InternalOnly.class::isInstance)) {
+				return null;
+			}
+
+			// All PathParams are treated as Id, all NsIdRef are treated as Id
+			if (type.getCtxAnnotations() == null
+				|| Arrays.stream(type.getCtxAnnotations())
+						 .noneMatch(((Predicate<Annotation>) PathParam.class::isInstance).or(NsIdRef.class::isInstance))) {
+				return chain.next().resolve(type, context, chain);
+			}
+			//TODO IdRef-Collection is not handled yet
+
+			Class<? extends Identifiable<?>> clazz = ManagerNode.extractIdentifableClass(type);
+
+			if (clazz == null) {
+				return chain.next().resolve(type, context, chain);
+			}
+
+			// We create the schema for Ids manually as annotations always coerce them to object which makes apis terrible
+
+			final Class<Id<?>> idClass = Id.findIdClass(clazz);
+			final Schema<Id<? extends Identifiable<?>>> idSchema = ManagerNode.createIdSchema(idClass);
+
+			context.defineModel(idSchema.getName(), idSchema);
+
+			// I wanted to also put the concrete Id-Type into the models, but then it starts resolving them as strings
+			return new Schema().$ref(idSchema.getName());
+		}
+	}
+
+	private static class CPSSubTypeSchemaResolver implements ModelConverter {
+		public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+
+			if(type.isResolveAsRef()){
+				return chain.next().resolve(type,context,chain);
+			}
+
+			final Class<?> base = ManagerNode.extractClass(type);
+
+			if (base == null || base.getAnnotation(CPSType.class) == null) {
+				return chain.hasNext() ? chain.next().resolve(type, context, chain) : null;
+			}
+
+			final CPSType cpsType = base.getAnnotation(CPSType.class);
+
+			final JsonTypeInfo typeInfo = cpsType.base().getAnnotation(JsonTypeInfo.class);
+
+			final ModelConverter next = chain.next();
+
+			final Schema<?> resolved = next.resolve(new AnnotatedType(type.getType()).resolveAsRef(false), context, chain);
+
+			if(resolved.getRequired() == null || !resolved.getRequired().contains(typeInfo.property())) {
+				resolved.addRequiredItem(typeInfo.property());
+			}
+
+			final ComposedSchema out = new ComposedSchema();
+
+			out.addAllOfItem(resolved);
+			final Schema baseRefResolved = context.resolve(new AnnotatedType(cpsType.base()).resolveAsRef(true));
+			out.addAllOfItem(baseRefResolved);
+
+			context.defineModel(base.getSimpleName(), out, type, resolved.getName());
+
+			return next.resolve(type, context, chain);
+		}
+
+	}
+
+		private static class CPSBaseSchemaResolver implements ModelConverter {
+		@Override
+		public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+
+			if(type.isResolveAsRef()){
+				return chain.next().resolve(type,context,chain);
+			}
+
+			final Class<?> base = ManagerNode.extractClass(type);
+
+			if (base == null || base.getAnnotation(CPSBase.class) == null) {
+				return chain.next().resolve(type, context, chain);
+			}
+
+			final Set<Class<?>> implementations = CPSTypeIdResolver.listImplementations((Class) base);
+
+			final Discriminator discriminator = new Discriminator();
+
+			final JsonTypeInfo typeInfo = base.getAnnotation(JsonTypeInfo.class);
+
+			if (typeInfo != null) {
+				discriminator.propertyName(typeInfo.property());
+			}
+
+			final ModelConverter next = chain.next();
+
+			// We cannot trust the type to be not a ref so we force it to be one for our evaluation
+			final AnnotatedType concreteType = new AnnotatedType(type.getType()).resolveAsRef(false);
+
+			final Schema<?> resolvedBase = next.resolve(concreteType, context, chain);
+
+			if (resolvedBase == null) {
+				return new Schema();
+			}
+
+			// Already resolved it so, we won't do that again.
+			if(resolvedBase instanceof ComposedSchema){
+				return resolvedBase;
+			}
+
+			final ComposedSchema outSchema = new ComposedSchema();
+			outSchema.properties(resolvedBase.getProperties());
+
+			// force evaluation of all subtypes
+			for (Class<?> clazz : implementations) {
+				final String name = clazz.getSimpleName();
+				final String cpsId = clazz.getAnnotation(CPSType.class).id();
+
+				// Force evaluation of subtype
+				context.resolve(new AnnotatedType(clazz));
+
+				// Add discriminator and parent-child relationship to schema
+				discriminator.mapping(cpsId, name);
+
+				outSchema.addOneOfItem(new Schema().$ref(name));
+			}
+
+			outSchema.discriminator(discriminator);
+
+			context.defineModel(base.getSimpleName(), outSchema, concreteType, resolvedBase.getName());
+
+			return next.resolve(type, context, chain);
+		}
+	}
+
+	private static class GenericJsonObjectModelConverter implements ModelConverter {
+		@Override
+		public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+
+			if (type.getType().getTypeName().contains("ObjectNode")) {
+				return context.resolve(type.type(Object.class));
+			}
+
+			if (type.getType().getTypeName().contains("JsonNode")) {
+				return context.resolve(type.type(Object.class));
+			}
+
+			if (chain.hasNext()) {
+				return chain.next().resolve(type, context, chain);
+			}
+
+			return null;
 		}
 	}
 }

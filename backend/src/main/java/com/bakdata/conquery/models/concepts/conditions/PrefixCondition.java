@@ -15,7 +15,7 @@ import lombok.ToString;
  */
 @CPSType(id="PREFIX_LIST", base=CTCondition.class)
 @ToString
-public class PrefixCondition implements CTCondition {
+public class PrefixCondition extends CTCondition {
 
 	@Setter @Getter @NotEmpty
 	private String[] prefixes;

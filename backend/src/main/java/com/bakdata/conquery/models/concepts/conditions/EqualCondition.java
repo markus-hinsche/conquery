@@ -18,7 +18,7 @@ import lombok.Setter;
  */
 @CPSType(id="EQUAL", base=CTCondition.class)
 @AllArgsConstructor
-public class EqualCondition implements CTCondition {
+public class EqualCondition extends CTCondition {
 
 	@Setter @Getter @NotEmpty
 	private Set<String> values;

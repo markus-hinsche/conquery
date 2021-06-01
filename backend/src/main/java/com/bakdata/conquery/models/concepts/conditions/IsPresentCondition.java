@@ -12,7 +12,7 @@ import lombok.Setter;
  * This condition requires that the selected Column has a value.
  */
 @CPSType(id="PRESENT", base=CTCondition.class)
-public class IsPresentCondition implements CTCondition {
+public class IsPresentCondition extends CTCondition {
 
 	@Getter @Setter
 	@NonNull

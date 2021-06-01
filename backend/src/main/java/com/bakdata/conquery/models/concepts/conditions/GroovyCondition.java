@@ -24,7 +24,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  * A condition that is a groovy script and thus able to represent everything.
  */
 @Slf4j @CPSType(id="GROOVY", base=CTCondition.class)
-public class GroovyCondition implements CTCondition {
+public class GroovyCondition extends CTCondition {
 
 	public static final String[] AUTO_IMPORTS = Stream.of(
 		LocalDate.class,

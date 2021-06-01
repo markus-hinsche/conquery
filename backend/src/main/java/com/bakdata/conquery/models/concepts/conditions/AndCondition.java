@@ -17,7 +17,7 @@ import lombok.Setter;
  * This condition connects multiple conditions with an and.
  */
 @CPSType(id="AND", base=CTCondition.class)
-public class AndCondition implements CTCondition {
+public class AndCondition extends CTCondition {
 
 	@Setter @Getter @Valid @NotEmpty
 	private List<CTCondition> conditions;

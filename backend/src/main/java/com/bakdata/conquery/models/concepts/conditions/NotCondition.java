@@ -16,7 +16,7 @@ import lombok.Setter;
  * This condition matches if its child does not.
  */
 @CPSType(id="NOT", base=CTCondition.class)
-public class NotCondition implements CTCondition {
+public class NotCondition extends CTCondition {
 
 	@Setter @Getter @Valid
 	private CTCondition condition;

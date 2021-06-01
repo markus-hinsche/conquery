@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @CPSType(id="COLUMN_EQUAL", base=CTCondition.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ColumnEqualCondition implements CTCondition {
+public class ColumnEqualCondition extends CTCondition {
 
 	@Setter @Getter @NotEmpty
 	private Set<String> values;

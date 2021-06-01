@@ -7,6 +7,27 @@ tags:
   - name: api
 paths:
   /datasets/{dataset}/concepts/{concept}:
+    get:
+      tags:
+        - api
+      operationId: getNode
+      parameters:
+        - name: concept
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConceptId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+            application/x-jackson-smile: {}
     delete:
       tags:
         - admin
@@ -16,12 +37,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: concept
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/ConceptId'
       responses:
         default:
           description: default response
@@ -31,28 +52,24 @@ paths:
   /datasets/{dataset}/concepts:
     get:
       tags:
-        - admin
-      operationId: listConcepts
+        - api
+      operationId: getRoot
       parameters:
         - name: dataset
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       responses:
         default:
           description: default response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
+                $ref: '#/components/schemas/FERoot'
             application/x-jackson-smile:
               schema:
-                type: array
-                items:
-                  type: string
+                $ref: '#/components/schemas/FERoot'
     post:
       tags:
         - admin
@@ -62,15 +79,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConceptObject'
-          application/x-jackson-smile:
-            schema:
-              $ref: '#/components/schemas/ConceptObject'
+            $ref: '#/components/schemas/DatasetId'
       responses:
         default:
           description: default response
@@ -87,7 +96,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: file
           in: query
           schema:
@@ -109,7 +118,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       requestBody:
         content:
           application/json:
@@ -134,7 +143,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       responses:
         default:
           description: default response
@@ -158,7 +167,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       requestBody:
         content:
           application/json:
@@ -183,7 +192,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       responses:
         default:
           description: default response
@@ -200,12 +209,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: secondaryId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/SecondaryIdDescription'
+            $ref: '#/components/schemas/SecondaryIdDescriptionId'
       responses:
         default:
           description: default response
@@ -222,7 +231,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       requestBody:
         content:
           '*/*':
@@ -247,7 +256,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       requestBody:
         content:
           application/json:
@@ -277,7 +286,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
       requestBody:
         content:
           application/json:
@@ -295,8 +304,8 @@ paths:
   /datasets:
     get:
       tags:
-        - admin
-      operationId: listDatasets
+        - api
+      operationId: getDatasets
       responses:
         default:
           description: default response
@@ -305,12 +314,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Id'
+                  $ref: '#/components/schemas/IdLabelDatasetId'
             application/x-jackson-smile:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Id'
+                  $ref: '#/components/schemas/IdLabelDatasetId'
     post:
       tags:
         - admin
@@ -341,17 +350,17 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/TableId'
         - name: importId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Import'
+            $ref: '#/components/schemas/ImportId'
       responses:
         default:
           description: default response
@@ -368,12 +377,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/TableId'
       responses:
         default:
           description: default response
@@ -393,12 +402,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/DatasetId'
         - name: table
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/TableId'
         - name: force
           in: query
           schema:
@@ -420,7 +429,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleId'
       responses:
         default:
           description: default response
@@ -490,19 +499,764 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/UserId'
       responses:
         default:
           description: default response
           content:
             '*/*': {}
+  /datasets/{dataset}/concepts/{concept}/resolve:
+    post:
+      tags:
+        - api
+      operationId: resolve
+      parameters:
+        - name: concept
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConceptId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptCodeList'
+          application/x-jackson-smile:
+            schema:
+              $ref: '#/components/schemas/ConceptCodeList'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolvedConceptsResult'
+            application/x-jackson-smile:
+              schema:
+                $ref: '#/components/schemas/ResolvedConceptsResult'
+  /config/frontend:
+    get:
+      tags:
+        - api
+      operationId: getFrontendConfig
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FrontendConfig'
+  /datasets/{dataset}/concepts/{concept}/tables/{table}/filters/{filter}/autocomplete:
+    post:
+      tags:
+        - api
+      operationId: autocompleteTextFilter
+      parameters:
+        - name: filter
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilterId'
+        - name: table
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/TableId'
+        - name: concept
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConceptId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: page
+          in: query
+          schema:
+            type: object
+            properties:
+              empty:
+                type: boolean
+              present:
+                type: boolean
+              asInt:
+                type: integer
+                format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: object
+            properties:
+              empty:
+                type: boolean
+              present:
+                type: boolean
+              asInt:
+                type: integer
+                format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StringContainer'
+          application/x-jackson-smile:
+            schema:
+              $ref: '#/components/schemas/StringContainer'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FEValue'
+            application/x-jackson-smile:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FEValue'
+  /datasets/{dataset}/concepts/{concept}/tables/{table}/filters/{filter}/resolve:
+    post:
+      tags:
+        - api
+      operationId: resolveFilterValues
+      parameters:
+        - name: filter
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilterId'
+        - name: table
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/TableId'
+        - name: concept
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConceptId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterValues'
+          application/x-jackson-smile:
+            schema:
+              $ref: '#/components/schemas/FilterValues'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolvedConceptsResult'
+            application/x-jackson-smile:
+              schema:
+                $ref: '#/components/schemas/ResolvedConceptsResult'
+  /datasets/{dataset}/form-configs/{form-config}:
+    get:
+      tags:
+        - api
+      operationId: getConfig
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: form-config
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FormConfigId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormConfigFullRepresentation'
+    delete:
+      tags:
+        - api
+      operationId: deleteConfig
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: form-config
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FormConfigId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - api
+      operationId: patchConfig
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: form-config
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FormConfigId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormConfigFullRepresentation'
+  /datasets/{dataset}/form-configs:
+    get:
+      tags:
+        - api
+      operationId: getConfigByUserAndType
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: formType
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  parallel:
+                    type: boolean
+    post:
+      tags:
+        - api
+      operationId: postConfig
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /datasets/{dataset}/form-queries:
+    get:
+      tags:
+        - api
+      operationId: getFormFEConfigs
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                type: object
+  /me:
+    get:
+      tags:
+        - api
+      operationId: getUserInformation
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FEMeInformation'
+  /datasets/{dataset}/queries/{query}:
+    get:
+      tags:
+        - api
+      operationId: getStatus
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FullExecutionStatus'
+    delete:
+      tags:
+        - api
+      operationId: cancel
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FullExecutionStatus'
+  /datasets/{dataset}/queries:
+    post:
+      tags:
+        - api
+      operationId: postQuery
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8: {}
+  /datasets/{dataset}/result/{query}.arrf:
+    get:
+      tags:
+        - api
+      operationId: get
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+        - name: pretty
+          in: query
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/vnd.apache.arrow.file: {}
+  /datasets/{dataset}/result/{query}.arrs:
+    get:
+      tags:
+        - api
+      operationId: get_1
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+        - name: pretty
+          in: query
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/vnd.apache.arrow.stream: {}
+  /datasets/{dataset}/result/{query}.csv:
+    get:
+      tags:
+        - api
+      operationId: getAsCsv
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+        - name: user-agent
+          in: header
+          schema:
+            type: string
+        - name: charset
+          in: query
+          schema:
+            type: string
+        - name: pretty
+          in: query
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            text/csv; charset=utf-8: {}
+  /datasets/{dataset}/result/{query}.xlsx:
+    get:
+      tags:
+        - api
+      operationId: get_2
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pretty
+          in: query
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/vnd.apache.arrow.file: {}
+  /datasets/{dataset}/stored-queries/{query}:
+    get:
+      tags:
+        - api
+      operationId: getSingleQueryInfo
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FullExecutionStatus'
+    delete:
+      tags:
+        - api
+      operationId: deleteQuery
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8: {}
+    patch:
+      tags:
+        - api
+      operationId: patchQuery
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/MetaDataPatch'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FullExecutionStatus'
+  /datasets/{dataset}/stored-queries:
+    get:
+      tags:
+        - api
+      operationId: getAllQueries
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionStatus'
+  /datasets/{dataset}/stored-queries/{query}/reexecute:
+    post:
+      tags:
+        - api
+      operationId: reexecute
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetId'
+        - name: query
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ManagedExecutionId'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FullExecutionStatus'
 components:
   schemas:
-    Id:
-      pattern: '[a-z0-9](\.[a-z0-9]+)*'
+    DatasetId:
       type: string
-      format: string
-    ConceptObject:
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    ConceptId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    AndCondition:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    BiMapStringString:
+      type: object
+      properties:
+        empty:
+          type: boolean
+      additionalProperties:
+        type: string
+    BigMultiSelectFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        labels:
+          type: object
+          properties:
+            empty:
+              type: boolean
+          additionalProperties:
+            type: string
+        values:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        template:
+          $ref: '#/components/schemas/FilterTemplate'
+        searchType:
+          type: string
+          enum:
+            - PREFIX
+            - CONTAINS
+            - EXACT
+        type:
+          type: string
+    CTCondition:
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          OR: OrCondition
+          AND: AndCondition
+          EQUAL: EqualCondition
+          PREFIX_LIST: PrefixCondition
+          COLUMN_EQUAL: ColumnEqualCondition
+          PREFIX_RANGE: PrefixRangeCondition
+          GROOVY: GroovyCondition
+          PRESENT: IsPresentCondition
+          NOT: NotCondition
+      oneOf:
+        - $ref: '#/components/schemas/OrCondition'
+        - $ref: '#/components/schemas/AndCondition'
+        - $ref: '#/components/schemas/EqualCondition'
+        - $ref: '#/components/schemas/PrefixCondition'
+        - $ref: '#/components/schemas/ColumnEqualCondition'
+        - $ref: '#/components/schemas/PrefixRangeCondition'
+        - $ref: '#/components/schemas/GroovyCondition'
+        - $ref: '#/components/schemas/IsPresentCondition'
+        - $ref: '#/components/schemas/NotCondition'
+    CategoryMaxSumFilter:
       required:
         - label
         - type
@@ -512,40 +1266,23 @@ components:
           type: string
         label:
           type: string
+        unit:
+          type: string
         description:
           type: string
-        additionalInfos:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        hidden:
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
           type: boolean
-        connectors:
-          type: array
-          items:
-            type: object
-        dataset:
-          $ref: '#/components/schemas/Id'
-        defaultSelects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Select'
-        selects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Select'
+        category:
+          $ref: '#/components/schemas/ColumnId'
+        value:
+          $ref: '#/components/schemas/ColumnId'
         type:
           type: string
-      discriminator:
-        propertyName: type
-    KeyValue:
-      type: object
-      properties:
-        key:
-          type: string
-        value:
-          type: string
-    Select:
+    CategoryMaxSumSelect:
       required:
         - label
         - type
@@ -559,31 +1296,13 @@ components:
           $ref: '#/components/schemas/SelectHolderObject'
         description:
           type: string
+        category:
+          $ref: '#/components/schemas/ColumnId'
+        value:
+          $ref: '#/components/schemas/ColumnId'
         default:
           type: boolean
         type:
-          type: string
-      discriminator:
-        propertyName: type
-    SelectHolderObject:
-      type: object
-      properties:
-        selects:
-          type: array
-          items:
-            type: object
-    SecondaryIdDescription:
-      required:
-        - label
-      type: object
-      properties:
-        name:
-          type: string
-        label:
-          type: string
-        dataset:
-          $ref: '#/components/schemas/Id'
-        description:
           type: string
     Column:
       required:
@@ -615,7 +1334,1255 @@ components:
         sharedDictionary:
           type: string
         secondaryId:
-          $ref: '#/components/schemas/Id'
+          $ref: '#/components/schemas/SecondaryIdDescriptionId'
+    ColumnEqualCondition:
+      required:
+        - column
+        - type
+        - values
+      type: object
+      properties:
+        values:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        column:
+          type: string
+        type:
+          type: string
+    ColumnId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    Concept:
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        hidden:
+          type: boolean
+        connectors:
+          type: array
+          items:
+            type: object
+        dataset:
+          $ref: '#/components/schemas/DatasetId'
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          TREE: TreeConcept
+          PERIOD_CONCEPT: PeriodTreeConcept
+      oneOf:
+        - $ref: '#/components/schemas/TreeConcept'
+        - $ref: '#/components/schemas/PeriodTreeConcept'
+    ConceptObject:
+      required:
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        hidden:
+          type: boolean
+        connectors:
+          type: array
+          items:
+            type: object
+        dataset:
+          $ref: '#/components/schemas/DatasetId'
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    ConceptTreeChild:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        parent:
+          $ref: '#/components/schemas/ConceptTreeNodeObject'
+    ConceptTreeConnector:
+      required:
+        - label
+        - validityDates
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        validityDates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidityDate'
+        table:
+          $ref: '#/components/schemas/TableId'
+        column:
+          $ref: '#/components/schemas/ColumnId'
+    ConceptTreeNode:
+      type: object
+      properties:
+        parent:
+          $ref: '#/components/schemas/ConceptTreeNode'
+        depth:
+          type: integer
+          format: int32
+        localId:
+          type: integer
+          format: int32
+        childIndex:
+          $ref: '#/components/schemas/TreeChildPrefixIndex'
+        matchingStats:
+          $ref: '#/components/schemas/MatchingStats'
+        name:
+          type: string
+    ConceptTreeNodeObject:
+      type: object
+      properties:
+        parent:
+          $ref: '#/components/schemas/ConceptTreeNode'
+        depth:
+          type: integer
+          format: int32
+        localId:
+          type: integer
+          format: int32
+        childIndex:
+          $ref: '#/components/schemas/TreeChildPrefixIndex'
+        matchingStats:
+          $ref: '#/components/schemas/MatchingStats'
+        name:
+          type: string
+    Connector:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        table:
+          $ref: '#/components/schemas/Table'
+    CountFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        distinct:
+          type: boolean
+        distinctByColumn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Column'
+        type:
+          type: string
+    CountOccurencesSelect:
+      required:
+        - column
+        - label
+        - selection
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        selection:
+          type: array
+          items:
+            type: string
+        default:
+          type: boolean
+        type:
+          type: string
+    CountQuartersFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    CountQuartersSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    CountSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        distinct:
+          type: boolean
+        distinctByColumn:
+          $ref: '#/components/schemas/ColumnId'
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        default:
+          type: boolean
+        type:
+          type: string
+    DateDistanceFilter:
+      required:
+        - column
+        - label
+        - timeUnit
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        timeUnit:
+          type: string
+          enum:
+            - Nanos
+            - Micros
+            - Millis
+            - Seconds
+            - Minutes
+            - Hours
+            - HalfDays
+            - Days
+            - Weeks
+            - Months
+            - Years
+            - Decades
+            - Centuries
+            - Millennia
+            - Eras
+            - Forever
+        type:
+          type: string
+    DateDistanceSelect:
+      required:
+        - column
+        - label
+        - timeUnit
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        timeUnit:
+          type: string
+          enum:
+            - Nanos
+            - Micros
+            - Millis
+            - Seconds
+            - Minutes
+            - Hours
+            - HalfDays
+            - Days
+            - Weeks
+            - Months
+            - Years
+            - Decades
+            - Centuries
+            - Millennia
+            - Eras
+            - Forever
+        default:
+          type: boolean
+        type:
+          type: string
+    DateUnionSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    DistinctSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    DurationSumFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    DurationSumSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    Entry:
+      type: object
+      properties:
+        numberOfEvents:
+          type: integer
+          format: int64
+        span:
+          type: array
+          items:
+            type: integer
+            format: int32
+    EqualCondition:
+      required:
+        - type
+        - values
+      type: object
+      properties:
+        values:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+    EventDateUnionSelect:
+      required:
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        default:
+          type: boolean
+        type:
+          type: string
+    ExistsSelect:
+      required:
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        default:
+          type: boolean
+        type:
+          type: string
+    Filter:
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          DATE_DISTANCE: DateDistanceFilter
+          SINGLE_SELECT: SelectFilter
+          COUNT: CountFilter
+          DURATION_SUM: DurationSumFilter
+          QUARTERS_IN_YEAR: QuartersInYearFilter
+          NUMBER: NumberFilter
+          PERIOD_SUM: PeriodSumFilter
+          COUNT_QUARTERS: CountQuartersFilter
+          CATEGORY_MAX_SUM: CategoryMaxSumFilter
+          BIG_MULTI_SELECT: BigMultiSelectFilter
+          SUM: SumFilter
+          SELECT: MultiSelectFilter
+          PERIOD_AVERAGE: PeriodAverageFilter
+          PREFIX_TEXT: PrefixTextFilter
+      oneOf:
+        - $ref: '#/components/schemas/DateDistanceFilter'
+        - $ref: '#/components/schemas/SelectFilter'
+        - $ref: '#/components/schemas/CountFilter'
+        - $ref: '#/components/schemas/DurationSumFilter'
+        - $ref: '#/components/schemas/QuartersInYearFilter'
+        - $ref: '#/components/schemas/NumberFilter'
+        - $ref: '#/components/schemas/PeriodSumFilter'
+        - $ref: '#/components/schemas/CountQuartersFilter'
+        - $ref: '#/components/schemas/CategoryMaxSumFilter'
+        - $ref: '#/components/schemas/BigMultiSelectFilter'
+        - $ref: '#/components/schemas/SumFilter'
+        - $ref: '#/components/schemas/MultiSelectFilter'
+        - $ref: '#/components/schemas/PeriodAverageFilter'
+        - $ref: '#/components/schemas/PrefixTextFilter'
+    FilterObject:
+      required:
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    FilterTemplate:
+      type: object
+      properties:
+        filePath:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        columnValue:
+          type: string
+        value:
+          type: string
+        optionValue:
+          type: string
+    FirstValueSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    GroovyCondition:
+      required:
+        - script
+        - type
+      type: object
+      properties:
+        script:
+          type: string
+        type:
+          type: string
+    IsPresentCondition:
+      required:
+        - type
+      type: object
+      properties:
+        column:
+          type: string
+        type:
+          type: string
+    KeyValue:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    LastValueSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    MatchingStats:
+      type: object
+      properties:
+        entries:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Entry'
+    MultiSelectFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        labels:
+          type: object
+          properties:
+            empty:
+              type: boolean
+          additionalProperties:
+            type: string
+        values:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        template:
+          $ref: '#/components/schemas/FilterTemplate'
+        searchType:
+          type: string
+          enum:
+            - PREFIX
+            - CONTAINS
+            - EXACT
+        type:
+          type: string
+    NotCondition:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    NumberFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    OrCondition:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    PeriodAverageFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    PeriodAverageSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    PeriodSumFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    PeriodSumSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    PeriodTreeConcept:
+      required:
+        - label
+        - selects
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        hidden:
+          type: boolean
+        dataset:
+          $ref: '#/components/schemas/DatasetId'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConceptTreeChild'
+        selects:
+          type: array
+          items:
+            $ref: '#/components/schemas/UniversalSelect'
+        parent:
+          $ref: '#/components/schemas/ConceptTreeNodeObject'
+        type:
+          type: string
+    PrefixCondition:
+      required:
+        - prefixes
+        - type
+      type: object
+      properties:
+        prefixes:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+    PrefixRangeCondition:
+      required:
+        - max
+        - min
+        - type
+      type: object
+      properties:
+        min:
+          type: string
+        max:
+          type: string
+        type:
+          type: string
+    PrefixSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        prefix:
+          type: string
+        default:
+          type: boolean
+        type:
+          type: string
+    PrefixTextFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    QuarterSelect:
+      required:
+        - label
+        - sample
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        sample:
+          type: string
+          enum:
+            - EARLIEST
+            - LATEST
+            - RANDOM
+        default:
+          type: boolean
+        type:
+          type: string
+    QuartersInYearFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    QuartersInYearSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    RandomValueSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        categorical:
+          type: boolean
+        default:
+          type: boolean
+        type:
+          type: string
+    SecondaryIdDescriptionId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    Select:
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        default:
+          type: boolean
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          CATEGORY_MAX_SUM: CategoryMaxSumSelect
+          LAST: LastValueSelect
+          COUNT_OCCURENCES: CountOccurencesSelect
+          EVENT_DATE_UNION: EventDateUnionSelect
+          SUM: SumSelect
+          FIRST: FirstValueSelect
+          COUNT: CountSelect
+          PREFIX: PrefixSelect
+          DATE_DISTANCE: DateDistanceSelect
+          QUARTER: QuarterSelect
+          PERIOD_SUM: PeriodSumSelect
+          DATE_UNION: DateUnionSelect
+          EXISTS: ExistsSelect
+          RANDOM: RandomValueSelect
+          COUNT_QUARTERS: CountQuartersSelect
+          DURATION_SUM: DurationSumSelect
+          PERIOD_AVERAGE: PeriodAverageSelect
+          QUARTERS_IN_YEAR: QuartersInYearSelect
+          DISTINCT: DistinctSelect
+      oneOf:
+        - $ref: '#/components/schemas/CategoryMaxSumSelect'
+        - $ref: '#/components/schemas/LastValueSelect'
+        - $ref: '#/components/schemas/CountOccurencesSelect'
+        - $ref: '#/components/schemas/EventDateUnionSelect'
+        - $ref: '#/components/schemas/SumSelect'
+        - $ref: '#/components/schemas/FirstValueSelect'
+        - $ref: '#/components/schemas/CountSelect'
+        - $ref: '#/components/schemas/PrefixSelect'
+        - $ref: '#/components/schemas/DateDistanceSelect'
+        - $ref: '#/components/schemas/QuarterSelect'
+        - $ref: '#/components/schemas/PeriodSumSelect'
+        - $ref: '#/components/schemas/DateUnionSelect'
+        - $ref: '#/components/schemas/ExistsSelect'
+        - $ref: '#/components/schemas/RandomValueSelect'
+        - $ref: '#/components/schemas/CountQuartersSelect'
+        - $ref: '#/components/schemas/DurationSumSelect'
+        - $ref: '#/components/schemas/PeriodAverageSelect'
+        - $ref: '#/components/schemas/QuartersInYearSelect'
+        - $ref: '#/components/schemas/DistinctSelect'
+    SelectFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        labels:
+          type: object
+          properties:
+            empty:
+              type: boolean
+          additionalProperties:
+            type: string
+        values:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        template:
+          $ref: '#/components/schemas/FilterTemplate'
+        searchType:
+          type: string
+          enum:
+            - PREFIX
+            - CONTAINS
+            - EXACT
+        type:
+          type: string
+    SelectHolderObject:
+      type: object
+      properties:
+        selects:
+          type: array
+          items:
+            type: object
+    SumFilter:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        unit:
+          type: string
+        description:
+          type: string
+        connector:
+          $ref: '#/components/schemas/Connector'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        subtractColumn:
+          $ref: '#/components/schemas/ColumnId'
+        distinctByColumn:
+          $ref: '#/components/schemas/ColumnId'
+        type:
+          type: string
+    SumSelect:
+      required:
+        - column
+        - label
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        distinctByColumn:
+          $ref: '#/components/schemas/ColumnId'
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        subtractColumn:
+          $ref: '#/components/schemas/ColumnId'
+        default:
+          type: boolean
+        type:
+          type: string
     Table:
       required:
         - columns
@@ -627,11 +2594,104 @@ components:
         label:
           type: string
         dataset:
-          $ref: '#/components/schemas/Id'
+          $ref: '#/components/schemas/DatasetId'
         columns:
           type: array
           items:
             $ref: '#/components/schemas/Column'
+    TableId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    TreeChildPrefixIndex:
+      type: object
+    TreeConcept:
+      required:
+        - label
+        - selects
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        hidden:
+          type: boolean
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConceptTreeConnector'
+        dataset:
+          $ref: '#/components/schemas/DatasetId'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConceptTreeChild'
+        selects:
+          type: array
+          items:
+            $ref: '#/components/schemas/UniversalSelect'
+        parent:
+          $ref: '#/components/schemas/ConceptTreeNodeObject'
+        type:
+          type: string
+    UniversalSelect:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        holder:
+          $ref: '#/components/schemas/SelectHolderObject'
+        description:
+          type: string
+        default:
+          type: boolean
+    ValidityDate:
+      required:
+        - column
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        column:
+          $ref: '#/components/schemas/ColumnId'
+        connector:
+          $ref: '#/components/schemas/Connector'
+    Dataset:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+    SecondaryIdDescription:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        dataset:
+          $ref: '#/components/schemas/Dataset'
+        description:
+          type: string
     StructureNode:
       required:
         - dataset
@@ -643,7 +2703,7 @@ components:
         label:
           type: string
         dataset:
-          $ref: '#/components/schemas/Id'
+          $ref: '#/components/schemas/DatasetId'
         description:
           type: string
         children:
@@ -661,67 +2721,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/KeyValue'
-    ColumnStore:
-      required:
-        - type
+    Id:
       type: object
-      properties:
-        null:
-          type: integer
-          format: int32
-          writeOnly: true
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    Import:
-      required:
-        - columns
-        - dictionaries
-        - table
-      type: object
-      properties:
-        name:
-          type: string
-        table:
-          $ref: '#/components/schemas/Id'
-        numberOfEntities:
-          type: integer
-          format: int64
-        numberOfEntries:
-          type: integer
-          format: int64
-        columns:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImportColumn'
-        dictionaries:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-    ImportColumn:
-      required:
-        - parent
-      type: object
-      properties:
-        name:
-          type: string
-        parent:
-          $ref: '#/components/schemas/Import'
-        typeDescription:
-          $ref: '#/components/schemas/ColumnStore'
-        lines:
-          type: integer
-          format: int64
-        memorySizeBytes:
-          minimum: 0
-          type: integer
-          format: int64
+    ImportId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    RoleId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
     ConqueryPermission:
-      required:
-        - type
-      type: object
       properties:
         creationTime:
           type: string
@@ -731,12 +2739,12 @@ components:
           type: array
           items:
             type: string
-        instances:
+        abilities:
           uniqueItems: true
           type: array
           items:
             type: string
-        abilities:
+        instances:
           uniqueItems: true
           type: array
           items:
@@ -745,69 +2753,1614 @@ components:
           type: string
       discriminator:
         propertyName: type
+        mapping:
+          WILDCARD_PERMISSION: WildcardPermission
+      oneOf:
+        - $ref: '#/components/schemas/WildcardPermission'
     Role:
       required:
         - label
         - name
-        - permissions
       type: object
       properties:
         name:
           type: string
         label:
           type: string
+    WildcardPermission:
+      required:
+        - type
+      type: object
+      properties:
+        parts:
+          type: array
+          items:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        creationTime:
+          type: string
+          format: date-time
+        type:
+          type: string
+    CredentialType:
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          PASSWORD: PasswordCredential
+      oneOf:
+        - $ref: '#/components/schemas/PasswordCredential'
+    PasswordCredential:
+      required:
+        - password
+        - type
+      type: object
+      properties:
+        password:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+    ProtoUser:
+      required:
+        - name
+        - permissions
+      type: object
+      properties:
+        label:
+          type: string
+        name:
+          type: string
         permissions:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/ConqueryPermission'
-    CredentialType:
+            type: string
+    UserId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    IdLabelDatasetId:
+      required:
+        - id
+        - label
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        label:
+          type: string
+    FEValue:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        templateValues:
+          type: object
+          additionalProperties:
+            type: string
+        optionValue:
+          type: string
+    ResolvedConceptsResult:
+      type: object
+      properties:
+        resolvedConcepts:
+          type: array
+          items:
+            type: string
+        resolvedFilter:
+          $ref: '#/components/schemas/ResolvedFilterResult'
+        unknownCodes:
+          type: array
+          items:
+            type: string
+    ResolvedFilterResult:
+      type: object
+      properties:
+        tableId:
+          type: string
+        filterId:
+          type: string
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/FEValue'
+    ConceptCodeList:
+      type: object
+      properties:
+        concepts:
+          type: array
+          items:
+            type: string
+    CurrencyConfig:
+      type: object
+      properties:
+        prefix:
+          type: string
+        thousandSeparator:
+          type: string
+        decimalSeparator:
+          type: string
+        decimalScale:
+          type: integer
+          format: int32
+    FrontendConfig:
+      required:
+        - currency
+      type: object
+      properties:
+        version:
+          type: string
+        currency:
+          $ref: '#/components/schemas/CurrencyConfig'
+    BooleanT:
       required:
         - type
       type: object
       properties:
         type:
           type: string
-      discriminator:
-        propertyName: type
-    ProtoUser:
+    CategoricalT:
       required:
-        - credentials
-        - name
-        - permissions
+        - type
       type: object
       properties:
+        type:
+          type: string
+    DateRangeT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    DateT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    FEFilter:
+      type: object
+      properties:
+        id:
+          type: string
         label:
           type: string
-        name:
+        type:
           type: string
-        permissions:
+          enum:
+            - SELECT
+            - MULTI_SELECT
+            - BIG_MULTI_SELECT
+            - INTEGER_RANGE
+            - REAL_RANGE
+            - NONE
+            - STRING
+            - MONEY_RANGE
+        unit:
+          type: string
+        description:
+          type: string
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/FEValue'
+        min:
+          type: integer
+          format: int32
+        max:
+          type: integer
+          format: int32
+        template:
+          $ref: '#/components/schemas/FilterTemplate'
+        pattern:
+          type: string
+        allowDropFile:
+          type: boolean
+    FENode:
+      type: object
+      properties:
+        parent:
+          $ref: '#/components/schemas/IdObject'
+        label:
+          type: string
+        description:
+          type: string
+        active:
+          type: boolean
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdObject'
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        matchingEntries:
+          type: integer
+          format: int64
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/FETable'
+        detailsAvailable:
+          type: boolean
+        codeListResolvable:
+          type: boolean
+        selects:
+          type: array
+          items:
+            $ref: '#/components/schemas/FESelect'
+    FERoot:
+      type: object
+      properties:
+        secondaryIds:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/FESecondaryId'
+        concepts:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FENode'
+    FESecondaryId:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+    FESelect:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+    FETable:
+      type: object
+      properties:
+        id:
+          type: string
+        connectorId:
+          type: string
+        label:
+          type: string
+        dateColumn:
+          $ref: '#/components/schemas/FEValidityDate'
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/FEFilter'
+        selects:
+          type: array
+          items:
+            $ref: '#/components/schemas/FESelect'
+        supportedSecondaryIds:
           uniqueItems: true
           type: array
           items:
             type: string
-        credentials:
+    FEValidityDate:
+      type: object
+      properties:
+        defaultValue:
+          type: string
+        options:
           type: array
           items:
-            $ref: '#/components/schemas/CredentialType'
+            $ref: '#/components/schemas/FEValue'
+    IdObject:
+      type: object
+    IdT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    IntegerT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    ListT:
+      required:
+        - type
+      type: object
+      properties:
+        elementType:
+          $ref: '#/components/schemas/ResultType'
+        type:
+          type: string
+    MoneyT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    NumericT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    RangeLocalDate:
+      type: object
+      properties:
+        min:
+          type: string
+          format: date
+        max:
+          type: string
+          format: date
+    ResolutionT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    ResultType:
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          ID: IdT
+          RESOLUTION: ResolutionT
+          NUMERIC: NumericT
+          INTEGER: IntegerT
+          LIST: ListT
+          BOOLEAN: BooleanT
+          DATE: DateT
+          DATE_RANGE: DateRangeT
+          STRING: StringT
+          MONEY: MoneyT
+          CATEGORICAL: CategoricalT
+      oneOf:
+        - $ref: '#/components/schemas/IdT'
+        - $ref: '#/components/schemas/ResolutionT'
+        - $ref: '#/components/schemas/NumericT'
+        - $ref: '#/components/schemas/IntegerT'
+        - $ref: '#/components/schemas/ListT'
+        - $ref: '#/components/schemas/BooleanT'
+        - $ref: '#/components/schemas/DateT'
+        - $ref: '#/components/schemas/DateRangeT'
+        - $ref: '#/components/schemas/StringT'
+        - $ref: '#/components/schemas/MoneyT'
+        - $ref: '#/components/schemas/CategoricalT'
+    StringT:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    FilterId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    StringContainer:
+      type: object
+      properties:
+        text:
+          type: string
+    FilterValues:
+      type: object
+      properties:
+        values:
+          type: array
+          items:
+            type: string
     User:
       required:
         - label
         - name
-        - permissions
       type: object
       properties:
         name:
           type: string
         label:
           type: string
-        permissions:
+        roles:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/ConqueryPermission'
-        roles:
+            type: string
+    FormConfigId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    FormConfigFullRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        formType:
+          type: string
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        ownerName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        own:
+          type: boolean
+        shared:
+          type: boolean
+        system:
+          type: boolean
+        groups:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+    FormConfigPatch:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        groups:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+    FormConfigAPI:
+      required:
+        - formType
+        - tags
+        - values
+      type: object
+      properties:
+        formType:
+          type: string
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+        formId:
+          type: string
+          format: uuid
+        creationTime:
+          type: string
+          format: date-time
+    FEDatasetAbility:
+      type: object
+      properties:
+        canUpload:
+          type: boolean
+    FEMeInformation:
+      type: object
+      properties:
+        userName:
+          type: string
+        hideLogoutButton:
+          type: boolean
+        datasetAbilities:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FEDatasetAbility'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdLabelGroupId'
+    IdLabelGroupId:
+      required:
+        - id
+        - label
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    AUForm:
+      required:
+        - dateRange
+        - queryGroup
+        - type
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/UserInfo'
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        queryGroup:
+          type: string
+        type:
+          type: string
+    AUFormCaseQuery:
+      required:
+        - dateRange
+        - type
+      type: object
+      properties:
+        baseConditionEmpty:
+          type: boolean
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        type:
+          type: string
+    AUFormPersonQuery:
+      required:
+        - dateRange
+        - type
+      type: object
+      properties:
+        baseConditionEmpty:
+          type: boolean
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        type:
+          type: string
+    AbsoluteFormQuery:
+      required:
+        - dateRange
+        - query
+        - resolutionsAndAlignmentMap
+        - type
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/IQuery'
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        resolutionsAndAlignmentMap:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolutionAndAlignment'
+        type:
+          type: string
+    AbsoluteMode:
+      required:
+        - alignmentHint
+        - dateRange
+        - value
+      type: object
+      properties:
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        alignmentHint:
+          type: string
+          enum:
+            - NO_ALIGN
+            - DAY
+            - QUARTER
+            - YEAR
+        value:
+          type: string
+    ArrayConceptQuery:
+      required:
+        - dateAggregationMode
+        - type
+      type: object
+      properties:
+        dateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        resolvedDateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        type:
+          type: string
+    CDateSet:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        minValue:
+          type: integer
+          format: int32
+        maxValue:
+          type: integer
+          format: int32
+    CQAnd:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        createExists:
+          type: boolean
+        dateAction:
+          type: string
+          enum:
+            - BLOCK
+            - MERGE
+            - INTERSECT
+            - NEGATE
+        type:
+          type: string
+    CQBeforeOrSameTemporalQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        index:
+          $ref: '#/components/schemas/CQSampled'
+        preceding:
+          $ref: '#/components/schemas/CQSampled'
+        type:
+          type: string
+    CQBeforeTemporalQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        index:
+          $ref: '#/components/schemas/CQSampled'
+        preceding:
+          $ref: '#/components/schemas/CQSampled'
+        type:
+          type: string
+    CQBigMultiSelectFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+    CQConcept:
+      required:
+        - ids
+        - tables
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/CQTable'
+        excludeFromTimeAggregation:
+          type: boolean
+        excludeFromSecondaryIdQuery:
+          type: boolean
+        aggregateEventDates:
+          type: boolean
+        ids:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConceptElementObject'
+        type:
+          type: string
+    CQDateRestriction:
+      required:
+        - child
+        - dateRange
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        child:
+          $ref: '#/components/schemas/CQElement'
+        type:
+          type: string
+    CQDaysBeforeOrNeverTemporalQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        index:
+          $ref: '#/components/schemas/CQSampled'
+        preceding:
+          $ref: '#/components/schemas/CQSampled'
+        days:
+          type: integer
+          format: int32
+        type:
+          type: string
+    CQDaysBeforeTemporalQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        index:
+          $ref: '#/components/schemas/CQSampled'
+        preceding:
+          $ref: '#/components/schemas/CQSampled'
+        days:
+          $ref: '#/components/schemas/IntegerRange'
+        type:
+          type: string
+    CQElement:
+      properties:
+        label:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          CONCEPT: CQConcept
+          EXTERNAL: CQExternal
+          AND: CQAnd
+          OR: CQOr
+          SAVED_QUERY: CQReusedQuery
+          RESULT_INFO_DECORATOR: ResultInfoDecorator
+          BEFORE_OR_SAME: CQBeforeOrSameTemporalQuery
+          DATE_RESTRICTION: CQDateRestriction
+          BEFORE: CQBeforeTemporalQuery
+          DAYS_BEFORE: CQDaysBeforeTemporalQuery
+          NEGATION: CQNegation
+          DAYS_OR_NO_EVENT_BEFORE: CQDaysBeforeOrNeverTemporalQuery
+          SAME: CQSameTemporalQuery
+      oneOf:
+        - $ref: '#/components/schemas/CQConcept'
+        - $ref: '#/components/schemas/CQExternal'
+        - $ref: '#/components/schemas/CQAnd'
+        - $ref: '#/components/schemas/CQOr'
+        - $ref: '#/components/schemas/CQReusedQuery'
+        - $ref: '#/components/schemas/ResultInfoDecorator'
+        - $ref: '#/components/schemas/CQBeforeOrSameTemporalQuery'
+        - $ref: '#/components/schemas/CQDateRestriction'
+        - $ref: '#/components/schemas/CQBeforeTemporalQuery'
+        - $ref: '#/components/schemas/CQDaysBeforeTemporalQuery'
+        - $ref: '#/components/schemas/CQNegation'
+        - $ref: '#/components/schemas/CQDaysBeforeOrNeverTemporalQuery'
+        - $ref: '#/components/schemas/CQSameTemporalQuery'
+    CQExternal:
+      required:
+        - format
+        - type
+        - values
+      type: object
+      properties:
+        label:
+          type: string
+        format:
+          type: array
+          items:
+            type: string
+            enum:
+              - ID
+              - EVENT_DATE
+              - START_DATE
+              - END_DATE
+              - DATE_RANGE
+              - DATE_SET
+              - IGNORE
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        valuesResolved:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CDateSet'
+        type:
+          type: string
+    CQIntegerRangeFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          $ref: '#/components/schemas/LongRange'
+        type:
+          type: string
+    CQMoneyRangeFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          $ref: '#/components/schemas/LongRange'
+        type:
+          type: string
+    CQMultiSelectFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+    CQNegation:
+      required:
+        - child
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        child:
+          $ref: '#/components/schemas/CQElement'
+        dateAction:
+          type: string
+          enum:
+            - BLOCK
+            - MERGE
+            - INTERSECT
+            - NEGATE
+        type:
+          type: string
+    CQOr:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        createExists:
+          type: boolean
+        dateAction:
+          type: string
+          enum:
+            - BLOCK
+            - MERGE
+            - INTERSECT
+            - NEGATE
+        type:
+          type: string
+    CQRealRangeFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          $ref: '#/components/schemas/RangeBigDecimal'
+        type:
+          type: string
+    CQReusedQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        resolvedQuery:
+          $ref: '#/components/schemas/IQuery'
+        excludeFromSecondaryId:
+          type: boolean
+        query:
+          type: string
+        type:
+          type: string
+    CQSameTemporalQuery:
+      required:
+        - type
+      type: object
+      properties:
+        label:
+          type: string
+        index:
+          $ref: '#/components/schemas/CQSampled'
+        preceding:
+          $ref: '#/components/schemas/CQSampled'
+        type:
+          type: string
+    CQSampled:
+      required:
+        - child
+        - sampler
+      type: object
+      properties:
+        child:
+          $ref: '#/components/schemas/CQElement'
+        sampler:
+          type: string
+          enum:
+            - EARLIEST
+            - LATEST
+            - RANDOM
+    CQSelectFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: string
+        type:
+          type: string
+    CQStringFilter:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: string
+        type:
+          type: string
+    CQTable:
+      type: object
+      properties:
+        dateColumn:
+          $ref: '#/components/schemas/ValidityDateContainer'
+        id:
+          $ref: '#/components/schemas/ConnectorId'
+    CQUnfilteredTable:
+      type: object
+      properties:
+        dateColumn:
+          $ref: '#/components/schemas/ValidityDateContainer'
+        id:
+          $ref: '#/components/schemas/ConnectorId'
+    ClassToInstanceMapObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+      additionalProperties:
+        type: object
+    ColumnDescriptor:
+      type: object
+      properties:
+        label:
+          type: string
+        userConceptLabel:
+          type: string
+        defaultLabel:
+          type: string
+        type:
+          type: string
+        selectId:
+          type: string
+    ConceptElementObject:
+      required:
+        - label
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        additionalInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        dataset:
+          $ref: '#/components/schemas/Dataset'
+    ConceptQuery:
+      required:
+        - dateAggregationMode
+        - type
+      type: object
+      properties:
+        dateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        resolvedDateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        type:
+          type: string
+    ConnectorId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    ConqueryErrorInfo:
+      type: object
+      properties:
+        message:
+          type: string
+        context:
+          type: object
+          additionalProperties:
+            type: string
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+    EntityDateMode:
+      required:
+        - alignmentHint
+        - dateAggregationMode
+        - value
+      type: object
+      properties:
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        dateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        alignmentHint:
+          type: string
+          enum:
+            - NO_ALIGN
+            - DAY
+            - QUARTER
+            - YEAR
+        value:
+          type: string
+    EntityDateQuery:
+      required:
+        - dateAggregationMode
+        - dateRange
+        - query
+        - resolutionsAndAlignments
+        - type
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/IQuery'
+        resolutionsAndAlignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolutionAndAlignment'
+        dateRange:
+          type: array
+          items:
+            type: integer
+            format: int32
+        dateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        type:
+          type: string
+    ExportForm:
+      required:
+        - queryGroup
+        - resolution
+        - type
+      type: object
+      properties:
+        resolution:
+          type: array
+          items:
+            type: string
+            enum:
+              - COMPLETE
+              - YEARS
+              - QUARTERS
+              - DAYS
+        alsoCreateCoarserSubdivisions:
+          type: boolean
+        queryGroup:
+          type: string
+        type:
+          type: string
+    FilterValue:
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: object
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          INTEGER_RANGE: CQIntegerRangeFilter
+          MONEY_RANGE: CQMoneyRangeFilter
+          STRING: CQStringFilter
+          MULTI_SELECT: CQMultiSelectFilter
+          BIG_MULTI_SELECT: CQBigMultiSelectFilter
+          REAL_RANGE: CQRealRangeFilter
+          SELECT: CQSelectFilter
+      oneOf:
+        - $ref: '#/components/schemas/CQIntegerRangeFilter'
+        - $ref: '#/components/schemas/CQMoneyRangeFilter'
+        - $ref: '#/components/schemas/CQStringFilter'
+        - $ref: '#/components/schemas/CQMultiSelectFilter'
+        - $ref: '#/components/schemas/CQBigMultiSelectFilter'
+        - $ref: '#/components/schemas/CQRealRangeFilter'
+        - $ref: '#/components/schemas/CQSelectFilter'
+    FilterValueObject:
+      required:
+        - filter
+        - type
+        - value
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterId'
+        value:
+          type: object
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    FullExecutionStatus:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastUsed:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        ownerName:
+          type: string
+        shared:
+          type: boolean
+        own:
+          type: boolean
+        system:
+          type: boolean
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - NEW
+            - RUNNING
+            - CANCELED
+            - FAILED
+            - DONE
+        numberOfResults:
+          type: integer
+          format: int64
+        requiredTime:
+          type: integer
+          format: int64
+        queryType:
+          type: string
+        secondaryId:
+          type: string
+        resultUrl:
+          type: string
+          format: url
+        progress:
+          type: number
+          format: float
+        columnDescriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnDescriptor'
+        canExpand:
+          type: boolean
+        error:
+          $ref: '#/components/schemas/ConqueryErrorInfo'
+        groups:
+          type: array
+          items:
+            type: string
+        availableSecondaryIds:
           uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/SecondaryIdDescription'
+        isPristineLabel:
+          type: boolean
+    IQuery:
+      type: object
+    IntegerRange:
+      type: object
+      properties:
+        min:
+          type: integer
+          format: int32
+        max:
+          type: integer
+          format: int32
+    JupyEndForm:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+    LongRange:
+      type: object
+      properties:
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
+    Mode:
+      properties:
+        value:
+          type: string
+      discriminator:
+        propertyName: value
+        mapping:
+          ENTITY_DATE: EntityDateMode
+          RELATIVE: RelativeMode
+          ABSOLUTE: AbsoluteMode
+      oneOf:
+        - $ref: '#/components/schemas/EntityDateMode'
+        - $ref: '#/components/schemas/RelativeMode'
+        - $ref: '#/components/schemas/AbsoluteMode'
+    QueryDescription:
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          TABLE_EXPORT: TableExportQuery
+          ABSOLUTE_FORM_QUERY: AbsoluteFormQuery
+          RELATIVE_FORM_QUERY: RelativeFormQuery
+          ARRAY_CONCEPT_QUERY: ArrayConceptQuery
+          AU_CASE_QUERY: AUFormCaseQuery
+          EXPORT_FORM: ExportForm
+          AU_FORM: AUForm
+          ENTITY_DATE_QUERY: EntityDateQuery
+          SECONDARY_ID_QUERY: SecondaryIdQuery
+          AU_PERSON_QUERY: AUFormPersonQuery
+          CONCEPT_QUERY: ConceptQuery
+          JUPYEND_FORM: JupyEndForm
+      oneOf:
+        - $ref: '#/components/schemas/TableExportQuery'
+        - $ref: '#/components/schemas/AbsoluteFormQuery'
+        - $ref: '#/components/schemas/RelativeFormQuery'
+        - $ref: '#/components/schemas/ArrayConceptQuery'
+        - $ref: '#/components/schemas/AUFormCaseQuery'
+        - $ref: '#/components/schemas/ExportForm'
+        - $ref: '#/components/schemas/AUForm'
+        - $ref: '#/components/schemas/EntityDateQuery'
+        - $ref: '#/components/schemas/SecondaryIdQuery'
+        - $ref: '#/components/schemas/AUFormPersonQuery'
+        - $ref: '#/components/schemas/ConceptQuery'
+        - $ref: '#/components/schemas/JupyEndForm'
+    RangeBigDecimal:
+      type: object
+      properties:
+        min:
+          type: number
+        max:
+          type: number
+    RelativeFormQuery:
+      required:
+        - indexPlacement
+        - indexSelector
+        - query
+        - resolutionsAndAlignmentMap
+        - timeUnit
+        - type
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/IQuery'
+        indexSelector:
+          type: string
+          enum:
+            - EARLIEST
+            - LATEST
+            - RANDOM
+        indexPlacement:
+          type: string
+          enum:
+            - BEFORE
+            - NEUTRAL
+            - AFTER
+        timeCountBefore:
+          minimum: 0
+          type: integer
+          format: int32
+        timeCountAfter:
+          minimum: 0
+          type: integer
+          format: int32
+        timeUnit:
+          type: string
+          enum:
+            - DAYS
+            - QUARTERS
+            - YEARS
+        resolutionsAndAlignmentMap:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolutionAndAlignment'
+        type:
+          type: string
+    RelativeMode:
+      required:
+        - indexPlacement
+        - indexSelector
+        - timeUnit
+        - value
+      type: object
+      properties:
+        timeUnit:
+          type: string
+          enum:
+            - DAYS
+            - QUARTERS
+            - YEARS
+        timeCountBefore:
+          minimum: 0
+          type: integer
+          format: int32
+        timeCountAfter:
+          minimum: 0
+          type: integer
+          format: int32
+        indexPlacement:
+          type: string
+          enum:
+            - BEFORE
+            - NEUTRAL
+            - AFTER
+        indexSelector:
+          type: string
+          enum:
+            - EARLIEST
+            - LATEST
+            - RANDOM
+        value:
+          type: string
+    ResolutionAndAlignment:
+      type: object
+      properties:
+        resolution:
+          type: string
+          enum:
+            - COMPLETE
+            - YEARS
+            - QUARTERS
+            - DAYS
+        alignment:
+          type: string
+          enum:
+            - NO_ALIGN
+            - DAY
+            - QUARTER
+            - YEAR
+    ResultInfoDecorator:
+      required:
+        - type
+        - values
+      type: object
+      properties:
+        label:
+          type: string
+        values:
+          type: object
+          properties:
+            empty:
+              type: boolean
+          additionalProperties:
+            type: object
+        type:
+          type: string
+    SecondaryIdQuery:
+      required:
+        - dateAggregationMode
+        - secondaryId
+        - type
+      type: object
+      properties:
+        secondaryId:
+          $ref: '#/components/schemas/SecondaryIdDescriptionId'
+        dateAggregationMode:
+          type: string
+          enum:
+            - NONE
+            - MERGE
+            - INTERSECT
+            - LOGICAL
+        withSecondaryId:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Column'
+        withoutSecondaryId:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Table'
+        type:
+          type: string
+    TableExportQuery:
+      required:
+        - dateRange
+        - query
+        - tables
+        - type
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/IQuery'
+        dateRange:
+          $ref: '#/components/schemas/RangeLocalDate'
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/CQUnfilteredTable'
+        type:
+          type: string
+    UserInfo:
+      required:
+        - company
+        - email
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        email:
+          type: string
+    ValidityDateContainer:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/ValidityDateId'
+    ValidityDateId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    ManagedExecutionId:
+      type: string
+      format: '[a-z0-9](.[a-z0-9]+)*'
+    ExecutionStatus:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastUsed:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        ownerName:
+          type: string
+        shared:
+          type: boolean
+        own:
+          type: boolean
+        system:
+          type: boolean
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - NEW
+            - RUNNING
+            - CANCELED
+            - FAILED
+            - DONE
+        numberOfResults:
+          type: integer
+          format: int64
+        requiredTime:
+          type: integer
+          format: int64
+        queryType:
+          type: string
+        secondaryId:
+          type: string
+        resultUrl:
+          type: string
+          format: url
+        isPristineLabel:
+          type: boolean
+    MetaDataPatch:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        groups:
           type: array
           items:
             type: string

@@ -78,24 +78,24 @@
                 <version>5.1.1</version>
                 <!-- /RELEASE_VERSION -->
                 <executions>
-                    <execution>
-                        <id>openapi-java-server</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generatorName>jaxrs-spec</generatorName>
-                            <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
-                            <configOptions>
-                                <sourceFolder>src/gen/java/main</sourceFolder>
-                                <interfaceOnly>true</interfaceOnly>
-                            </configOptions>
-                            <apiPackage>com.bakdata.conquery.resources.admin.gen</apiPackage>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <generateModels>true</generateModels>
-                            <generateApis>true</generateApis>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>openapi-java-server</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <generatorName>jaxrs-spec</generatorName>-->
+<!--                            <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>-->
+<!--                            <configOptions>-->
+<!--                                <sourceFolder>src/gen/java/main</sourceFolder>-->
+<!--                                <interfaceOnly>true</interfaceOnly>-->
+<!--                            </configOptions>-->
+<!--                            <apiPackage>com.bakdata.conquery.resources.admin.gen</apiPackage>-->
+<!--                            <skipValidateSpec>true</skipValidateSpec>-->
+<!--                            <generateModels>true</generateModels>-->
+<!--                            <generateApis>true</generateApis>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                     <execution>
                         <id>openapi-python-client</id>
                         <goals>

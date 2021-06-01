@@ -17,7 +17,7 @@ import lombok.Setter;
  * This condition connects multiple conditions with an or.
  */
 @CPSType(id="OR", base=CTCondition.class)
-public class OrCondition implements CTCondition {
+public class OrCondition extends CTCondition {
 
 	@Setter @Getter @Valid @NotEmpty
 	private List<CTCondition> conditions;
