@@ -1,20 +1,15 @@
 package com.bakdata.conquery.models.forms.managed;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
 
 import com.bakdata.conquery.apiv1.QueryDescription;
 import com.bakdata.conquery.apiv1.forms.Form;
@@ -27,7 +22,7 @@ import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.execution.ExecutionState;
 import com.bakdata.conquery.models.execution.FullExecutionStatus;
 import com.bakdata.conquery.models.execution.ManagedExecution;
-import com.bakdata.conquery.models.forms.managed.ManagedForm.FormSharedResult;
+import com.bakdata.conquery.models.forms.managed.ManagedForm.FormShardResult;
 import com.bakdata.conquery.models.i18n.I18n;
 import com.bakdata.conquery.models.identifiable.IdMap;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
@@ -38,17 +33,11 @@ import com.bakdata.conquery.models.query.QueryPlanContext;
 import com.bakdata.conquery.models.query.QueryResolveContext;
 import com.bakdata.conquery.models.query.Visitable;
 import com.bakdata.conquery.models.query.queryplan.QueryPlan;
-import com.bakdata.conquery.models.query.resultinfo.ResultInfo;
-import com.bakdata.conquery.models.query.results.EntityResult;
 import com.bakdata.conquery.models.query.results.ShardResult;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.Namespace;
-import com.bakdata.conquery.resources.ResourceConstants;
-import com.bakdata.conquery.resources.api.ResultCsvResource;
 import com.bakdata.conquery.util.QueryUtils.NamespacedIdentifiableCollector;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.univocity.parsers.csv.CsvWriter;
-import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -67,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @CPSType(base = ManagedExecution.class, id = "MANAGED_FORM")
 @NoArgsConstructor
-public abstract class ManagedForm extends ManagedExecution<FormSharedResult> {
+public abstract class ManagedForm extends ManagedExecution<FormShardResult> {
 
 	/**
 	 * The form that was submitted through the api.
@@ -127,10 +116,10 @@ public abstract class ManagedForm extends ManagedExecution<FormSharedResult> {
 
 	// Executed on Worker
 	@Override
-	public Map<ManagedExecutionId,QueryPlan> createQueryPlans(QueryPlanContext context) {
+	public Map<ManagedExecutionId, QueryPlan<?>> createQueryPlans(QueryPlanContext context) {
 		synchronized (this) {
-			Map<ManagedExecutionId,QueryPlan> plans = new HashMap<>();
-			for( ManagedQuery subQuery : flatSubQueries.values()) {
+			Map<ManagedExecutionId, QueryPlan<?>> plans = new HashMap<>();
+			for (ManagedQuery subQuery : flatSubQueries.values()) {
 				plans.putAll(subQuery.createQueryPlans(context));
 			}
 			return plans;
@@ -141,7 +130,7 @@ public abstract class ManagedForm extends ManagedExecution<FormSharedResult> {
 	 * Distribute the result to a sub query.
 	 */
 	@Override
-	public void addResult(@NonNull MetaStorage storage, FormSharedResult result) {
+	public void addResult(@NonNull MetaStorage storage, FormShardResult result) {
 		ManagedExecutionId subquery = result.getSubqueryId();
 		if(result.getError().isPresent()) {
 			fail(storage, result.getError().get());
@@ -186,11 +175,11 @@ public abstract class ManagedForm extends ManagedExecution<FormSharedResult> {
 	}
 
 	@Override
-	public FormSharedResult getInitializedShardResult(Entry<ManagedExecutionId, QueryPlan> entry) {
-		FormSharedResult result = new FormSharedResult();
+	public FormShardResult getInitializedShardResult(ManagedExecutionId subqueryId) {
+		FormShardResult result = new FormShardResult();
 		result.setQueryId(getId());
-		if(entry != null) {
-			result.setSubqueryId(entry.getKey());
+		if(subqueryId != null) {
+			result.setSubqueryId(subqueryId);
 		}
 		return result;
 	}
@@ -203,7 +192,7 @@ public abstract class ManagedForm extends ManagedExecution<FormSharedResult> {
 	@Data
 	@CPSType(id = "FORM_SHARD_RESULT", base = ShardResult.class)
 	@EqualsAndHashCode(callSuper = true)
-	public static class FormSharedResult extends ShardResult {
+	public static class FormShardResult extends ShardResult {
 		private ManagedExecutionId subqueryId;
 	}
 

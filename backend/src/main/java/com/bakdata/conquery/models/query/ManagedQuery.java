@@ -1,14 +1,11 @@
 package com.bakdata.conquery.models.query;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -16,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
 
 import c10n.C10N;
 import com.bakdata.conquery.apiv1.QueryDescription;
@@ -47,8 +43,6 @@ import com.bakdata.conquery.models.query.results.ShardResult;
 import com.bakdata.conquery.models.query.visitor.QueryVisitor;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.Namespace;
-import com.bakdata.conquery.resources.ResourceConstants;
-import com.bakdata.conquery.resources.api.ResultCsvResource;
 import com.bakdata.conquery.util.QueryUtils.NamespacedIdentifiableCollector;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
@@ -203,7 +197,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> implements Singl
 	}
 
 	@Override
-	public Map<ManagedExecutionId, QueryPlan> createQueryPlans(QueryPlanContext context) {
+	public Map<ManagedExecutionId, QueryPlan<?>> createQueryPlans(QueryPlanContext context) {
 		if (context.getDataset().equals(getDataset())) {
 			return Map.of(this.getId(), query.createQueryPlan(context));
 		}
@@ -212,7 +206,7 @@ public class ManagedQuery extends ManagedExecution<ShardResult> implements Singl
 	}
 
 	@Override
-	public ShardResult getInitializedShardResult(Entry<ManagedExecutionId, QueryPlan> entry) {
+	public ShardResult getInitializedShardResult(ManagedExecutionId subqueryId) {
 		ShardResult result = new ShardResult();
 		result.setQueryId(getId());
 		return result;

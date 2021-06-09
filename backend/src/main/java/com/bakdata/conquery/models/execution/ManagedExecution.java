@@ -1,5 +1,23 @@
 package com.bakdata.conquery.models.execution;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.UriBuilder;
+
 import com.bakdata.conquery.apiv1.QueryDescription;
 import com.bakdata.conquery.io.cps.CPSBase;
 import com.bakdata.conquery.io.jackson.serializer.MetaIdRef;
@@ -28,8 +46,6 @@ import com.bakdata.conquery.models.query.PrintSettings;
 import com.bakdata.conquery.models.query.QueryPlanContext;
 import com.bakdata.conquery.models.query.Visitable;
 import com.bakdata.conquery.models.query.queryplan.QueryPlan;
-import com.bakdata.conquery.models.query.resultinfo.ResultInfo;
-import com.bakdata.conquery.models.query.results.EntityResult;
 import com.bakdata.conquery.models.query.results.ShardResult;
 import com.bakdata.conquery.models.worker.DatasetRegistry;
 import com.bakdata.conquery.models.worker.Namespace;
@@ -39,32 +55,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Uninterruptibles;
-import com.univocity.parsers.csv.CsvWriter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.authz.Permission;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -357,7 +355,7 @@ public abstract class ManagedExecution<R extends ShardResult> extends Identifiab
 	/**
 	 * Creates a mapping from subexecutions. Their id is mapped to their {@link QueryPlan}.
 	 */
-	public abstract Map<ManagedExecutionId,QueryPlan> createQueryPlans(QueryPlanContext context);
+	public abstract Map<ManagedExecutionId, QueryPlan<?>> createQueryPlans(QueryPlanContext context);
 
 	public abstract void addResult(@NonNull MetaStorage storage, R result);
 
@@ -365,9 +363,10 @@ public abstract class ManagedExecution<R extends ShardResult> extends Identifiab
 	 * Initializes the result that is send from a worker to the ManagerNode.
 	 * E.g. this function enables the {@link ManagedForm} to prepare the result in order to be
 	 * matched to its subqueries.
+	 * @param subqueryId
 	 */
 	@JsonIgnore
-	public abstract R getInitializedShardResult(Map.Entry<ManagedExecutionId, QueryPlan> entry);
+	public abstract R getInitializedShardResult(ManagedExecutionId subqueryId);
 
 	/**
 	 * Returns the {@link QueryDescription} that caused this {@link ManagedExecution}.

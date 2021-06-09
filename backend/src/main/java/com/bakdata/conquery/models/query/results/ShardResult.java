@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 import com.bakdata.conquery.io.cps.CPSBase;
 import com.bakdata.conquery.io.cps.CPSType;
@@ -17,7 +17,6 @@ import com.bakdata.conquery.models.messages.namespaces.NamespaceMessage;
 import com.bakdata.conquery.models.messages.namespaces.specific.CollectQueryResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +39,7 @@ public class ShardResult {
 	@ToString.Include
 	private LocalDateTime finishTime;
 	@JsonIgnore
-	private ListenableFuture<List<Optional<EntityResult>>> future;
+	private CompletableFuture<List<EntityResult>> future;
 
 	private Optional<ConqueryError> error = Optional.empty();
 
@@ -58,9 +57,7 @@ public class ShardResult {
 		}
 
 		try {
-			results =  Uninterruptibles.getUninterruptibly(future).stream()
-					.flatMap(Optional::stream)
-					.collect(Collectors.toList());
+			results =  Uninterruptibles.getUninterruptibly(future);
 		} catch (ConqueryError e) {
 			error = Optional.of(e);
 		} catch (Exception e) {

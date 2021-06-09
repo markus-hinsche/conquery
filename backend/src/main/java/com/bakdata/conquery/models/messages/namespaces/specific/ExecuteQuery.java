@@ -17,7 +17,6 @@ import com.bakdata.conquery.models.query.QueryPlanContext;
 import com.bakdata.conquery.models.query.queryplan.QueryPlan;
 import com.bakdata.conquery.models.query.results.ShardResult;
 import com.bakdata.conquery.models.worker.Worker;
-import com.google.common.util.concurrent.MoreExecutors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,8 +47,7 @@ public class ExecuteQuery extends WorkerMessage {
 		// Execution might have been cancelled before so we uncancel it here.
 		context.getQueryExecutor().uncancelQuery(executionId);
 
-
-		Set<Entry<ManagedExecutionId, QueryPlan>> plans = null;
+		Set<Entry<ManagedExecutionId, QueryPlan<?>>> plans = null;
 		// Generate query plans for this execution. For ManagedQueries this is only one plan.
 		// For ManagedForms there might be multiple plans, which originate from ManagedQueries.
 		// The results are send directly to these ManagesQueries
@@ -65,8 +63,8 @@ public class ExecuteQuery extends WorkerMessage {
 		}
 
 		// Execute all plans.
-		for (Entry<ManagedExecutionId, QueryPlan> entry : plans) {
-			ShardResult result = execution.getInitializedShardResult(entry);
+		for (Entry<ManagedExecutionId, QueryPlan<?>> entry : plans) {
+			ShardResult result = execution.getInitializedShardResult(entry.getKey());
 			result.setWorkerId(context.getInfo().getId());
 
 			try {
@@ -76,7 +74,7 @@ public class ExecuteQuery extends WorkerMessage {
 					   .execute(entry.getKey(), entry.getValue(), result, executionContext);
 				// Send result back
 				result.getFuture()
-					  .addListener(
+					  .thenRun(
 							  () -> {
 
 								  log.debug(
@@ -95,8 +93,7 @@ public class ExecuteQuery extends WorkerMessage {
 								  else {
 									  result.send(context);
 								  }
-							  },
-							  MoreExecutors.directExecutor()
+							  }
 					  );
 			}
 			catch (Exception e) {
