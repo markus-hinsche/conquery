@@ -108,9 +108,9 @@ public class MigrateCommand extends ConqueryCommand {
 		final ObjectMapper mapper = Jackson.BINARY_MAPPER;
 
 		final ObjectReader keyReader = mapper.readerFor(String.class);
-		final ObjectReader valueReader = mapper.readerFor(ObjectNode.class);
+		final ObjectReader valueReader = mapper.readerFor(JsonNode.class);
 		final ObjectWriter keyWriter = mapper.writerFor(String.class);
-		final ObjectWriter valueWriter = mapper.writerFor(ObjectNode.class);
+		final ObjectWriter valueWriter = mapper.writerFor(JsonNode.class);
 
 
 		Arrays.stream(environments)
