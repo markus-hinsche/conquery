@@ -1,9 +1,9 @@
 package com.bakdata.conquery.models.datasets.concepts.select;
 
 import com.bakdata.conquery.io.cps.CPSBase;
+import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.datasets.concepts.Connector;
 import com.bakdata.conquery.models.datasets.concepts.SelectHolder;
-import com.bakdata.conquery.models.datasets.Dataset;
 import com.bakdata.conquery.models.externalservice.ResultType;
 import com.bakdata.conquery.models.identifiable.Labeled;
 import com.bakdata.conquery.models.identifiable.ids.NamespacedIdentifiable;
@@ -34,6 +34,9 @@ public abstract class Select extends Labeled<SelectId> implements NamespacedIden
 
 	@Setter @Getter
 	private String description;
+
+	@Setter @Getter
+	private boolean hidden;
 
 	@Setter @Getter @JsonProperty("default")
 	private boolean isDefault = false;
