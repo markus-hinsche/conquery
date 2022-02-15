@@ -5,6 +5,16 @@ if [ -z "$1" ]; then
   exit
 fi
 
-for container_id in $(docker ps -a --filter="name=$1" -q);do
-  docker rm -f $container_id
-done
+if [ -z $2 ]
+then
+	if ! cr=$(./scripts/get_cr.sh)
+	then
+		exit 1
+	fi
+
+	echo "Using $cr as container runtime"
+else
+	cr=$2
+fi
+
+$cr rm -f $1

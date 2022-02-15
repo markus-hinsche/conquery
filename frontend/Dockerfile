@@ -30,6 +30,9 @@ COPY --from=builder /app/build /usr/share/nginx/html
 # Copy the env replacer
 COPY ./scripts/replace-env-at-runtime.sh /
 
+# Copy container assets to the container root fs (e.g. nginx config template)
+COPY ./container /
+
 # The default command replaces the environment variables and starts nginx as a subprocess
 CMD [ "/bin/sh", "-c", "/replace-env-at-runtime.sh /usr/share/nginx/html/index.html && nginx -g \"daemon off;\""]
 
